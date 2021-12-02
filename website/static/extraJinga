@@ -1,0 +1,31 @@
+{{ question['questionText'] }}
+
+#entryInput {
+  font-size: 20px;
+}
+
+MENTION WHY IMPLICATED FUNCTION FOR CREATING ELEMENTS:
+
+    const answerEntry = document.createElement("input")
+    answerEntry.setAttribute("placeholder", "Enter the number of people...")
+    const element = document.getElementById("answer-container")
+    answerEntry.setAttribute("id", "entryInput")
+    answerEntry.setAttribute("type", "text")
+    answerEntry.setAttribute("size", "30")
+    element.appendChild(answerEntry)
+    const submitButton = document.createElement("button")
+    submitButton.setAttribute("class", "bte btn-primary")
+    submitButton.setAttribute()
+
+
+
+
+
+
+
+
+
+                    #print(type(toModify))
+                    #print(toModify)
+                    #print(type(modificationBy))
+                    #print(modificationBy)

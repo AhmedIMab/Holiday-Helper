@@ -1,0 +1,148 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %}
+{% block homepage %}
+<section class="bg-dark text-light p-5 pt-lg-0 text-center text-sm-start">
+    <div class="container">
+        <div class="d-sm-flex align-items-center justify-content-between">
+            <div>
+                <h1><span class="text-warning">Holiday</span> Helper!</h1>
+                <!-- lead makes it a bit bigger -->
+                <p class="lead my-4 mr-5">
+                We focus on getting you the best possible destination for you to enjoy
+                and make the most out of your holiday
+                </p>
+                <a href="/questions" class="btn btn-primary mb-2">Start Adventuring Now!</a>
+            </div>
+            <!-- d means display so d-sm-block will block on smaller screens -->
+            <img class="img-fluid w-50 d-none d-sm-block" src="/static/travel5.png" alt="this is the image" />
+        </div>
+    </div>
+</section>
+
+<!-- SHOWCASE-->
+
+<section class="p-5">
+    <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-md">
+                <div class="card card1 text-light">
+                    <div class="card-body text-center">
+                        <div class="h1 mb-3">
+                            <i class="bi bi-question"></i>
+                        </div>
+                        <h3 class="card-title mb-3">
+                            What do we do?
+                        </h3>
+                        <p class="card-text">
+                            Find out more about our main functions and in which ways we can assist you to
+                            find the correct travel spot
+                        </p>
+                        <a href="#helpsect" class="btn btn-info mb-2">Help Me</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md">
+                <div class="card card2 text-light">
+                    <div class="card-body text-center">
+                        <div class="h1 mb-3">
+                            <i class="bi bi-card-checklist"></i>
+                        </div>
+                        <h3 class="card-title mb-3">
+                            Your countries
+                        </h3>
+                        <p class="card-text">
+                            Pick the countries you have previously visited and choose whether these will
+                            affect the destinations our algorithm picks for you
+                        </p>
+                        <a href="/countries" class="btn btn-success mb-2">Get Adding!</a>
+                    </div>
+                </div>
+            </div>
+<!--            <div class="col-md">
+                <div class="card bg-dark text-light">
+                    <div class="card-body text-center">
+                        <div class="h1 mb-3">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h3 class="card-title mb-3">
+                            In Person
+                        </h3>
+                        <p class="card-text">
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci esse pariatur rem? A, saepe, soluta.
+                        </p>
+                        <a href="#" class="btn btn-primary mb-2">Read more</a>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+    </div>
+</section>
+
+<!-- ########-->
+
+<!-- Learn Sections? -->
+
+
+<section id="helpsect" class="p-5">
+    <div class="container">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-md align-center">
+                <img src="/static/world1.png" class="img-fluid">
+            </div>
+            <div class="col-md p-5">
+                <h2>What we do!</h2>
+                <p class="lead">
+                    The primary objective of Holiday helper is to help those unsure of where they want to travel to, we do this by:
+                </p>
+                <p>
+                    &bull; Ask you various questions to better understand the type of holiday you are looking for
+                </p>
+                <p>
+                    &bull; Use your responses to create a personalised score system for the different factors we feature
+                </p>
+                <p>
+                    &bull; Use these 'factor scores' to then compare with all the countries in the world and see which one closely matches your preference
+                </p>
+                <p>
+                    For example, if you answer yes to a question about winter activities and give us a rough estimate of your budget, we will recommend countries which are
+                    good for winter activities like <span style="color: #36b2b2">skiing</span> which match your budget
+                </p>
+
+<!--                <a href="#" class="btn btn-light mt-3">
+                    <i class="bi bi-chevron-right">Read More</i>
+                </a>-->
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!--<section id="" class="p-5 bg-dark text-light">
+    <div class="container">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-md">
+                <h2>Learn React!</h2>
+                <p class="lead">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim iusto nostrum quis unde! Laudantium, odit!
+                </p>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus atque, corporis cumque delectus earum eos eum molestiae natus nisi numquam obcaecati, pariatur perferendis placeat provident quis rerum similique tenetur voluptatem.
+                </p>
+                <a href="#" class="btn btn-light mt-3">
+                    <i class="bi bi-chevron-right">Read More</i>
+                </a>
+            </div>
+            <div class="col-md">
+                <img src="/static/react.svg" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</section>-->
+
+
+<script
+    type="text/javascript"
+    src="{{ url_for('static', filename='home.js') }}"
+></script>
+
+{% endblock %}

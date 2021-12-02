@@ -1,0 +1,61 @@
+Compulsory:
+1) How many people will be travelling? - Number ✔️
+2) How long would you like to go for? - Number ✔️
+3) Would you like to go to previous countries? - Y/N ✔️
+4) What sort of budget do you have? - Scale / MCQ 
+5) How wide range of safety features would you like to see in the country? - Scale / MCQ ✔️
+6) What sort of holiday are you going for? - MCQ ✔️
+	a) water sports / summer b) winter sports c) tourism 
+7) Do you want to factor in current covid restrictions? - Y/N
+
+Question Requirements:
+8) How many water sport activities are you looking to do? - Scale / Number
+9) How much culture are you planning to see on this holiday? - Scale / Number
+10) To what degree would you like to participate in winter sport activities? - Scale / Number
+
+
+
+
+USERSCORE: userID | prev countries | travelling for | number of travellers | water sports score | winter sports score | culture | safety | budget | final cost
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+user | water sports | winter sports | culture | safety | budget 
+
+
+user1: 80, 30, 10, 90, 40
+user1.: 0.89, 0.33, 0.11, 1, 0.44 
+each score ranked based off the the highest score
+
+afghanistan * user: 0, 0, 0.33, 0, 0 = 0.33
+us * user: 38.27, 33.33, 4.51, 51, 28.16 = 155.27
+
+score above takes into account how many questions asked
+
+
+
+
+
+
+e.g. Afghanistan: 0, 0, 3, 0, 0
+afghanistan - user: 80, 30, 7, 90, 40 = 247
+
+
+
+e.g. US: 43, 100, 41, 51, 64
+US - user: 37, 70, 31, 39, 24 = 201
+

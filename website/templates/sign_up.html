@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block title %}Sign Up{% endblock %}
+{% block content %}
+<form method = "POST">
+    <h3 align="center" class="pt-3">Sign Up</h3>
+    <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address"/>
+    </div>
+    <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter first name"/>
+    </div>
+    <div class="form-group">
+        <label for="password1">Password</label>
+        <input type="password" class="form-control" id="password1" name="password1" placeholder="Enter password"/>
+    </div>
+    <div class="form-group">
+        <label for="password2">Confirm Password</label>
+        <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm password"/>
+    </div>
+    <br />
+    <div class="pb-4">
+        <!-- the submit button will automatically use the href linked function in the navbar to know where to look for the function -->
+        <!-- e.g. this submit button is linked to this html (obviously) and this html came from the sign up navbar -->
+        <!-- So since href="sign-up" in the navbar, this submit button will automatically look in the blueprints for the route with the same as the href -->
+        <!-- i.e. the @views.route('/sign-up') will be used -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+{% endblock %}

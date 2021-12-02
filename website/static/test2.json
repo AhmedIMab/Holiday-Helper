@@ -1,0 +1,389 @@
+{
+  "questions": [
+    {
+      "questionID": 1,
+      "mandatory": true,
+      "questionText": "How many people are travelling?",
+      "questionType": "Integer",
+      "answerPlaceholder": "Enter the number of people...",
+      "answers": [
+        {
+          "answerID": 30,
+          "answerText": "1",
+          "modifiers": [
+            {
+              "modifier": "num_travellers",
+              "modifyBy": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 2,
+      "mandatory": true,
+      "questionText": "Would you like to go to previous countries?",
+      "questionType": "Multiple Choice",
+      "ToNote": "Boolean",
+      "answers": [
+        {
+          "choice": 1,
+          "answerID": 40,
+          "answerText": "Yes",
+          "modifiers": [
+            {
+              "modifier": "prev_countries",
+              "modifyBy": true
+            }
+          ]
+        },
+        {
+          "choice": 2,
+          "answerID": 41,
+          "answerText": "No",
+          "modifiers": [
+            {
+              "modifier": "prev_countries",
+              "modifyBy": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 3,
+      "mandatory": true,
+      "questionText": "How long would you like to travel for?",
+      "questionType": "Integer",
+      "answerPlaceholder": "Enter the number of days...",
+      "answers": [
+        {
+          "answerID": 50,
+          "answerText": "1",
+          "minValue": 1,
+          "maxValue": 10000,
+          "modifiers": [
+            {
+              "modifier": "travelling_time",
+              "modifyBy": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 4,
+      "mandatory": true,
+      "questionText": "What type of holiday would you like to go for?",
+      "questionType": "Multiple Choice",
+      "answers": [
+        {
+          "choice": 1,
+          "answerID": 60,
+          "answerText": "Winter Activities",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "modifyBy": 50
+            },
+            {
+              "modifier": "water_sports_user_score",
+              "modifyBy": -20
+            },
+            {
+              "modifier": "culture_user_score",
+              "modifyBy": -20
+            }
+          ]
+        },
+        {
+          "choice": 2,
+          "answerID": 61,
+          "answerText": "Beach Activities",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "modifyBy": -20
+            },
+            {
+              "modifier": "water_sports_user_score",
+              "modifyBy": 50
+            },
+            {
+              "modifier": "culture_user_score",
+              "modifyBy": -20
+            }
+          ]
+        },
+        {
+          "choice": 3,
+          "answerID": 62,
+          "answerText": "Tourism",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "modifyBy": -20
+            },
+            {
+              "modifier": "water_sports_user_score",
+              "modifyBy": -20
+            },
+            {
+              "modifier": "culture_user_score",
+              "modifyBy": 50
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 5,
+      "mandatory": true,
+      "questionText": "How wide range of safety features would you like to see?",
+      "questionHelper": "1 being minimal features, 10 being extremely safe",
+      "questionType": "Multiple Choice",
+      "answers": [
+        {
+          "answerID": 70,
+          "answerText": "1",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "modifyBy": 10
+            }
+          ]
+        },
+        {
+          "answerID": 71,
+          "answerText": "2",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "modifyBy": 20
+            }
+          ]
+        },
+        {
+          "answerID": 72,
+          "answerText": "3",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "modifyBy": 30
+            }
+          ]
+        },
+        {
+          "answerID": 73,
+          "answerText": "4",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "modifyBy": 40
+            }
+          ]
+        },
+        {
+          "answerID": 74,
+          "answerText": "5",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "modifyBy": 50
+            }
+          ]
+        },
+        {
+          "answerID": 75,
+          "answerText": "6",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "modifyBy": 60
+            }
+          ]
+        },
+        {
+          "answerID": 76,
+          "answerText": "7",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "modifyBy": 70
+            }
+          ]
+        },
+        {
+          "answerID": 77,
+          "answerText": "8",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "modifyBy": 80
+            }
+          ]
+        },
+        {
+          "answerID": 78,
+          "answerText": "9",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "modifyBy": 90
+            }
+          ]
+        },
+        {
+          "answerID": 79,
+          "answerText": "10",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "modifyBy": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 6,
+      "mandatory": true,
+      "questionText": "What is your approximate budget?",
+      "questionHelper": "1 being low budget, 10 being high budget",
+      "questionType": "Multiple Choice",
+      "answers": [
+        {
+          "answerID": 80,
+          "answerText": "1",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "modifyBy": 10
+            }
+          ]
+        },
+        {
+          "answerID": 81,
+          "answerText": "2",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "modifyBy": 20
+            }
+          ]
+        },
+        {
+          "answerID": 82,
+          "answerText": "3",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "modifyBy": 30
+            }
+          ]
+        },
+        {
+          "answerID": 83,
+          "answerText": "4",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "modifyBy": 40
+            }
+          ]
+        },
+        {
+          "answerID": 84,
+          "answerText": "5",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "modifyBy": 50
+            }
+          ]
+        },
+        {
+          "answerID": 85,
+          "answerText": "6",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "modifyBy": 60
+            }
+          ]
+        },
+        {
+          "answerID": 86,
+          "answerText": "7",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "modifyBy": 70
+            }
+          ]
+        },
+        {
+          "answerID": 87,
+          "answerText": "8",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "modifyBy": 80
+            }
+          ]
+        },
+        {
+          "answerID": 88,
+          "answerText": "9",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "modifyBy": 90
+            }
+          ]
+        },
+        {
+          "answerID": 89,
+          "answerText": "10",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "modifyBy": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 7,
+      "mandatory": true,
+      "questionText": "Would you like to factor in current covid restrictions?",
+      "questionType": "Multiple Choice",
+      "ToNote": "Boolean",
+      "answers": [
+        {
+          "choice": 1,
+          "answerID": 90,
+          "answerText": "Yes",
+          "modifiers": [
+            {
+              "modifier": "covid_feature",
+              "modifyBy": true
+            }
+          ]
+        },
+        {
+          "choice": 2,
+          "answerID": 91,
+          "answerText": "No",
+          "modifiers": [
+            {
+              "modifier": "covid_feature",
+              "modifyBy": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}  

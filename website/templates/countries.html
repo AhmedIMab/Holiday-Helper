@@ -1,0 +1,70 @@
+{% extends "base.html" %} {% block title %}Your Countries{% endblock %}
+{% block countriespage %}
+<div class="container pt-5" align="center">
+    <h1 align="center">Your <b class="text-primary">Countries</b></h1>
+    <button type="button" class="btn btn-outline-primary mt-4">Would you like to be suggested countries you have been to?</button>
+</div>
+
+<div class="container select-box pt-5">
+    <div class="options-container active">
+        {% for country in countries %}
+            {% for countryCode, countryName in country.items() %}
+            <div class="option">
+                <input type="radio" class="radio" id="{{ countryCode }}" name="countries" />
+                <!-- Links the button with the label -->
+                <label for="{{ countryCode }}">{{ countryName }}</label>
+            </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <!-- id for the selected country and to manipulate it in JS -->
+    <!-- class of selected used for the styling -->
+    <div id="selectedCountry" class="selected">
+        Select Countries...
+    </div>
+
+
+</div>
+
+<div class="container pt-4" align="center">
+    <button type="submit" class="bte btn-primary addCountryButton">Add Country</button>
+    <p id="noCountrySelected" style="display:none; color:red" class="pt-3">
+        Please select a country
+    </p>
+</div>
+
+
+<div class="container py-4">
+      <ul class="list-group list-group-flush pt-3" id="notes">
+          <!-- Loops through the Country's list -->
+          {% for generalCountry in countries %}
+          <!-- Loops through the user's countries -->
+          {% for country in user.countries %}
+          <!-- Creates a variable for the country code of the country (in the users' countries) -->
+          {% set countryCode = country.country_code %}
+            <!-- Matches the dictionary in the Python list to the jinga country codes with the matching country names -->
+            {% for generalCountryCode, generalCountryName in generalCountry.items() %}
+            <!-- If the countryCode matches the countryCode in the Country table -->
+            {% if countryCode == generalCountryCode %}
+                <!-- Creates a variable for the country name which has the matching country code in the country table -->
+                {% set countryName = generalCountryName %}
+                <li class="list-group-item list-group-item-info">{{ countryName }}
+                    <button type="button" country-code={{ countryCode }} class="close deleteCountryButton">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </li>
+            {% endif %}
+            {% endfor %}
+          {% endfor %}
+          {% endfor %}
+      </ul>
+</div>
+
+
+<script
+    type="module"
+    src="{{ url_for('static', filename='countries.js') }}"
+></script>
+
+{% endblock %}

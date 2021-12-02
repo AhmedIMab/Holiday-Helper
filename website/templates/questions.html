@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% block title %}Travelling{% endblock %}
+{% block content %}
+<div class="container pt-5">
+    <h1 align="center">Hello {{ user.first_name }}</h1>
+    <p class="question-text"></p>
+</div>
+
+<div class="container" id="answer-container">
+
+</div>
+
+
+
+
+
+
+
+<script
+    type="module"
+    src="{{ url_for('static', filename='questions2.js') }}"
+></script>
+{% endblock %}

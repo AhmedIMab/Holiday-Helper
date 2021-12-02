@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block title %}Notes{% endblock %}
+{% block content %}
+<h1 align="center">Notes</h1>
+<ul class="list-group list-group-flush" id="notes">
+    {% for note in user.notes %}
+    <!-- Each note has the elements below: -->
+    <li class="list-group-item">{{ note.data }}
+        <!-- OnClick will run a javascript called deleteNote and send the current node (note.id - known as it's in a for loop with 'li' -->
+        <!-- Adapted  to jQuery so the class deleteNoteButton will be detected by note.js and use the 'note-id=' to add it the server? -->
+        <button type="button" note-id={{ note.id }} class="close deleteNoteButton">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </li>
+    {% endfor %}
+</ul>
+
+
+
+<textarea name=noteinputted" id="noteData" class="form-control"></textarea>
+<br />
+<div align="center">
+    <button type="button" class="bte btn-primary addNoteButton">Add Note</button>
+</div>
+
+
+
+<script
+    src="{{ url_for('static', filename='notes.js') }}"
+    type="module"
+></script>
+
+{% endblock %}
