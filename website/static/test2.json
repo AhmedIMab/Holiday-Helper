@@ -5,7 +5,7 @@
       "mandatory": true,
       "questionText": "How many people are travelling?",
       "questionType": "Integer",
-      "answerPlaceholder": "Enter the number of people...",
+      "answerPlaceholder": "Enter the number of people........",
       "answers": [
         {
           "answerID": 30,
