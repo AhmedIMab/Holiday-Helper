@@ -36,7 +36,8 @@ def getQuestion(questionID):
 
 
 def nextQuestionID():
-    return "1"
+    questions = getQuestions()
+
 
 
 def getAnswers(questionID):
@@ -180,7 +181,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
             for modifier in answer.get("modifiers"):
                 if questionAnswered == False:
                     toModify = modifier.get("modifier")
-                    modificationBy = modifier.get("modifyBy")
+                    modificationBy = modifier.get("value")
                     print(modificationBy)
                     print(type(modificationBy))
                     # Gets the attribute name in the database of the modifier
@@ -234,7 +235,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
     #
     # for modifier in answers.get("modifiers"):
     #     toModify = modifier.get("modifier")
-    #     modificationBy = modifier.get("modifyBy")
+    #     modificationBy = modifier.get("value")
     #     print(type(toModify))
     #     print(toModify)
     #     print(type(modificationBy))

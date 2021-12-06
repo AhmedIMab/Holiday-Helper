@@ -166,27 +166,61 @@ const integerQuestion = function (event, question, answers) {
 
 
 const multipleChoiceQuestion = function (event, question, answers) {
+    const element = document.getElementById("answer-container")
+    const main = document.getElementById("main")
+    const answer_buttons = createElementX(
+            "section",
+            {
+                "class":"row"
+            },[
+                createElementX(
+                    "div",
+                    {
+                        "id":"buttonsss",
+                        "class": "col centerAButtons"
+                    }
+                )
+            ])
+
+    // const centerAButtons = document.getElementsByClassName("centerAButtons")
+    console.log("TEST")
+    console.log(main)
+    element.appendChild(answer_buttons)
+
     for (var i = 0; i < answers.length; i++) {
-            // Loops through the list of dictionaries of the answers
-            // sets the answer
-            const answer = answers[i]
-            // retrieves the answer text of the answer
-            const answerText = answer.answerText
-            // console.log(answer)
-            // console.log(answerText)
-            // creates a new button element
-            const answer_button = document.createElement("button")
-            // to add text to the button, a node is created with the answer's text
-            const node = document.createTextNode(answerText)
-            // adds the node to the button element
-            answer_button.appendChild(node)
-            answer_button.classList.add('answerButtons')
-            answer_button.setAttribute("questionID", question.questionID)
-            answer_button.setAttribute("answerID", answer.answerID)
-            // finds an existing div element
-            const element = document.getElementById("answer-container")
-            // then adds the answer button (with it's text) to the element with the id "answers"
-            element.appendChild(answer_button)
+        // Loops through the list of dictionaries of the answers
+        // sets the answer
+        const answer = answers[i]
+        // retrieves the answer text of the answer
+        const answerText = answer.answerText
+        // console.log(answer)
+        // console.log(answerText)
+        // creates a new button element
+        const centerAButtons = document.getElementById("buttonsss");
+        console.log(centerAButtons)
+
+        const answer_button = createElementX(
+                "button",
+                {
+                    "class":"btn btn-outline-primary answerButtons",
+                    "questionID": question.questionID,
+                    "answerID": answer.answerID
+                },
+                [
+                    document.createTextNode(answerText)
+                ])
+
+        // const answer_button = document.createElement("button")
+        // to add text to the button, a node is created with the answer's text
+        // const node = document.createTextNode(answerText)
+        // adds the node to the button element
+        // answer_button.appendChild(node)
+        // answer_button.classList.add('answerButtons')
+        // answer_button.setAttribute("questionID", question.questionID)
+        // answer_button.setAttribute("answerID", answer.answerID)
+        // finds an existing div element
+        // then adds the answer button (with it's text) to the element with the id "answers"
+        centerAButtons.appendChild(answer_button)
     }
 
     const answerButton = $(".answerButtons");

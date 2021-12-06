@@ -9,7 +9,7 @@ Compulsory:
 7) Do you want to factor in current covid restrictions? - Y/N
 
 Question Requirements:
-8) How many water sport activities are you looking to do? - Scale / Number
+8) How much time do you plan to allocate to water sport activities? - Scale / Number
 9) How much culture are you planning to see on this holiday? - Scale / Number
 10) To what degree would you like to participate in winter sport activities? - Scale / Number
 
@@ -39,7 +39,10 @@ user | water sports | winter sports | culture | safety | budget
 
 user1: 80, 30, 10, 90, 40
 user1.: 0.89, 0.33, 0.11, 1, 0.44 
-each score ranked based off the the highest score
+each score ranked based off the highest score
+and to make normalised between 1 and 100, multiply by 100 as it matches
+current database tables
+
 
 afghanistan * user: 0, 0, 0.33, 0, 0 = 0.33
 us * user: 38.27, 33.33, 4.51, 51, 28.16 = 155.27
@@ -53,8 +56,6 @@ score above takes into account how many questions asked
 
 e.g. Afghanistan: 0, 0, 3, 0, 0
 afghanistan - user: 80, 30, 7, 90, 40 = 247
-
-
 
 e.g. US: 43, 100, 41, 51, 64
 US - user: 37, 70, 31, 39, 24 = 201

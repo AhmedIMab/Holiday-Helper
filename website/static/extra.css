@@ -102,3 +102,17 @@
   display: none;
 }
 
+
+.centerAButtons {
+  text-align: center;
+/*  display: flex;*/
+/*  flex-flow: row nowrap;*/
+/*  justify-content: space-between;*/
+}
+
+
+.answerButtons {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+

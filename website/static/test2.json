@@ -3,6 +3,7 @@
     {
       "questionID": 1,
       "mandatory": true,
+      "questionRequirements": null,
       "questionText": "How many people are travelling?",
       "questionType": "Integer",
       "answerPlaceholder": "Enter the number of people...",
@@ -13,7 +14,7 @@
           "modifiers": [
             {
               "modifier": "num_travellers",
-              "modifyBy": 1
+              "value": 1
             }
           ]
         }
@@ -33,7 +34,7 @@
           "modifiers": [
             {
               "modifier": "prev_countries",
-              "modifyBy": true
+              "value": true
             }
           ]
         },
@@ -44,7 +45,7 @@
           "modifiers": [
             {
               "modifier": "prev_countries",
-              "modifyBy": false
+              "value": false
             }
           ]
         }
@@ -65,7 +66,7 @@
           "modifiers": [
             {
               "modifier": "travelling_time",
-              "modifyBy": 1
+              "value": 1
             }
           ]
         }
@@ -84,15 +85,15 @@
           "modifiers": [
             {
               "modifier": "winter_sports_user_score",
-              "modifyBy": 50
+              "value": 50
             },
             {
               "modifier": "water_sports_user_score",
-              "modifyBy": -20
+              "value": -20
             },
             {
               "modifier": "culture_user_score",
-              "modifyBy": -20
+              "value": -20
             }
           ]
         },
@@ -103,15 +104,15 @@
           "modifiers": [
             {
               "modifier": "winter_sports_user_score",
-              "modifyBy": -20
+              "value": -20
             },
             {
               "modifier": "water_sports_user_score",
-              "modifyBy": 50
+              "value": 50
             },
             {
               "modifier": "culture_user_score",
-              "modifyBy": -20
+              "value": -20
             }
           ]
         },
@@ -122,15 +123,15 @@
           "modifiers": [
             {
               "modifier": "winter_sports_user_score",
-              "modifyBy": -20
+              "value": -20
             },
             {
               "modifier": "water_sports_user_score",
-              "modifyBy": -20
+              "value": -20
             },
             {
               "modifier": "culture_user_score",
-              "modifyBy": 50
+              "value": 50
             }
           ]
         }
@@ -149,7 +150,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "modifyBy": 10
+              "value": 10
             }
           ]
         },
@@ -159,7 +160,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "modifyBy": 20
+              "value": 20
             }
           ]
         },
@@ -169,7 +170,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "modifyBy": 30
+              "value": 30
             }
           ]
         },
@@ -179,7 +180,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "modifyBy": 40
+              "value": 40
             }
           ]
         },
@@ -189,7 +190,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "modifyBy": 50
+              "value": 50
             }
           ]
         },
@@ -199,7 +200,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "modifyBy": 60
+              "value": 60
             }
           ]
         },
@@ -209,7 +210,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "modifyBy": 70
+              "value": 70
             }
           ]
         },
@@ -219,7 +220,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "modifyBy": 80
+              "value": 80
             }
           ]
         },
@@ -229,7 +230,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "modifyBy": 90
+              "value": 90
             }
           ]
         },
@@ -239,7 +240,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "modifyBy": 100
+              "value": 100
             }
           ]
         }
@@ -258,7 +259,7 @@
           "modifiers": [
             {
               "modifier": "budget_user_score",
-              "modifyBy": 10
+              "value": 10
             }
           ]
         },
@@ -268,7 +269,7 @@
           "modifiers": [
             {
               "modifier": "budget_user_score",
-              "modifyBy": 20
+              "value": 20
             }
           ]
         },
@@ -278,7 +279,7 @@
           "modifiers": [
             {
               "modifier": "budget_user_score",
-              "modifyBy": 30
+              "value": 30
             }
           ]
         },
@@ -288,7 +289,7 @@
           "modifiers": [
             {
               "modifier": "budget_user_score",
-              "modifyBy": 40
+              "value": 40
             }
           ]
         },
@@ -298,7 +299,7 @@
           "modifiers": [
             {
               "modifier": "budget_user_score",
-              "modifyBy": 50
+              "value": 50
             }
           ]
         },
@@ -308,7 +309,7 @@
           "modifiers": [
             {
               "modifier": "budget_user_score",
-              "modifyBy": 60
+              "value": 60
             }
           ]
         },
@@ -318,7 +319,7 @@
           "modifiers": [
             {
               "modifier": "budget_user_score",
-              "modifyBy": 70
+              "value": 70
             }
           ]
         },
@@ -328,7 +329,7 @@
           "modifiers": [
             {
               "modifier": "budget_user_score",
-              "modifyBy": 80
+              "value": 80
             }
           ]
         },
@@ -338,7 +339,7 @@
           "modifiers": [
             {
               "modifier": "budget_user_score",
-              "modifyBy": 90
+              "value": 90
             }
           ]
         },
@@ -348,7 +349,7 @@
           "modifiers": [
             {
               "modifier": "budget_user_score",
-              "modifyBy": 100
+              "value": 100
             }
           ]
         }
@@ -368,7 +369,7 @@
           "modifiers": [
             {
               "modifier": "covid_feature",
-              "modifyBy": true
+              "value": true
             }
           ]
         },
@@ -379,7 +380,349 @@
           "modifiers": [
             {
               "modifier": "covid_feature",
-              "modifyBy": false
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 7,
+      "mandatory": false,
+      "questionRequirements": [
+        {
+          "modifier": "water_sports_user_score",
+          "value": 50
+        }
+      ],
+      "questionText": "How much time do you plan to allocate to water sport activities?",
+      "questionType": "Multiple Choice",
+      "answers": [
+        {
+          "answerID": 90,
+          "answerText": "1",
+          "modifiers": [
+            {
+              "modifier": "water_sports_user_score",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "answerID": 91,
+          "answerText": "2",
+          "modifiers": [
+            {
+              "modifier": "water_sports_user_score",
+              "value": 20
+            }
+          ]
+        },
+        {
+          "answerID": 92,
+          "answerText": "3",
+          "modifiers": [
+            {
+              "modifier": "water_sports_user_score",
+              "value": 30
+            }
+          ]
+        },
+        {
+          "answerID": 93,
+          "answerText": "4",
+          "modifiers": [
+            {
+              "modifier": "water_sports_user_score",
+              "value": 40
+            }
+          ]
+        },
+        {
+          "answerID": 94,
+          "answerText": "5",
+          "modifiers": [
+            {
+              "modifier": "water_sports_user_score",
+              "value": 50
+            }
+          ]
+        },
+        {
+          "answerID": 95,
+          "answerText": "6",
+          "modifiers": [
+            {
+              "modifier": "water_sports_user_score",
+              "value": 60
+            }
+          ]
+        },
+        {
+          "answerID": 96,
+          "answerText": "7",
+          "modifiers": [
+            {
+              "modifier": "water_sports_user_score",
+              "value": 70
+            }
+          ]
+        },
+        {
+          "answerID": 97,
+          "answerText": "8",
+          "modifiers": [
+            {
+              "modifier": "water_sports_user_score",
+              "value": 80
+            }
+          ]
+        },
+        {
+          "answerID": 98,
+          "answerText": "9",
+          "modifiers": [
+            {
+              "modifier": "water_sports_user_score",
+              "value": 90
+            }
+          ]
+        },
+        {
+          "answerID": 99,
+          "answerText": "10",
+          "modifiers": [
+            {
+              "modifier": "water_sports_user_score",
+              "value": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 8,
+      "mandatory": false,
+      "questionRequirements": [
+        {
+          "modifier": "winter_sports_user_score",
+          "value": 50
+        }
+      ],
+      "questionText": "How much time do you plan to allocate to winter sport activities?",
+      "questionType": "Multiple Choice",
+      "answers": [
+        {
+          "answerID": 100,
+          "answerText": "1",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "answerID": 101,
+          "answerText": "2",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "value": 20
+            }
+          ]
+        },
+        {
+          "answerID": 102,
+          "answerText": "3",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "value": 30
+            }
+          ]
+        },
+        {
+          "answerID": 103,
+          "answerText": "4",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "value": 40
+            }
+          ]
+        },
+        {
+          "answerID": 104,
+          "answerText": "5",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "value": 50
+            }
+          ]
+        },
+        {
+          "answerID": 105,
+          "answerText": "6",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "value": 60
+            }
+          ]
+        },
+        {
+          "answerID": 106,
+          "answerText": "7",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "value": 70
+            }
+          ]
+        },
+        {
+          "answerID": 107,
+          "answerText": "8",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "value": 80
+            }
+          ]
+        },
+        {
+          "answerID": 108,
+          "answerText": "9",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "value": 90
+            }
+          ]
+        },
+        {
+          "answerID": 109,
+          "answerText": "10",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "value": 100
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 9,
+      "mandatory": false,
+      "questionRequirements": [
+        {
+          "modifier": "culture_user_score",
+          "value": 50
+        }
+      ],
+      "questionText": "How much time do you plan to allocate to tourist activities",
+      "questionType": "Multiple Choice",
+      "answers": [
+        {
+          "answerID": 110,
+          "answerText": "1",
+          "modifiers": [
+            {
+              "modifier": "culture_user_score",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "answerID": 111,
+          "answerText": "2",
+          "modifiers": [
+            {
+              "modifier": "culture_user_score",
+              "value": 20
+            }
+          ]
+        },
+        {
+          "answerID": 112,
+          "answerText": "3",
+          "modifiers": [
+            {
+              "modifier": "culture_user_score",
+              "value": 30
+            }
+          ]
+        },
+        {
+          "answerID": 113,
+          "answerText": "4",
+          "modifiers": [
+            {
+              "modifier": "culture_user_score",
+              "value": 40
+            }
+          ]
+        },
+        {
+          "answerID": 114,
+          "answerText": "5",
+          "modifiers": [
+            {
+              "modifier": "culture_user_score",
+              "value": 50
+            }
+          ]
+        },
+        {
+          "answerID": 115,
+          "answerText": "6",
+          "modifiers": [
+            {
+              "modifier": "culture_user_score",
+              "value": 60
+            }
+          ]
+        },
+        {
+          "answerID": 116,
+          "answerText": "7",
+          "modifiers": [
+            {
+              "modifier": "culture_user_score",
+              "value": 70
+            }
+          ]
+        },
+        {
+          "answerID": 117,
+          "answerText": "8",
+          "modifiers": [
+            {
+              "modifier": "culture_user_score",
+              "value": 80
+            }
+          ]
+        },
+        {
+          "answerID": 118,
+          "answerText": "9",
+          "modifiers": [
+            {
+              "modifier": "culture_user_score",
+              "value": 90
+            }
+          ]
+        },
+        {
+          "answerID": 119,
+          "answerText": "10",
+          "modifiers": [
+            {
+              "modifier": "culture_user_score",
+              "value": 100
             }
           ]
         }
