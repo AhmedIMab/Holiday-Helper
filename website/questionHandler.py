@@ -1,12 +1,11 @@
 import json
 import os
 import sqlite3
-
 import sqlalchemy.exc
-
 from .models import Note, User, Country, UserCountry, UserTravelScore
 from flask_login import login_required, current_user
 from . import db
+from .collectionStream import CollectionStream
 
 
 def getQuestions():
@@ -37,8 +36,21 @@ def getQuestion(questionID):
 
 def nextQuestionID():
     questions = getQuestions()
+    questionsStream = CollectionStream(questions).stream().sort(lambda x:x.get("questionText")).collect()
+    print(questionsStream)
+    return "1"
 
 
+def getMandatoryQuestions():
+    questions = getQuestions()
+    mandatoryQuestions = CollectionStream(questions).filter(lambda x:x.get("mandatory") == True).collect()
+    #print(len(mandatoryQuestions))
+    #print(mandatoryQuestions)
+    return mandatoryQuestions
+
+
+
+#getMandatoryQuestions()
 
 def getAnswers(questionID):
     question = getQuestion(questionID)

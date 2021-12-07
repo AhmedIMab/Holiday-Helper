@@ -71,6 +71,7 @@ class UserTravelScore(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     travel_id = db.Column(db.Integer, primary_key=True)
     questions_answered = db.Column(db.String)
+    questions_skipped = db.Column(db.String)
     # country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
     prev_countries = db.Column(db.Boolean)
     travelling_time = db.Column(db.Integer)
