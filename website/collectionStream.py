@@ -27,6 +27,14 @@ class CollectionStream(UserList):
 
         return self
 
+    def first(self):
+        list = self.collect()
+        if len(list) == 0:
+            return None
+        else:
+            return list[0]
+
+
     def collect(self, collection_class=None):
         if collection_class is None:
             if self.iter is not None:

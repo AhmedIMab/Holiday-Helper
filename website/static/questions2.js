@@ -24,8 +24,8 @@ const nextQuestion = function (event, questionID) {
 
     console.log("NEXT QUESTION FUNCTION")
     console.log(questionID)
-    const nextQ = parseInt(questionID) + 1
-    Api.getQuestion(nextQ)
+    // const nextQ = parseInt(questionID) + 1
+    Api.getLatestQuestion()
         .then((_res) => {
         return _res.json()
     }).then((question) => {

@@ -180,7 +180,8 @@ def AllQuestions():
 @views.route("/api/questions/nextQuestion", methods=["GET"])
 @login_required
 def nextQuestion():
-    questionID = nextQuestionID()
+    travelID = 1
+    questionID = nextQuestionID(travelID)
     question = getQuestion(questionID)
     if question == None:
         return f"A question with questionID: {questionID} was not found", status.HTTP_404_NOT_FOUND

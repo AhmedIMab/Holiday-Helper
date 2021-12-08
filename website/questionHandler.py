@@ -34,11 +34,114 @@ def getQuestion(questionID):
     return None
 
 
-def nextQuestionID():
+
+def isQuestionAnswered(travelID, questionID):
+    questionAnswered = False
+    #print(current_user.id)
+    #print(travelID)
+
+    try:
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+
+    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+        pass
+
+    if current_travel == None:
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+
+
+    try:
+        y = getattr(current_travel, 'questions_answered')
+        questionsAnsweredArray = y.split(',')
+        for questionA in questionsAnsweredArray:
+            if questionA == "":
+                pass
+            else:
+                if int(questionID) == int(questionA):
+                    questionAnswered = True
+                    break
+    except (UnboundLocalError, AttributeError) as e:
+        print("NOTHING ANSWERED")
+
+    if questionAnswered == True:
+        print("This question has been answered", {questionID})
+    else:
+        print("Not answered")
+
+    return questionAnswered
+
+
+def haveRequirementsBeenMet(travelID, questionID):
+    question = getQuestion(questionID)
+    requirementsMet = True
+
+    try:
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+
+    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+        pass
+
+    if current_travel == None:
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+
+
+    try:
+        questionRequirements = question.get("questionRequirements")
+        for requirement in questionRequirements:
+            requiredModifier = requirement.get("modifier")
+            requiredValue = requirement.get("value")
+            x = getattr(current_travel, requiredModifier)
+            if x >= requiredValue:
+                print("requirement met")
+                #requirementsMet = True
+            else:
+                requirementsMet = False
+                break
+
+    except:
+        return False
+
+
+    return requirementsMet
+
+
+
+
+
+
+
+def nextQuestionID(travelID):
     questions = getQuestions()
-    questionsStream = CollectionStream(questions).stream().sort(lambda x:x.get("questionText")).collect()
+    # first filter will ask the questions which have not been answered
+    # by applying a not to the return of isQuestionAnswered
+    # second filter will make sure only mandatory questions are asked
+    # x is the current element the method is looking at (filter)
+    questionsStream = CollectionStream(questions).stream()\
+        .filter(lambda x:not(isQuestionAnswered(1, x.get("questionID"))))\
+        .filter(lambda x:x.get("mandatory") == True)\
+        .sort(lambda x:x.get("questionID")).first()
+
     print(questionsStream)
-    return "1"
+    if questionsStream == None:
+        # This will only run when their are no questions left or test2.json is empty/no questions to begin with
+        # filter and get the non mandatory questions
+        # also filtering questions they have answered as they may answer a question and this will loop
+        questionsStream = CollectionStream(questions).stream()\
+            .filter(lambda x:x.get("mandatory") == False) \
+            .filter(lambda x: not(isQuestionAnswered(1, x.get("questionID"))))\
+            .filter(lambda x:haveRequirementsBeenMet(travelID, x.get("questionID"))) \
+            .sort(lambda x:x.get("questionID"))\
+            .first()
+
+        print(questionsStream)
+
+        if questionsStream == None:
+            return 1
+        else:
+            return questionsStream.get("questionID")
+
+    else:
+        return questionsStream.get("questionID")
 
 
 def getMandatoryQuestions():
@@ -87,15 +190,11 @@ def questionAnswered(current_travel, questionID):
 
 def userQuestionAnswer(questionID, answerValue, travelID):
     question = getQuestion(questionID)
-    print(answerValue)
     answerIntegerValue = int(answerValue)
     print("The answer as an integer is: ", answerIntegerValue)
     answer = getAnswer(questionID, answerValue)
     answerI = getAnswer(questionID, answerIntegerValue)
     questionType = question.get("questionType")
-    print("IT PASSED THE ANSWER")
-    print(answer)
-    print(answerI)
 
 
 
@@ -153,7 +252,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                 questionAnswered = True
                 break
 
-    print(f"This question has been answered? {questionAnswered}")
+    # print(f"This question has been answered? {questionAnswered}")
 
 
 
@@ -165,15 +264,15 @@ def userQuestionAnswer(questionID, answerValue, travelID):
             # Try to make lines 153 to 162 a recursive function?
             # Ask Dom
             answers = getAnswers(questionID)
-            print(answers)
+            #print(answers)
             modifiersX = answers[0]
-            print(modifiersX)
-            print(type(modifiersX))
+            #print(modifiersX)
+            #print(type(modifiersX))
             modifiers = modifiersX.get("modifiers")
-            print(modifiers)
-            print(type(modifiers))
+            #print(modifiers)
+            #print(type(modifiers))
             toModify = modifiers[0].get("modifier")
-            print(toModify)
+            #print(toModify)
             x = getattr(current_travel, toModify)
             setattr(current_travel, toModify, x + answerIntegerValue)
 
