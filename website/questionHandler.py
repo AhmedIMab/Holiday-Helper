@@ -116,32 +116,58 @@ def nextQuestionID(travelID):
     # by applying a not to the return of isQuestionAnswered
     # second filter will make sure only mandatory questions are asked
     # x is the current element the method is looking at (filter)
-    questionsStream = CollectionStream(questions).stream()\
-        .filter(lambda x:not(isQuestionAnswered(1, x.get("questionID"))))\
-        .filter(lambda x:x.get("mandatory") == True)\
-        .sort(lambda x:x.get("questionID")).first()
+    # questionsStream = CollectionStream(questions).stream()\
+    #     .filter(lambda x:not(isQuestionAnswered(1, x.get("questionID"))))\
+    #     .filter(lambda x:x.get("mandatory") == True)\
+    #     .sort(lambda x:x.get("questionID")).first()
 
-    print(questionsStream)
-    if questionsStream == None:
-        # This will only run when their are no questions left or test2.json is empty/no questions to begin with
-        # filter and get the non mandatory questions
-        # also filtering questions they have answered as they may answer a question and this will loop
-        questionsStream = CollectionStream(questions).stream()\
-            .filter(lambda x:x.get("mandatory") == False) \
-            .filter(lambda x: not(isQuestionAnswered(1, x.get("questionID"))))\
-            .filter(lambda x:haveRequirementsBeenMet(travelID, x.get("questionID"))) \
-            .sort(lambda x:x.get("questionID"))\
-            .first()
+    questionsStream = questions
+    questionsStream = filter(lambda x:not(isQuestionAnswered(1, x.get("questionID"))), questionsStream)
+    questionsStream = filter(lambda x:x.get("mandatory") == True, questionsStream)
+    questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
 
-        print(questionsStream)
+    if len(questionsStream) == 0:
+        questionsStream = questions
+        questionsStream = filter(lambda x:x.get("mandatory") == False, questionsStream)
+        questionsStream = filter(lambda x: not(isQuestionAnswered(1, x.get("questionID"))), questionsStream)
+        questionsStream = filter(lambda x:haveRequirementsBeenMet(travelID, x.get("questionID")), questionsStream)
+        questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
+        # questionsStream = questionsStream[0]
 
-        if questionsStream == None:
+        if len(questionsStream) == 0:
             return 1
         else:
+            questionsStream = questionsStream[0]
             return questionsStream.get("questionID")
 
     else:
+        questionsStream = questionsStream[0]
         return questionsStream.get("questionID")
+
+
+    print(questionsStream)
+
+
+    # if questionsStream == None:
+    #     # This will only run when their are no questions left or test2.json is empty/no questions to begin with
+    #     # filter and get the non mandatory questions
+    #     # also filtering questions they have answered as they may answer a question and this will loop
+    #     # questionsStream = CollectionStream(questions).stream()\
+    #     #     .filter(lambda x:x.get("mandatory") == False) \
+    #     #     .filter(lambda x: not(isQuestionAnswered(1, x.get("questionID"))))\
+    #     #     .filter(lambda x:haveRequirementsBeenMet(travelID, x.get("questionID"))) \
+    #     #     .sort(lambda x:x.get("questionID"))\
+    #     #     .first()
+    #
+    #     print(questionsStream)
+    #
+    #     if questionsStream == None:
+    #         return 1
+    #     else:
+    #         return questionsStream.get("questionID")
+    #
+    # else:
+    #     return questionsStream.get("questionID")
 
 
 def getMandatoryQuestions():
