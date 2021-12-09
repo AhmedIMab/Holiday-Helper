@@ -2,10 +2,12 @@ import json
 import os
 import sqlite3
 import sqlalchemy.exc
-from .models import Note, User, Country, UserCountry, UserTravelScore
+from .models import Note, User, Country, UserCountry, UserTravelScore, Sport, Cost, CulturalValue, CovidRestrictions, Safety
+from .models import UserCountryScore
 from flask_login import login_required, current_user
 from . import db
 from .collectionStream import CollectionStream
+from enum import Enum
 
 
 def getQuestions():
@@ -105,6 +107,180 @@ def haveRequirementsBeenMet(travelID, questionID):
     return requirementsMet
 
 
+def userCountryScore(travelID, countryCode):
+    try:
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+        current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
+        print(current_country)
+
+    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+        pass
+
+    if current_travel == None or current_country == None:
+        # current_travel = UserTravelScore.query.get((current_user.id, travelID))
+        new_user_country = UserCountryScore(user_id=current_user.id,
+                                            travel_id=travelID,
+                                            country_code=countryCode,
+                                            water_sports_score=0,
+                                            winter_sports_score=0,
+                                            culture_score=0,
+                                            safety_score=0,
+                                            budget_score=0,
+                                            total_score=0
+                                            )
+        db.session.add(new_user_country)
+        db.session.commit()
+        current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
+        print(current_country)
+
+
+    # multiple enum's as inconsistent naming in databases
+    class UserCountryScoreEnum(Enum):
+        WATER_SPORTS = "water_sports_score"
+        WINTER_SPORTS = "winter_sports_score"
+        CULTURE_SCORE = "culture_score"
+        SAFETY_SCORE = "safety_score"
+        BUDGET_SCORE = "budget_score"
+
+    class CountryScoreEnum(Enum):
+        WATER_SPORTS = "water_sports_score"
+        WINTER_SPORTS = "winter_sports_score"
+        CULTURE_SCORE = "heritage_score"
+        SAFETY_SCORE = "safety_score"
+        BUDGET_SCORE = "cost_score"
+
+
+    class UserScoreEnum(Enum):
+        WATER_SPORTS = "water_sports_user_score"
+        WINTER_SPORTS = "winter_sports_user_score"
+        CULTURE_SCORE = "culture_user_score"
+        SAFETY_SCORE = "safety_user_score"
+        BUDGET_SCORE = "budget_user_score"
+
+
+    user_score = {}
+    user_score_values = []
+    for n in UserScoreEnum:
+        factor_user_score = getattr(current_travel, n.value)
+        user_score[n.name] = (factor_user_score)
+        user_score_values.append(factor_user_score)
+
+
+    # winter_sports_user_score = getattr(current_travel, "winter_sports_user_score")
+    # culture_user_score = getattr(current_travel, "water_sports_user_score")
+    # safety_user_score = getattr(current_travel, "culture_user_score")
+    # budget_user_score = getattr(current_travel, "budget_user_score")
+    # print("This is the water sports user score", water_sports_user_score)
+    # print("This is the winter sports user score", winter_sports_user_score)
+    # print("This is the culture user score", culture_user_score)
+    # print("This is the safety user score", safety_user_score)
+    # print("This is the budgets user score", budget_user_score)
+    # user_score = []
+    # user_score.append(water_sports_user_score)
+    # user_score.append(winter_sports_user_score)
+    # user_score.append(culture_user_score)
+    # user_score.append(safety_user_score)
+    # user_score.append(budget_user_score)
+    #print(user_score)
+
+
+    most_important_user_score = max(user_score_values)
+    print(most_important_user_score)
+
+    country_scores = {}
+
+
+    countryScore = Sport.query.get((countryCode))
+    # Adds a dictionary key of the Water Sports to the attribute of enum value for water sports
+    country_scores[CountryScoreEnum.WATER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WATER_SPORTS.value)
+    country_scores[CountryScoreEnum.WINTER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WINTER_SPORTS.value)
+    # country_water_sports_score = getattr(countryScore, CountryScoreEnum.WATER_SPORTS.value)
+    # country_winter_sports_score = getattr(countryScore, CountryScoreEnum.WINTER_SPORTS.value)
+
+    countryScore = CulturalValue.query.get((countryCode))
+    country_scores[CountryScoreEnum.CULTURE_SCORE.name] = getattr(countryScore, CountryScoreEnum.CULTURE_SCORE.value)
+    # country_culture_score = getattr(countryScore, CountryScoreEnum.CULTURE_SPORTS.value)
+
+    countryScore = Safety.query.get((countryCode))
+    country_scores[CountryScoreEnum.SAFETY_SCORE.name] = getattr(countryScore, CountryScoreEnum.SAFETY_SCORE.value)
+    # country_safety_score = getattr(countryScore, CountryScoreEnum.SAFETY_SCORE.value)
+
+    countryScore = Cost.query.get((countryCode))
+    country_scores[CountryScoreEnum.BUDGET_SCORE.name] = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
+    # country_budget_score = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
+
+    # print("This is the countries water sports score", country_water_sports_score)
+    # print("This is the countries winter sports score", country_winter_sports_score)
+    # print("This is the countries culture sports score", country_culture_score)
+    # print("This is the countries safety sports score", country_safety_score)
+    # print("This is the countries budget sports score", country_budget_score)
+
+    print(country_scores)
+
+    user_relative_scores = {}
+    for x in UserScoreEnum:
+        factor_relative_score = user_score[x.name] / most_important_user_score
+        user_relative_scores[x.name] = factor_relative_score
+
+    print(user_relative_scores)
+
+    # update the user's scores to the relative score compared to largest value
+    # water_sports_user_score = water_sports_user_score / most_important_user_score
+    # winter_sports_user_score = winter_sports_user_score / most_important_user_score
+    # culture_user_score = culture_user_score / most_important_user_score
+    # safety_user_score = safety_user_score / most_important_user_score
+    # budget_user_score = budget_user_score / most_important_user_score
+    # user_relative_scores = []
+    # user_relative_scores.append(water_sports_user_score)
+    # user_relative_scores.append(winter_sports_user_score)
+    # user_relative_scores.append(culture_user_score)
+    # user_relative_scores.append(safety_user_score)
+    # user_relative_scores.append(budget_user_score)
+    #
+    # print(user_relative_scores)
+
+    userCountryScores = []
+    userCountryScoresD = {}
+    for y in UserScoreEnum:
+        userCountryScoreT = user_relative_scores[y.name] * country_scores[y.name]
+        print("inside for loop!")
+        print(user_score[y.name])
+        print(country_scores[y.name])
+        userCountryScores.append(userCountryScoreT)
+        userCountryScoresD[y.name] = userCountryScoreT
+
+    print("TEST", userCountryScores)
+
+
+    # userCountryWaterScore = water_sports_user_score * country_water_sports_score
+    # userCountryWinterScore = water_sports_user_score * country_winter_sports_score
+    # userCountryCultureScore = culture_user_score * country_culture_score
+    # userCountrySafetyScore = safety_user_score * country_safety_score
+    # userCountryBudgetScore = budget_user_score * country_budget_score
+    # userCountryScores.append(userCountryWaterScore)
+    # userCountryScores.append(userCountryWinterScore)
+    # userCountryScores.append(userCountryCultureScore)
+    # userCountryScores.append(userCountrySafetyScore)
+    # userCountryScores.append(userCountryBudgetScore)
+
+    totalForCountry = sum(userCountryScores)
+    print(totalForCountry)
+
+    for t in UserCountryScoreEnum:
+        # adds the value for the factor score, modifying the value in the Enumerator
+        # e.g. the first run of the loop, t.value = water_sports_score
+        # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
+        setattr(current_country, t.value, userCountryScoresD[t.name])
+
+    # setattr(current_country, "water_sports_score", userCountryWaterScore)
+    # setattr(current_country, "winter_sports_score", userCountryWinterScore)
+    # setattr(current_country, "culture_score", userCountryCultureScore)
+    # setattr(current_country, "safety_score", userCountrySafetyScore)
+    # setattr(current_country, "budget_score", userCountryBudgetScore)
+    setattr(current_country, "total_score", totalForCountry)
+
+    db.session.commit()
+
 
 
 
@@ -112,30 +288,37 @@ def haveRequirementsBeenMet(travelID, questionID):
 
 def nextQuestionID(travelID):
     questions = getQuestions()
-    # first filter will ask the questions which have not been answered
-    # by applying a not to the return of isQuestionAnswered
-    # second filter will make sure only mandatory questions are asked
-    # x is the current element the method is looking at (filter)
-    # questionsStream = CollectionStream(questions).stream()\
-    #     .filter(lambda x:not(isQuestionAnswered(1, x.get("questionID"))))\
-    #     .filter(lambda x:x.get("mandatory") == True)\
-    #     .sort(lambda x:x.get("questionID")).first()
-
     questionsStream = questions
+
+    # filter will ask the questions which have not been answered
+    # by applying a not to the return of isQuestionAnswered so isQuestionAnswered will take the questionID and travelID
+    # it will return True if the question has been answered
+    # so by applying a not, the value will be False
+    # and the filter function extracts elements from a list which return True therefore ignoring answered questions
+    # x is the current element the method is looking at (filter)
     questionsStream = filter(lambda x:not(isQuestionAnswered(1, x.get("questionID"))), questionsStream)
+    # second filter will make sure only mandatory questions are asked
     questionsStream = filter(lambda x:x.get("mandatory") == True, questionsStream)
+    # Sort the questions by the smallest to biggest questionID (integer)
     questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
 
     if len(questionsStream) == 0:
+        # This will only run when there are no questions left or test2.json is empty/no questions to begin with
+        # this series of functions is for checking questions with requirements
         questionsStream = questions
+        # so only looks at questions which have requirements (non mandatory)
         questionsStream = filter(lambda x:x.get("mandatory") == False, questionsStream)
+        # same as above filter
+        # needed so that if a question with requirements is answered we need to make sure it's filtered out
+        # and only ask non answered questions
         questionsStream = filter(lambda x: not(isQuestionAnswered(1, x.get("questionID"))), questionsStream)
+        # runs the function haveRequirementsBeenMet to get the questions which the user meets requirements for
         questionsStream = filter(lambda x:haveRequirementsBeenMet(travelID, x.get("questionID")), questionsStream)
         questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
-        # questionsStream = questionsStream[0]
 
         if len(questionsStream) == 0:
-            return 1
+            # Will only run when there are no questions to ask/questions with requirements have been met as well
+            return 0
         else:
             questionsStream = questionsStream[0]
             return questionsStream.get("questionID")
@@ -146,6 +329,18 @@ def nextQuestionID(travelID):
 
 
     print(questionsStream)
+
+
+
+
+
+
+
+
+    # questionsStream = CollectionStream(questions).stream()\
+    #     .filter(lambda x:not(isQuestionAnswered(1, x.get("questionID"))))\
+    #     .filter(lambda x:x.get("mandatory") == True)\
+    #     .sort(lambda x:x.get("questionID")).first()
 
 
     # if questionsStream == None:

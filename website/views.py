@@ -150,6 +150,26 @@ def test():
 
 
 
+
+
+@views.route("/countrySuggestions", methods=["GET"])
+@login_required
+def suggestCountries():
+    return render_template("TEST.html", user=current_user)
+
+
+
+@views.route("/testCountryUser", methods=['GET', 'POST'])
+@login_required
+def testCountry():
+    testResponse = json.loads(request.data)
+    print(testResponse)
+    travelID = testResponse.get("travelID")
+    countryCode = testResponse.get("countryCode")
+    userCountryScore(travelID, countryCode)
+    return testResponse
+
+
 @views.route("userQuestionAnswer", methods=["POST"])
 @login_required
 def userAnswer():
@@ -164,9 +184,6 @@ def userAnswer():
     return jsonify({}), status.HTTP_200_OK
 
 
-
-
-
 @views.route("/api/questions/", methods=["GET"])
 @login_required
 def AllQuestions():
@@ -177,14 +194,19 @@ def AllQuestions():
 
 
 
+
+
 @views.route("/api/questions/nextQuestion", methods=["GET"])
 @login_required
 def nextQuestion():
     travelID = 1
     questionID = nextQuestionID(travelID)
     question = getQuestion(questionID)
+    print("THIS IS QUESTION ID in next question views", questionID)
+
     if question == None:
-        return f"A question with questionID: {questionID} was not found", status.HTTP_404_NOT_FOUND
+        return f"A question with questionID: {questionID} was not found", status.HTTP_406_NOT_ACCEPTABLE
+
 
     else:
         return question, status.HTTP_200_OK
@@ -196,6 +218,7 @@ def nextQuestion():
 def questions(questionID):
     question = getQuestion(questionID)
     if question == None:
+        # return render_template("TEST.html", user=current_user)
         return f"A question with questionID: {questionID} was not found", status.HTTP_404_NOT_FOUND
 
     else:

@@ -44,11 +44,11 @@ class Api {
     }
 
 
-    getQuestion(questionNumber) {
-        return fetch("/api/questions/" + questionNumber, {
-            method: "GET"
-        })
-    }
+    // getQuestion(questionNumber) {
+    //     return fetch("/api/questions/" + questionNumber, {
+    //         method: "GET"
+    //     })
+    // }
 
     getLatestQuestion() {
         return fetch("/api/questions/nextQuestion", {
@@ -59,7 +59,15 @@ class Api {
     sendUserResponse(questionID, answerID) {
         return fetch("userQuestionAnswer", {
             method: "POST",
+            // sends the answer to the views.py function UserAnswerQuestion
             body: JSON.stringify({questionID: questionID, answerID: answerID})
+        })
+    }
+
+    testUserAndCountryScores(travelID, countryCode) {
+        return fetch("/testCountryUser", {
+            method: "POST",
+            body: JSON.stringify({travelID: travelID, countryCode:countryCode})
         })
     }
 

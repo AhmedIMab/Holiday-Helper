@@ -85,6 +85,21 @@ class UserTravelScore(db.Model):
     final_travel_cost = db.Column(db.Integer)
 
 
+class UserCountryScore(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    travel_id = db.Column(db.Integer, primary_key=True)
+    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
+    # The score for the user * the countries winter sports score
+    water_sports_score = db.Column(db.Float)
+    winter_sports_score = db.Column(db.Float)
+    culture_score = db.Column(db.Float)
+    safety_score = db.Column(db.Float)
+    budget_score = db.Column(db.Float)
+    total_score = db.Column(db.Float)
+
+
+
+
 
 
 

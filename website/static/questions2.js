@@ -19,34 +19,6 @@ const removeAllChildNodes = function (parent) {
     }
 }
 
-
-const nextQuestion = function (event, questionID) {
-
-    console.log("NEXT QUESTION FUNCTION")
-    console.log(questionID)
-    // const nextQ = parseInt(questionID) + 1
-    Api.getLatestQuestion()
-        .then((_res) => {
-        return _res.json()
-    }).then((question) => {
-        removeAllChildNodes(document.getElementById("answer-container"))
-        // Changes the questionTextP element's text to the current questions text
-        questionTextP.text(question.questionText)
-        const questionType = question.questionType
-        const answers = question.answers
-        if (questionType == "Multiple Choice") {
-        console.log("THIS IS A MULTIPLE CHOICE QUESTION")
-        multipleChoiceQuestion(event, question, answers)
-
-        } else if (questionType == "Integer") {
-            console.log("THIS IS AN INTEGER QUESTION")
-            integerQuestion(event, question, answers)
-        }
-    })
-}
-
-
-
 function createElementX (type, attributes, children=[]) {
     // Creates an element of type (type)
     // e.g. div
@@ -73,7 +45,46 @@ function createElementX (type, attributes, children=[]) {
     return element
 }
 
+const nextQuestion = function (event) {
 
+    console.log("NEXT QUESTION FUNCTION")
+    // console.log(questionID)
+    // const nextQ = parseInt(questionID) + 1
+    Api.getLatestQuestion()
+        .then((_res) => {
+            if (_res.ok) {
+                return _res.json
+            } else {
+                console.log("ERROR")
+                if(_res.status === 406) {
+                    throw Error(_res.statusText);
+                }
+                else {
+                    throw new Error("Something went wrong");
+                }
+            }
+            console.log("TESTETSETET")
+            // console.log(_res.json())
+            // return _res.json()
+        }).then((question) => {
+            // question here is the same as _res.json
+            removeAllChildNodes(document.getElementById("answer-container"))
+            // Changes the questionTextP element's text to the current questions text
+            questionTextP.text(question.questionText)
+            const questionType = question.questionType
+            const answers = question.answers
+            if (questionType == "Multiple Choice") {
+                console.log("THIS IS A MULTIPLE CHOICE QUESTION")
+                multipleChoiceQuestion(event, question, answers)
+
+            } else if (questionType == "Integer") {
+                console.log("THIS IS AN INTEGER QUESTION")
+                integerQuestion(event, question, answers)
+            }
+        }).catch((error) => {
+            console.log("This is the error:", error)
+        })
+}
 
 const integerQuestion = function (event, question, answers) {
     console.log(answers)
@@ -137,14 +148,14 @@ const integerQuestion = function (event, question, answers) {
     submitButtonX.click(function (event) {
         console.log("submit button clicked!")
         const answerValue = $("#entryInput").val();
-        console.log(answerValue)
+        // console.log(answerValue)
         const questionID = question.questionID
-        console.log(questionID)
+        // console.log(questionID)
         Api.sendUserResponse(questionID, answerValue).then(() => {
             // window.location.href = "/questions";
         }).then(() => {
             console.log("Moving onto next question?")
-            nextQuestion(event, questionID)
+            nextQuestion(event)
         });
 
     })
@@ -183,8 +194,8 @@ const multipleChoiceQuestion = function (event, question, answers) {
             ])
 
     // const centerAButtons = document.getElementsByClassName("centerAButtons")
-    console.log("TEST")
-    console.log(main)
+    // console.log("TEST")
+    // console.log(main)
     element.appendChild(answer_buttons)
 
     for (var i = 0; i < answers.length; i++) {
@@ -197,7 +208,7 @@ const multipleChoiceQuestion = function (event, question, answers) {
         // console.log(answerText)
         // creates a new button element
         const centerAButtons = document.getElementById("buttonsss");
-        console.log(centerAButtons)
+        // console.log(centerAButtons)
 
         const answer_button = createElementX(
                 "button",
@@ -224,19 +235,19 @@ const multipleChoiceQuestion = function (event, question, answers) {
     }
 
     const answerButton = $(".answerButtons");
-    console.log(answerButton)
+    // console.log(answerButton)
 
     answerButton.click(function (event) {
         // console.log("answerButton clicked!")
         // const answerText = event.currentTarget.innerText;
         const questionID = event.currentTarget.attributes["questionID"].value;
         const answerID = event.currentTarget.attributes["answerID"].value;
-        console.log(questionID)
-        console.log(answerID)
+        // console.log(questionID)
+        // console.log(answerID)
         Api.sendUserResponse(questionID, answerID).then(() => {
             // window.location.href = "/questions";
         }).then(() => {
-            nextQuestion(event, questionID)
+            nextQuestion(event)
         });
         // console.log(answerText)
     })

@@ -40,8 +40,7 @@ user | water sports | winter sports | culture | safety | budget
 user1: 80, 30, 10, 90, 40
 user1.: 0.89, 0.33, 0.11, 1, 0.44 
 each score ranked based off the highest score
-and to make normalised between 1 and 100, multiply by 100 as it matches
-current database tables
+####### (hmmmm) and to make normalised between 1 and 100, multiply by 100 as it matches current database tables
 
 
 afghanistan * user: 0, 0, 0.33, 0, 0 = 0.33

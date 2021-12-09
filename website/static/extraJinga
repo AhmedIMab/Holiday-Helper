@@ -29,3 +29,16 @@ MENTION WHY IMPLICATED FUNCTION FOR CREATING ELEMENTS:
                     #print(toModify)
                     #print(type(modificationBy))
                     #print(modificationBy)
+
+
+    WAS IN TEST PAGE
+    {% for country in countries %}
+    {% for countryCode, countryName in country.items() %}
+        <div class="option">
+              <input type="radio" class="radio" id="{{ countryCode }}" name="countries"/>
+              <label for="{{ countryCode }}">{{ countryName }}</label>
+        </div>
+    {% endfor %}
+    {% endfor %}
+
+
