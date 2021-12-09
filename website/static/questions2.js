@@ -52,20 +52,13 @@ const nextQuestion = function (event) {
     // const nextQ = parseInt(questionID) + 1
     Api.getLatestQuestion()
         .then((_res) => {
-            if (_res.ok) {
-                return _res.json
-            } else {
-                console.log("ERROR")
-                if(_res.status === 406) {
-                    throw Error(_res.statusText);
-                }
-                else {
-                    throw new Error("Something went wrong");
-                }
+            // console.log("ERROR")
+            if(_res.status === 406) {
+                throw Error("No more questions");
             }
             console.log("TESTETSETET")
             // console.log(_res.json())
-            // return _res.json()
+            return _res.json()
         }).then((question) => {
             // question here is the same as _res.json
             removeAllChildNodes(document.getElementById("answer-container"))
@@ -82,9 +75,16 @@ const nextQuestion = function (event) {
                 integerQuestion(event, question, answers)
             }
         }).catch((error) => {
-            console.log("This is the error:", error)
+            // console.log("This is the error:", error)
+            // console.log(error)
+            if (error == "Error: No more questions") {
+                console.log("CCC")
+                window.location.href = "/test";
+            }
         })
 }
+
+
 
 const integerQuestion = function (event, question, answers) {
     console.log(answers)
@@ -255,33 +255,42 @@ const multipleChoiceQuestion = function (event, question, answers) {
 
 
 
+// shows the next question the user should get
+nextQuestion()
 
-Api.getLatestQuestion()
-    // _res is the response (can be named anything)
-    .then((_res) => {
-        // console.log(_res)
-        // change the body in a JSON string format to a JSON object
-        return _res.json()
-    }).then((question) => {
-    // console.log(question)
-    // Much simpler from JSON to js
-    // Manipulate the object to get the question text of the question
-    // .text is a js method to change the text of the element to whats in the bracket (question.questionText)
-    questionTextP.text(question.questionText)
-    const questionType = question.questionType
-    // console.log(questionType)
-    const answers = question.answers
-    // console.log(answers)
 
-    if (questionType == "Multiple Choice") {
-        console.log("THIS IS A MULTIPLE CHOICE QUESTION")
-        multipleChoiceQuestion(event, question, answers)
 
-    } else if (questionType == "Integer") {
-        console.log("THIS IS AN INTEGER QUESTION")
-        integerQuestion(event, question, answers)
-    }
-})
+
+
+
+
+// Api.getLatestQuestion()
+//     // _res is the response (can be named anything)
+//     .then((_res) => {
+//
+//         // console.log(_res)
+//         // change the body in a JSON string format to a JSON object
+//         return _res.json()
+//     }).then((question) => {
+//     // console.log(question)
+//     // Much simpler from JSON to js
+//     // Manipulate the object to get the question text of the question
+//     // .text is a js method to change the text of the element to whats in the bracket (question.questionText)
+//     questionTextP.text(question.questionText)
+//     const questionType = question.questionType
+//     // console.log(questionType)
+//     const answers = question.answers
+//     // console.log(answers)
+//
+//     if (questionType == "Multiple Choice") {
+//         console.log("THIS IS A MULTIPLE CHOICE QUESTION")
+//         multipleChoiceQuestion(event, question, answers)
+//
+//     } else if (questionType == "Integer") {
+//         console.log("THIS IS AN INTEGER QUESTION")
+//         integerQuestion(event, question, answers)
+//     }
+// })
 
 
 
