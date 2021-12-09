@@ -140,7 +140,7 @@
     {
       "questionID": 5,
       "mandatory": true,
-      "questionText": "How wide range of safety features would you like to see?",
+      "questionText": "How safe would you like the country to be?",
       "questionHelper": "1 being minimal features, 10 being extremely safe",
       "questionType": "Multiple Choice",
       "answers": [

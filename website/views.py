@@ -165,8 +165,17 @@ def testCountry():
     testResponse = json.loads(request.data)
     print(testResponse)
     travelID = testResponse.get("travelID")
-    countryCode = testResponse.get("countryCode")
-    userCountryScore(travelID, countryCode)
+    #countryCode = testResponse.get("countryCode")
+    countries = Country.query.all()
+    #print(countries)
+    AllCountries = []
+    for country in countries:
+        AllCountries.append(country.country_code)
+
+    print("XXX")
+    #print(AllCountries)
+
+    userCountryScore(travelID, AllCountries)
     return testResponse
 
 

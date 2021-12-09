@@ -107,33 +107,11 @@ def haveRequirementsBeenMet(travelID, questionID):
     return requirementsMet
 
 
-def userCountryScore(travelID, countryCode):
-    try:
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-        current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-        print(current_country)
-
-    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        pass
-
-    if current_travel == None or current_country == None:
-        # current_travel = UserTravelScore.query.get((current_user.id, travelID))
-        new_user_country = UserCountryScore(user_id=current_user.id,
-                                            travel_id=travelID,
-                                            country_code=countryCode,
-                                            water_sports_score=0,
-                                            winter_sports_score=0,
-                                            culture_score=0,
-                                            safety_score=0,
-                                            budget_score=0,
-                                            total_score=0
-                                            )
-        db.session.add(new_user_country)
-        db.session.commit()
-        current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-        print(current_country)
+def addCountry(travelID, countryCode):
+    pass
 
 
+def userCountryScore(travelID, countryCodesL):
     # multiple enum's as inconsistent naming in databases
     class UserCountryScoreEnum(Enum):
         WATER_SPORTS = "water_sports_score"
@@ -158,12 +136,41 @@ def userCountryScore(travelID, countryCode):
         BUDGET_SCORE = "budget_user_score"
 
 
-    user_score = {}
-    user_score_values = []
-    for n in UserScoreEnum:
-        factor_user_score = getattr(current_travel, n.value)
-        user_score[n.name] = (factor_user_score)
-        user_score_values.append(factor_user_score)
+
+    print("IN USER COUNTRY SCORE FUNCTION")
+    for countryCode in countryCodesL:
+        print(countryCode)
+        try:
+            current_travel = UserTravelScore.query.get((current_user.id, travelID))
+            current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
+            print(current_country)
+
+        except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+            pass
+
+        if current_travel == None or current_country == None:
+            # current_travel = UserTravelScore.query.get((current_user.id, travelID))
+            new_user_country = UserCountryScore(user_id=current_user.id,
+                                                travel_id=travelID,
+                                                country_code=countryCode,
+                                                water_sports_score=0,
+                                                winter_sports_score=0,
+                                                culture_score=0,
+                                                safety_score=0,
+                                                budget_score=0,
+                                                total_score=0
+                                                )
+            db.session.add(new_user_country)
+            db.session.commit()
+            current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
+            print(current_country)
+            user_score = {}
+            user_score_values = []
+
+            for n in UserScoreEnum:
+                factor_user_score = getattr(current_travel, n.value)
+                user_score[n.name] = (factor_user_score)
+                user_score_values.append(factor_user_score)
 
 
     # winter_sports_user_score = getattr(current_travel, "winter_sports_user_score")
@@ -183,101 +190,111 @@ def userCountryScore(travelID, countryCode):
     # user_score.append(budget_user_score)
     #print(user_score)
 
+            most_important_user_score = max(user_score_values)
+            print(most_important_user_score)
 
-    most_important_user_score = max(user_score_values)
-    print(most_important_user_score)
+            country_scores = {}
 
-    country_scores = {}
+            countryScore = Sport.query.get((countryCode))
+            # Adds a dictionary key of the Water Sports to the attribute of enum value for water sports
+            country_scores[CountryScoreEnum.WATER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WATER_SPORTS.value)
+            country_scores[CountryScoreEnum.WINTER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WINTER_SPORTS.value)
+            # country_water_sports_score = getattr(countryScore, CountryScoreEnum.WATER_SPORTS.value)
+            # country_winter_sports_score = getattr(countryScore, CountryScoreEnum.WINTER_SPORTS.value)
+
+            countryScore = CulturalValue.query.get((countryCode))
+            country_scores[CountryScoreEnum.CULTURE_SCORE.name] = getattr(countryScore, CountryScoreEnum.CULTURE_SCORE.value)
+            # country_culture_score = getattr(countryScore, CountryScoreEnum.CULTURE_SPORTS.value)
+
+            countryScore = Safety.query.get((countryCode))
+            country_scores[CountryScoreEnum.SAFETY_SCORE.name] = getattr(countryScore, CountryScoreEnum.SAFETY_SCORE.value)
+            # country_safety_score = getattr(countryScore, CountryScoreEnum.SAFETY_SCORE.value)
+
+            countryScore = Cost.query.get((countryCode))
+            country_scores[CountryScoreEnum.BUDGET_SCORE.name] = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
+            # country_budget_score = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
+
+            # print("This is the countries water sports score", country_water_sports_score)
+            # print("This is the countries winter sports score", country_winter_sports_score)
+            # print("This is the countries culture sports score", country_culture_score)
+            # print("This is the countries safety sports score", country_safety_score)
+            # print("This is the countries budget sports score", country_budget_score)
+
+            print(country_scores)
+
+            for countryScoreX in country_scores:
+                print("Ben")
+                if country_scores[countryScoreX] == None:
+                    print("NONE HERE")
+                    print(countryScoreX, country_scores[countryScoreX])
+                    print(countryScoreX)
+                    print("3rd print")
+                    print((CountryScoreEnum.str(countryScoreX).value()))
+                    setattr(current_country, CountryScoreEnum.str(countryScoreX),)
+
+                #print(countryScoreX,country_scores[countryScoreX])
+
+            user_relative_scores = {}
+            for x in UserScoreEnum:
+                factor_relative_score = user_score[x.name] / most_important_user_score
+                user_relative_scores[x.name] = factor_relative_score
+
+            print(user_relative_scores)
+
+            # update the user's scores to the relative score compared to largest value
+            # water_sports_user_score = water_sports_user_score / most_important_user_score
+            # winter_sports_user_score = winter_sports_user_score / most_important_user_score
+            # culture_user_score = culture_user_score / most_important_user_score
+            # safety_user_score = safety_user_score / most_important_user_score
+            # budget_user_score = budget_user_score / most_important_user_score
+            # user_relative_scores = []
+            # user_relative_scores.append(water_sports_user_score)
+            # user_relative_scores.append(winter_sports_user_score)
+            # user_relative_scores.append(culture_user_score)
+            # user_relative_scores.append(safety_user_score)
+            # user_relative_scores.append(budget_user_score)
+            #
+            # print(user_relative_scores)
+
+            userCountryScores = []
+            userCountryScoresD = {}
+            for y in UserScoreEnum:
+                userCountryScoreT = user_relative_scores[y.name] * country_scores[y.name]
+                print("inside for loop!")
+                print(user_score[y.name])
+                print(country_scores[y.name])
+                userCountryScores.append(userCountryScoreT)
+                userCountryScoresD[y.name] = userCountryScoreT
+
+            print("TEST", userCountryScores)
 
 
-    countryScore = Sport.query.get((countryCode))
-    # Adds a dictionary key of the Water Sports to the attribute of enum value for water sports
-    country_scores[CountryScoreEnum.WATER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WATER_SPORTS.value)
-    country_scores[CountryScoreEnum.WINTER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WINTER_SPORTS.value)
-    # country_water_sports_score = getattr(countryScore, CountryScoreEnum.WATER_SPORTS.value)
-    # country_winter_sports_score = getattr(countryScore, CountryScoreEnum.WINTER_SPORTS.value)
+            # userCountryWaterScore = water_sports_user_score * country_water_sports_score
+            # userCountryWinterScore = water_sports_user_score * country_winter_sports_score
+            # userCountryCultureScore = culture_user_score * country_culture_score
+            # userCountrySafetyScore = safety_user_score * country_safety_score
+            # userCountryBudgetScore = budget_user_score * country_budget_score
+            # userCountryScores.append(userCountryWaterScore)
+            # userCountryScores.append(userCountryWinterScore)
+            # userCountryScores.append(userCountryCultureScore)
+            # userCountryScores.append(userCountrySafetyScore)
+            # userCountryScores.append(userCountryBudgetScore)
 
-    countryScore = CulturalValue.query.get((countryCode))
-    country_scores[CountryScoreEnum.CULTURE_SCORE.name] = getattr(countryScore, CountryScoreEnum.CULTURE_SCORE.value)
-    # country_culture_score = getattr(countryScore, CountryScoreEnum.CULTURE_SPORTS.value)
+            totalForCountry = sum(userCountryScores)
+            print(totalForCountry)
 
-    countryScore = Safety.query.get((countryCode))
-    country_scores[CountryScoreEnum.SAFETY_SCORE.name] = getattr(countryScore, CountryScoreEnum.SAFETY_SCORE.value)
-    # country_safety_score = getattr(countryScore, CountryScoreEnum.SAFETY_SCORE.value)
+            for t in UserCountryScoreEnum:
+                # adds the value for the factor score, modifying the value in the Enumerator
+                # e.g. the first run of the loop, t.value = water_sports_score
+                # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
+                setattr(current_country, t.value, userCountryScoresD[t.name])
 
-    countryScore = Cost.query.get((countryCode))
-    country_scores[CountryScoreEnum.BUDGET_SCORE.name] = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
-    # country_budget_score = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
-
-    # print("This is the countries water sports score", country_water_sports_score)
-    # print("This is the countries winter sports score", country_winter_sports_score)
-    # print("This is the countries culture sports score", country_culture_score)
-    # print("This is the countries safety sports score", country_safety_score)
-    # print("This is the countries budget sports score", country_budget_score)
-
-    print(country_scores)
-
-    user_relative_scores = {}
-    for x in UserScoreEnum:
-        factor_relative_score = user_score[x.name] / most_important_user_score
-        user_relative_scores[x.name] = factor_relative_score
-
-    print(user_relative_scores)
-
-    # update the user's scores to the relative score compared to largest value
-    # water_sports_user_score = water_sports_user_score / most_important_user_score
-    # winter_sports_user_score = winter_sports_user_score / most_important_user_score
-    # culture_user_score = culture_user_score / most_important_user_score
-    # safety_user_score = safety_user_score / most_important_user_score
-    # budget_user_score = budget_user_score / most_important_user_score
-    # user_relative_scores = []
-    # user_relative_scores.append(water_sports_user_score)
-    # user_relative_scores.append(winter_sports_user_score)
-    # user_relative_scores.append(culture_user_score)
-    # user_relative_scores.append(safety_user_score)
-    # user_relative_scores.append(budget_user_score)
-    #
-    # print(user_relative_scores)
-
-    userCountryScores = []
-    userCountryScoresD = {}
-    for y in UserScoreEnum:
-        userCountryScoreT = user_relative_scores[y.name] * country_scores[y.name]
-        print("inside for loop!")
-        print(user_score[y.name])
-        print(country_scores[y.name])
-        userCountryScores.append(userCountryScoreT)
-        userCountryScoresD[y.name] = userCountryScoreT
-
-    print("TEST", userCountryScores)
-
-
-    # userCountryWaterScore = water_sports_user_score * country_water_sports_score
-    # userCountryWinterScore = water_sports_user_score * country_winter_sports_score
-    # userCountryCultureScore = culture_user_score * country_culture_score
-    # userCountrySafetyScore = safety_user_score * country_safety_score
-    # userCountryBudgetScore = budget_user_score * country_budget_score
-    # userCountryScores.append(userCountryWaterScore)
-    # userCountryScores.append(userCountryWinterScore)
-    # userCountryScores.append(userCountryCultureScore)
-    # userCountryScores.append(userCountrySafetyScore)
-    # userCountryScores.append(userCountryBudgetScore)
-
-    totalForCountry = sum(userCountryScores)
-    print(totalForCountry)
-
-    for t in UserCountryScoreEnum:
-        # adds the value for the factor score, modifying the value in the Enumerator
-        # e.g. the first run of the loop, t.value = water_sports_score
-        # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
-        setattr(current_country, t.value, userCountryScoresD[t.name])
-
-    # setattr(current_country, "water_sports_score", userCountryWaterScore)
-    # setattr(current_country, "winter_sports_score", userCountryWinterScore)
-    # setattr(current_country, "culture_score", userCountryCultureScore)
-    # setattr(current_country, "safety_score", userCountrySafetyScore)
-    # setattr(current_country, "budget_score", userCountryBudgetScore)
-    setattr(current_country, "total_score", totalForCountry)
+            # setattr(current_country, "water_sports_score", userCountryWaterScore)
+            # setattr(current_country, "winter_sports_score", userCountryWinterScore)
+            # setattr(current_country, "culture_score", userCountryCultureScore)
+            # setattr(current_country, "safety_score", userCountrySafetyScore)
+            # setattr(current_country, "budget_score", userCountryBudgetScore)
+            setattr(current_country, "total_score", totalForCountry)
 
     db.session.commit()
 

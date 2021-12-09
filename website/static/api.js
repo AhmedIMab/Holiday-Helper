@@ -64,10 +64,10 @@ class Api {
         })
     }
 
-    testUserAndCountryScores(travelID, countryCode) {
+    testUserAndCountryScores(travelID) {
         return fetch("/testCountryUser", {
             method: "POST",
-            body: JSON.stringify({travelID: travelID, countryCode:countryCode})
+            body: JSON.stringify({travelID: travelID})
         })
     }
 
