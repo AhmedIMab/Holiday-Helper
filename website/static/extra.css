@@ -117,8 +117,14 @@
 }
 
 
-.Cost-Text {
+.cost-text {
   text-align: right;
 }
 
+.cost-number {
+  color: blueviolet;
+}
 
+/*.country-text {*/
+/*  text-align: left;*/
+/*}*/

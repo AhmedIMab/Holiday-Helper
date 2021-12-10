@@ -13,7 +13,7 @@
             {% set countryDict = country[1] %}
             {% for roughCostText, roughCost in countryDict.items() %}
             <li class="list-group-item">
-                  {{ countryName}}<p class="Cost-Text">{{ roughCostText }}: £{{ roughCost}}</p>
+                  {{ countryName}} <p class="cost-text">{{ roughCostText }}: <span class="cost-number">£{{ roughCost}}</span></p>
             </li>
             {% endfor %}
             {% endfor %}

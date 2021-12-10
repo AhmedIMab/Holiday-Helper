@@ -133,7 +133,7 @@ def sortCountries(travelID):
         valuesToDisplay = {}
         #print(type(score))
         #print(dir(score))
-        valuesToDisplay["Rough cost"] = travel_cost
+        valuesToDisplay["Your journey will cost roughly"] = travel_cost
         #userSuggestions[score.country_code] = valuesToDisplay
         userSuggestions.append((score.country_code, valuesToDisplay))
         #print(score.country_code)
