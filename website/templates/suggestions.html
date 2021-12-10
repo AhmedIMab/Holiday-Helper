@@ -6,7 +6,17 @@
 
 <div class="container py-4">
       <ul class="list-group list-group-flush pt-3" id="notes">
-            {{ best_countries }}
+            {% for country in best_countries %}
+            <!-- sets the country name to the first part of the tuple-->
+            {% set countryName = country[0] %}
+            <!-- sets the country dictionary Which has the rough cost and value for travelling to that country  -->
+            {% set countryDict = country[1] %}
+            {% for roughCostText, roughCost in countryDict.items() %}
+            <li class="list-group-item">
+                  {{ countryName}}<p class="Cost-Text">{{ roughCostText }}: £{{ roughCost}}</p>
+            </li>
+            {% endfor %}
+            {% endfor %}
       </ul>
 </div>
 
