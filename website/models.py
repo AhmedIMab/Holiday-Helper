@@ -82,7 +82,6 @@ class UserTravelScore(db.Model):
     culture_user_score = db.Column(db.Integer)
     safety_user_score = db.Column(db.Integer)
     budget_user_score = db.Column(db.Integer)
-    final_travel_cost = db.Column(db.Integer)
 
 
 class UserCountryScore(db.Model):
@@ -96,6 +95,7 @@ class UserCountryScore(db.Model):
     safety_score = db.Column(db.Float)
     budget_score = db.Column(db.Float)
     total_score = db.Column(db.Float)
+    final_travel_cost = db.Column(db.Float)
 
 
 

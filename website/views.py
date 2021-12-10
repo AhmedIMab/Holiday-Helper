@@ -1,6 +1,6 @@
 import sqlite3
 import sqlalchemy.exc
-from flask import Blueprint, render_template, request, flash, jsonify, url_for
+from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect
 from flask_api import status
 import flask_sqlalchemy
 from flask_login import login_required, current_user
@@ -103,7 +103,7 @@ def test():
     for country in countries:
         countriess.append({country.country_code: country.country_name})
 
-    return render_template("TEST.html", user=current_user, countries=countriess)
+    return render_template("travelID.html", user=current_user, countries=countriess)
 
 
 
@@ -149,13 +149,65 @@ def test():
 
 
 
+# @views.route("/countrySuggestions", methods=["GET"])
+# @login_required
+# def suggestions():
+#     print("This is with a GET response!")
+#     return render_template("suggestions.html", user=current_user)
 
 
 
-@views.route("/countrySuggestions", methods=["GET"])
+@views.route("/suggestions/<travelID>", methods=["GET"])
 @login_required
-def suggestCountries():
-    return render_template("TEST.html", user=current_user)
+def suggestions(travelID):
+    travel_response = travelID
+    print(travel_response)
+    #travelID = travel_response["travelID"]
+    #print(travelID)
+    ranked_countries = sortCountries(travelID)
+    print("Hiii")
+    print(ranked_countries)
+    print(len(ranked_countries))
+
+    countries = Country.query.all()
+    AllCountries = {}
+    for country in countries:
+        AllCountries[country.country_code] = country.country_name
+        #AllCountries.append({country.country_code: country.country_name})
+
+    print(AllCountries)
+
+    # x[0] is the country code
+    # the first part of the tuple will be replaced with value of the country code (country name) from all the countries
+    # x[1] is the original second part of the tuple
+    ranked_countries_UF = list(map(lambda x:(AllCountries[x[0]],x[1]), ranked_countries))
+    # for countryX in ranked_countries_UF:
+    #     print(countryX)
+
+    print(ranked_countries_UF)
+
+
+    return render_template("suggestions.html", user=current_user, best_countries=ranked_countries_UF)
+
+
+
+# @views.route("/countrySuggestions", methods=["GET", "POST"])
+# @login_required
+# def suggestCountries():
+#     if request.method == "POST":
+#         travel_response = json.loads(request.data)
+#         print(travel_response)
+#         travelID = travel_response["travelID"]
+#         print(travelID)
+#         ranked_countries = sortCountries(travelID)
+#         print("Hiii")
+#         print(ranked_countries)
+#         return render_template("suggestions.html", user=current_user, best_countries=ranked_countries)
+#         # return render_template("suggestions.html", user=current_user)
+#
+#     print("we're here")
+#     return render_template("travelID.html", user=current_user)
+
 
 
 
@@ -163,20 +215,25 @@ def suggestCountries():
 @login_required
 def testCountry():
     testResponse = json.loads(request.data)
-    print(testResponse)
+    #print(testResponse)
     travelID = testResponse.get("travelID")
     #countryCode = testResponse.get("countryCode")
-    countries = Country.query.all()
-    #print(countries)
-    AllCountries = []
-    for country in countries:
-        AllCountries.append(country.country_code)
 
-    print("XXX")
+
+    #print("XXX")
     #print(AllCountries)
 
-    userCountryScore(travelID, AllCountries)
-    return testResponse
+    countries = Country.query.all()
+
+    AllCountries = []
+    for country in countries:
+        #print(type(country))
+        AllCountries.append(country.country_code)
+
+    userSuggestions = userCountryScore(travelID, AllCountries)
+
+    return render_template("suggestions.html", user=current_user, best_countries=userSuggestions)
+
 
 
 @views.route("userQuestionAnswer", methods=["POST"])
@@ -227,7 +284,6 @@ def nextQuestion():
 def questions(questionID):
     question = getQuestion(questionID)
     if question == None:
-        # return render_template("TEST.html", user=current_user)
         return f"A question with questionID: {questionID} was not found", status.HTTP_404_NOT_FOUND
 
     else:

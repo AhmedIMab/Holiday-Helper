@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block title %}TEST{% endblock %}
+{% block content %}
+<div class="container pt-5">
+      <h1 align="center">Admin Page</h1>
+</div>
+
+
+<div align="center" id="travelSubmit" class="input-group pt-4">
+    <input type="text" class="form-control" id="travelIDInput">
+</div>
+
+
+
+<div class="container pt-5" align="center">
+    <button type="button" class="btn btn-outline-primary mt-4 showSuggestions">Show best countries</button>
+</div>
+
+
+<!--<div class="container py-4">-->
+<!--      <ul class="list-group list-group-flush pt-3" id="notes">-->
+<!--            {{ best_countries }}-->
+<!--      </ul>-->
+<!--</div>-->
+
+<script
+    type="module"
+    src="{{ url_for('static', filename='travelID.js') }}"
+></script>
+
+{% endblock %}

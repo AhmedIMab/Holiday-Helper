@@ -71,6 +71,13 @@ class Api {
         })
     }
 
+    // getSuggestedCountries(travelID) {
+    //     return fetch("/countrySuggestions", {
+    //         method: "POST",
+    //         body: JSON.stringify({travelID: travelID})
+    //     })
+    // }
+
 }
 
 export default new Api();

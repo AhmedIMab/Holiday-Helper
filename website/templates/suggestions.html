@@ -1,0 +1,18 @@
+{% extends "base.html" %} {% block title %}TEST{% endblock %}
+{% block content %}
+<div class="container pt-5">
+      <h1 align="center">Suggested Countries</h1>
+</div>
+
+<div class="container py-4">
+      <ul class="list-group list-group-flush pt-3" id="notes">
+            {{ best_countries }}
+      </ul>
+</div>
+
+<script
+    type="module"
+    src="{{ url_for('static', filename='suggestions.js') }}"
+></script>
+
+{% endblock %}

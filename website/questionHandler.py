@@ -3,8 +3,11 @@ import os
 import sqlite3
 import sqlalchemy.exc
 from .models import Note, User, Country, UserCountry, UserTravelScore, Sport, Cost, CulturalValue, CovidRestrictions, Safety
-from .models import UserCountryScore
+from .models import UserCountryScore, CountryDailyCost
 from flask_login import login_required, current_user
+from sqlalchemy.sql import *
+from sqlalchemy import desc
+from sqlalchemy.sql import func
 from . import db
 from .collectionStream import CollectionStream
 from enum import Enum
@@ -107,8 +110,46 @@ def haveRequirementsBeenMet(travelID, questionID):
     return requirementsMet
 
 
-def addCountry(travelID, countryCode):
-    pass
+
+def sortCountries(travelID):
+    print("sort countries is running")
+    print("this is the travelID", travelID)
+    #all_user_countries = UserCountryScore.query.all()
+    x = select(UserCountryScore)\
+        .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
+        .order_by(UserCountryScore.total_score.desc())
+    #print(x)
+    result = db.session.connection().execute(x)
+
+    # test = db.session.query('country_code').from_statement(x)
+    # print(test)
+    result = result.fetchall()
+    print("this is RESULT", result)
+    userSuggestions = []
+
+
+    for score in result:
+        travel_cost = score.final_travel_cost
+        valuesToDisplay = {}
+        #print(type(score))
+        #print(dir(score))
+        valuesToDisplay["Rough cost"] = travel_cost
+        # Remember to add rough cost of travel!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        #userSuggestions[score.country_code] = valuesToDisplay
+        userSuggestions.append((score.country_code, valuesToDisplay))
+        #print(score.country_code)
+        #print(score.total_score)
+        #print(score.__getitem__("country_code"))
+
+    #print(userSuggestions)
+
+
+    return userSuggestions
+
+    #x = UserCountryScore.query.all.order_by(desc(UserCountryScore.total_score))
+
+
+
 
 
 def userCountryScore(travelID, countryCodesL):
@@ -139,11 +180,11 @@ def userCountryScore(travelID, countryCodesL):
 
     print("IN USER COUNTRY SCORE FUNCTION")
     for countryCode in countryCodesL:
-        print(countryCode)
+        #print("This is the country code", countryCode)
         try:
             current_travel = UserTravelScore.query.get((current_user.id, travelID))
             current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-            print(current_country)
+            #print(current_country)
 
         except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
             pass
@@ -158,12 +199,14 @@ def userCountryScore(travelID, countryCodesL):
                                                 culture_score=0,
                                                 safety_score=0,
                                                 budget_score=0,
-                                                total_score=0
-                                                )
+                                                total_score=0,
+                                                final_travel_cost=1)
             db.session.add(new_user_country)
             db.session.commit()
             current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-            print(current_country)
+            #print(current_country)
+
+
             user_score = {}
             user_score_values = []
 
@@ -191,7 +234,7 @@ def userCountryScore(travelID, countryCodesL):
     #print(user_score)
 
             most_important_user_score = max(user_score_values)
-            print(most_important_user_score)
+            #print(most_important_user_score)
 
             country_scores = {}
 
@@ -214,74 +257,50 @@ def userCountryScore(travelID, countryCodesL):
             country_scores[CountryScoreEnum.BUDGET_SCORE.name] = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
             # country_budget_score = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
 
-            # print("This is the countries water sports score", country_water_sports_score)
-            # print("This is the countries winter sports score", country_winter_sports_score)
-            # print("This is the countries culture sports score", country_culture_score)
-            # print("This is the countries safety sports score", country_safety_score)
-            # print("This is the countries budget sports score", country_budget_score)
+            #print(country_scores)
 
-            print(country_scores)
 
-            for countryScoreX in country_scores:
-                print("Ben")
-                if country_scores[countryScoreX] == None:
-                    print("NONE HERE")
-                    print(countryScoreX, country_scores[countryScoreX])
-                    print(countryScoreX)
-                    print("3rd print")
-                    print((CountryScoreEnum.str(countryScoreX).value()))
-                    setattr(current_country, CountryScoreEnum.str(countryScoreX),)
 
-                #print(countryScoreX,country_scores[countryScoreX])
 
             user_relative_scores = {}
             for x in UserScoreEnum:
                 factor_relative_score = user_score[x.name] / most_important_user_score
                 user_relative_scores[x.name] = factor_relative_score
 
-            print(user_relative_scores)
+            #print("user relative score",user_relative_scores)
 
-            # update the user's scores to the relative score compared to largest value
-            # water_sports_user_score = water_sports_user_score / most_important_user_score
-            # winter_sports_user_score = winter_sports_user_score / most_important_user_score
-            # culture_user_score = culture_user_score / most_important_user_score
-            # safety_user_score = safety_user_score / most_important_user_score
-            # budget_user_score = budget_user_score / most_important_user_score
-            # user_relative_scores = []
-            # user_relative_scores.append(water_sports_user_score)
-            # user_relative_scores.append(winter_sports_user_score)
-            # user_relative_scores.append(culture_user_score)
-            # user_relative_scores.append(safety_user_score)
-            # user_relative_scores.append(budget_user_score)
-            #
-            # print(user_relative_scores)
 
             userCountryScores = []
             userCountryScoresD = {}
             for y in UserScoreEnum:
-                userCountryScoreT = user_relative_scores[y.name] * country_scores[y.name]
-                print("inside for loop!")
-                print(user_score[y.name])
-                print(country_scores[y.name])
+                if country_scores[y.name] is not None:
+                    userCountryScoreT = user_relative_scores[y.name] * country_scores[y.name]
+                else:
+                    userCountryScoreT = 0
+                #print("inside for loop!")
+                #print(user_score[y.name])
+                #print(country_scores[y.name])
                 userCountryScores.append(userCountryScoreT)
                 userCountryScoresD[y.name] = userCountryScoreT
 
-            print("TEST", userCountryScores)
+            print("User Country Scores", userCountryScores)
 
 
-            # userCountryWaterScore = water_sports_user_score * country_water_sports_score
-            # userCountryWinterScore = water_sports_user_score * country_winter_sports_score
-            # userCountryCultureScore = culture_user_score * country_culture_score
-            # userCountrySafetyScore = safety_user_score * country_safety_score
-            # userCountryBudgetScore = budget_user_score * country_budget_score
-            # userCountryScores.append(userCountryWaterScore)
-            # userCountryScores.append(userCountryWinterScore)
-            # userCountryScores.append(userCountryCultureScore)
-            # userCountryScores.append(userCountrySafetyScore)
-            # userCountryScores.append(userCountryBudgetScore)
+            country_daily_cost = CountryDailyCost.query.get((countryCode))
+            print("SSSSS")
+            print(country_daily_cost.daily_cost)
+            if country_daily_cost.daily_cost is not None:
+                total_cost_for_country = current_travel.num_travellers * current_travel.travelling_time * country_daily_cost.daily_cost
+                print(f"This is the cost for {countryCode} £{total_cost_for_country}")
 
-            totalForCountry = sum(userCountryScores)
-            print(totalForCountry)
+                setattr(current_country, "final_travel_cost", total_cost_for_country)
+            else:
+                total_cost_for_country = 0
+                setattr(current_country, "final_travel_cost", total_cost_for_country)
+
+
+            totalScoreForCountry = sum(userCountryScores)
+            #print(totalForCountry)
 
             for t in UserCountryScoreEnum:
                 # adds the value for the factor score, modifying the value in the Enumerator
@@ -289,14 +308,12 @@ def userCountryScore(travelID, countryCodesL):
                 # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
                 setattr(current_country, t.value, userCountryScoresD[t.name])
 
-            # setattr(current_country, "water_sports_score", userCountryWaterScore)
-            # setattr(current_country, "winter_sports_score", userCountryWinterScore)
-            # setattr(current_country, "culture_score", userCountryCultureScore)
-            # setattr(current_country, "safety_score", userCountrySafetyScore)
-            # setattr(current_country, "budget_score", userCountryBudgetScore)
-            setattr(current_country, "total_score", totalForCountry)
+
+            setattr(current_country, "total_score", totalScoreForCountry)
 
     db.session.commit()
+
+    return sortCountries(1)
 
 
 
@@ -347,39 +364,6 @@ def nextQuestionID(travelID):
 
     print(questionsStream)
 
-
-
-
-
-
-
-
-    # questionsStream = CollectionStream(questions).stream()\
-    #     .filter(lambda x:not(isQuestionAnswered(1, x.get("questionID"))))\
-    #     .filter(lambda x:x.get("mandatory") == True)\
-    #     .sort(lambda x:x.get("questionID")).first()
-
-
-    # if questionsStream == None:
-    #     # This will only run when their are no questions left or test2.json is empty/no questions to begin with
-    #     # filter and get the non mandatory questions
-    #     # also filtering questions they have answered as they may answer a question and this will loop
-    #     # questionsStream = CollectionStream(questions).stream()\
-    #     #     .filter(lambda x:x.get("mandatory") == False) \
-    #     #     .filter(lambda x: not(isQuestionAnswered(1, x.get("questionID"))))\
-    #     #     .filter(lambda x:haveRequirementsBeenMet(travelID, x.get("questionID"))) \
-    #     #     .sort(lambda x:x.get("questionID"))\
-    #     #     .first()
-    #
-    #     print(questionsStream)
-    #
-    #     if questionsStream == None:
-    #         return 1
-    #     else:
-    #         return questionsStream.get("questionID")
-    #
-    # else:
-    #     return questionsStream.get("questionID")
 
 
 def getMandatoryQuestions():
@@ -466,8 +450,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                                           winter_sports_user_score=0,
                                           culture_user_score=0,
                                           safety_user_score=0,
-                                          budget_user_score=0,
-                                          final_travel_cost=0)
+                                          budget_user_score=0)
         db.session.add(new_user_travel)
         db.session.commit()
 
@@ -513,16 +496,6 @@ def userQuestionAnswer(questionID, answerValue, travelID):
             #print(toModify)
             x = getattr(current_travel, toModify)
             setattr(current_travel, toModify, x + answerIntegerValue)
-
-            # if questionID == 1:
-            #     # Hard coded as the first question will ALWAYS be num travellers
-            #     # Avoid this if in the next questions?
-            #     print("This is the first question")
-            #     print(int(answerValue))
-            #
-            #     x = getattr(current_travel, "num_travellers")
-            #     print(x)
-            #     setattr(current_travel, "num_travellers", x + answerIntegerValue)
 
         elif questionType == "Multiple Choice":
             print("This is a Multiple Choice Question")
