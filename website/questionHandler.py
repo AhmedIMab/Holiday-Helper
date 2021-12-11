@@ -134,7 +134,6 @@ def sortCountries(travelID):
         #print(type(score))
         #print(dir(score))
         valuesToDisplay["Your journey will cost roughly"] = travel_cost
-        #userSuggestions[score.country_code] = valuesToDisplay
         userSuggestions.append((score.country_code, valuesToDisplay))
         #print(score.country_code)
         #print(score.total_score)
@@ -179,17 +178,13 @@ def userCountryScore(travelID, countryCodesL):
 
     print("IN USER COUNTRY SCORE FUNCTION")
     for countryCode in countryCodesL:
-        #print("This is the country code", countryCode)
         try:
             current_travel = UserTravelScore.query.get((current_user.id, travelID))
             current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-            #print(current_country)
-
         except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
             pass
 
         if current_travel == None or current_country == None:
-            # current_travel = UserTravelScore.query.get((current_user.id, travelID))
             new_user_country = UserCountryScore(user_id=current_user.id,
                                                 travel_id=travelID,
                                                 country_code=countryCode,
@@ -203,9 +198,6 @@ def userCountryScore(travelID, countryCodesL):
             db.session.add(new_user_country)
             db.session.commit()
             current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-            #print(current_country)
-
-
             user_score = {}
             user_score_values = []
 
@@ -213,8 +205,6 @@ def userCountryScore(travelID, countryCodesL):
                 factor_user_score = getattr(current_travel, n.value)
                 user_score[n.name] = (factor_user_score)
                 user_score_values.append(factor_user_score)
-
-
     # winter_sports_user_score = getattr(current_travel, "winter_sports_user_score")
     # culture_user_score = getattr(current_travel, "water_sports_user_score")
     # safety_user_score = getattr(current_travel, "culture_user_score")
@@ -233,10 +223,7 @@ def userCountryScore(travelID, countryCodesL):
     #print(user_score)
 
             most_important_user_score = max(user_score_values)
-            #print(most_important_user_score)
-
             country_scores = {}
-
             countryScore = Sport.query.get((countryCode))
             # Adds a dictionary key of the Water Sports to the attribute of enum value for water sports
             country_scores[CountryScoreEnum.WATER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WATER_SPORTS.value)
@@ -266,9 +253,6 @@ def userCountryScore(travelID, countryCodesL):
                 factor_relative_score = user_score[x.name] / most_important_user_score
                 user_relative_scores[x.name] = factor_relative_score
 
-            #print("user relative score",user_relative_scores)
-
-
             userCountryScores = []
             userCountryScoresD = {}
             for y in UserScoreEnum:
@@ -282,11 +266,7 @@ def userCountryScore(travelID, countryCodesL):
                 userCountryScores.append(userCountryScoreT)
                 userCountryScoresD[y.name] = userCountryScoreT
 
-            print("User Country Scores", userCountryScores)
-
-
             country_daily_cost = CountryDailyCost.query.get((countryCode))
-            print("SSSSS")
             print(country_daily_cost.daily_cost)
             if country_daily_cost.daily_cost is not None:
                 total_cost_for_country = current_travel.num_travellers * current_travel.travelling_time * country_daily_cost.daily_cost
@@ -307,12 +287,9 @@ def userCountryScore(travelID, countryCodesL):
                 # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
                 setattr(current_country, t.value, userCountryScoresD[t.name])
 
-
             setattr(current_country, "total_score", totalScoreForCountry)
-
     db.session.commit()
-
-    return sortCountries(1)
+    return sortCountries(travelID)
 
 
 

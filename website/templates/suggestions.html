@@ -4,6 +4,39 @@
       <h1 align="center">Suggested Countries</h1>
 </div>
 
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Country</th>
+            <th scope="col">Number of travellers</th>
+            <th scope="col">Travelling time</th>
+            <th scope="col">Rough Journey Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for country in best_countries %}
+        <!-- sets the country name to the first part of the tuple-->
+        {% set countryName = country[0] %}
+        <!-- sets the country dictionary Which has the rough cost and value for travelling to that country  -->
+        {% set countryDict = country[1] %}
+        {% set countryNumber = 0 %}
+        {% for roughCostText, roughCost in countryDict.items() %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{ countryName }}</td>
+                <td>num travellers here</td>
+                <td>num travelling time here</td>
+                <td>{{ roughCostText }}: <span class="cost-number">£{{ roughCost}}</span></td>
+            </tr>
+        {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+{#
 <div class="container py-4">
       <ul class="list-group list-group-flush pt-3" id="notes">
             {% for country in best_countries %}
@@ -19,6 +52,7 @@
             {% endfor %}
       </ul>
 </div>
+#}
 
 <script
     type="module"

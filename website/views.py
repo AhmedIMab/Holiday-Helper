@@ -105,8 +105,6 @@ def test():
 
     return render_template("travelID.html", user=current_user, countries=countriess)
 
-
-
 # @views.route("/api/answerquestion/", methods=["POST"])
 # @login_required
 # def questions():
@@ -156,16 +154,11 @@ def test():
 #     return render_template("suggestions.html", user=current_user)
 
 
-
 @views.route("/suggestions/<travelID>", methods=["GET"])
 @login_required
 def suggestions(travelID):
     travel_response = travelID
-    print(travel_response)
-    #travelID = travel_response["travelID"]
-    #print(travelID)
     ranked_countries = sortCountries(travelID)
-    print("Hiii")
     print(ranked_countries)
     print(len(ranked_countries))
 

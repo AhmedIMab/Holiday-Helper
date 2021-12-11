@@ -16,6 +16,7 @@ def login():
         # queries the database to get the first name where the email is right
         user = User.query.filter_by(email=email).first()
         if user:
+            # check password hash is a method in the module werkzeug.security
             if check_password_hash(user.password, password):
                 flash('Login Successful', category='success')
                 login_user(user, remember=True)
