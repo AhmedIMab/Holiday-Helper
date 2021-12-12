@@ -12,7 +12,7 @@ showBestCountries.click(function (event) {
     console.log("showinggggg")
     const travelID = $("#travelIDInput").val()
     console.log("This is the travelID", travelID)
-    Api.testUserAndCountryScores(travelID).then((_res) => {
+    Api.UserCountrySuggestions(travelID).then((_res) => {
         console.log("PASSED")
         console.log(_res.json)
         window.location.href = "/suggestions/" + travelID

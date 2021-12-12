@@ -1,9 +1,9 @@
 {% extends "base.html" %} {% block title %}TEST{% endblock %}
 {% block content %}
 <div class="container pt-5">
-    <h1 align="center"><span class="text-success">Suggested Countries</span></h1>
+    <h1 align="center"><span class="text-success">Suggested Countries for Travel Session: {{ user_travel[0] }}</span></h1>
     <p class="pt-4 pb-2 text-primary" id="user-countries-header">
-        By taking into account that {{ user_travel[0] }} people are travelling for {{ user_travel[1] }} days....<br>
+        By taking into account that {{ user_travel[1] }} people are travelling for {{ user_travel[2] }} days....<br>
         We have comprised a list for you <span class="text-danger">{{ current_user.first_name }}</span>,
         of all the countries and an estimate of the cost of travelling there!
     </p>

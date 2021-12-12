@@ -173,13 +173,6 @@ def suggestions(travelID):
 
     print(AllCountries)
 
-    # ranked_countries = userCountryScore(travelID, AllCountries)
-    #
-    # # x[0] is the country code
-    # # the first part of the tuple will be replaced with value of the country code (country name) from all the countries
-    # # x[1] is the original second part of the tuple
-    # ranked_countries_UF = list(map(lambda x:(AllCountries[x[0]],x[1]), ranked_countries))
-
 
     user_travel_details = []
     try:
@@ -191,12 +184,13 @@ def suggestions(travelID):
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
         num_travellers = current_travel.num_travellers
         travelling_time = current_travel.travelling_time
+        user_travel_details.append(travelID)
         user_travel_details.append(num_travellers)
         user_travel_details.append(travelling_time)
         return render_template("suggestions.html",
-                           user=current_user,
-                           best_countries=ranked_countries_UF,
-                           user_travel=user_travel_details)
+                               user=current_user,
+                               best_countries=ranked_countries_UF,
+                               user_travel=user_travel_details)
 
     except (AttributeError, sqlalchemy.exc.IntegrityError):
         user_travel_details.append(0)
@@ -267,6 +261,7 @@ def userAnswer():
     userQuestionAnswer(questionID, answerID, 1)
 
     return jsonify({}), status.HTTP_200_OK
+
 
 
 @views.route("/api/questions/", methods=["GET"])

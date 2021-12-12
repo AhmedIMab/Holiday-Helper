@@ -64,7 +64,7 @@ class Api {
         })
     }
 
-    testUserAndCountryScores(travelID) {
+    UserCountrySuggestions(travelID) {
         return fetch("/suggestions/" + travelID, {
             method: "GET"
         })
