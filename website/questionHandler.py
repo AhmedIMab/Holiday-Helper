@@ -109,16 +109,16 @@ def haveRequirementsBeenMet(travelID, questionID):
     return requirementsMet
 
 
-# def doesUserWantThisCountry(travelID, countryCode):
-#     try:
-#         x = select(UserCountry) \
-#             .where(UserCountry.user_id == current_user.id, UserCountry.country_code == countryCode)
-#
-#         result = db.session.connection().execute
-#         result = result.fetchall()
-#         print("This is the countries the user has travelled to: ", result)
-#     except:
-#         print("Error")
+def doesUserWantThisCountry(travelID, countryCode):
+    try:
+        x = select(UserCountry) \
+            .where(UserCountry.user_id == current_user.id, UserCountry.country_code == countryCode)
+
+        result = db.session.connection().execute
+        result = result.fetchall()
+        print("This is the countries the user has travelled to: ", result)
+    except:
+        print("Error")
 
 
 def sortCountries(travelID):

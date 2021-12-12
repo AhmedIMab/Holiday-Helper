@@ -154,13 +154,16 @@ def test():
 #     return render_template("suggestions.html", user=current_user)
 
 
+@views.route("/noTravel", methods=["GET"])
+@login_required
+def noTravel():
+    return render_template("NoTravel.html", user=current_user)
+
+
 @views.route("/suggestions/<travelID>", methods=["GET"])
 @login_required
 def suggestions(travelID):
     travel_response = travelID
-    ranked_countries = sortCountries(travelID)
-    print(ranked_countries)
-    print(len(ranked_countries))
 
     countries = Country.query.all()
     AllCountries = {}
@@ -170,15 +173,21 @@ def suggestions(travelID):
 
     print(AllCountries)
 
-    # x[0] is the country code
-    # the first part of the tuple will be replaced with value of the country code (country name) from all the countries
-    # x[1] is the original second part of the tuple
-    ranked_countries_UF = list(map(lambda x:(AllCountries[x[0]],x[1]), ranked_countries))
-    # for countryX in ranked_countries_UF:
-    #     print(countryX)
+    # ranked_countries = userCountryScore(travelID, AllCountries)
+    #
+    # # x[0] is the country code
+    # # the first part of the tuple will be replaced with value of the country code (country name) from all the countries
+    # # x[1] is the original second part of the tuple
+    # ranked_countries_UF = list(map(lambda x:(AllCountries[x[0]],x[1]), ranked_countries))
+
 
     user_travel_details = []
     try:
+        ranked_countries = userCountryScore(travelID, AllCountries)
+        # x[0] is the country code
+        # the first part of the tuple will be replaced with value of the country code (country name) from all the countries
+        # x[1] is the original second part of the tuple
+        ranked_countries_UF = list(map(lambda x: (AllCountries[x[0]], x[1]), ranked_countries))
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
         num_travellers = current_travel.num_travellers
         travelling_time = current_travel.travelling_time
@@ -189,10 +198,11 @@ def suggestions(travelID):
                            best_countries=ranked_countries_UF,
                            user_travel=user_travel_details)
 
-    except AttributeError:
+    except (AttributeError, sqlalchemy.exc.IntegrityError):
         user_travel_details.append(0)
         user_travel_details.append(1)
-        return f"A travel with travelID: {travelID} was not found", status.HTTP_404_NOT_FOUND
+        return redirect(url_for('views.noTravel'))
+        #return f"A travel with travelID: {travelID} was not found", status.HTTP_404_NOT_FOUND
 
 
     print(ranked_countries_UF)
@@ -220,29 +230,29 @@ def suggestions(travelID):
 
 
 
-@views.route("/testCountryUser", methods=['GET', 'POST'])
-@login_required
-def testCountry():
-    testResponse = json.loads(request.data)
-    #print(testResponse)
-    travelID = testResponse.get("travelID")
-    #countryCode = testResponse.get("countryCode")
-
-
-    #print("XXX")
-    #print(AllCountries)
-
-    countries = Country.query.all()
-
-    AllCountries = []
-    for country in countries:
-        #print(type(country))
-        AllCountries.append(country.country_code)
-
-    userSuggestions = userCountryScore(travelID, AllCountries)
-
-    return render_template("suggestions.html", user=current_user, best_countries=userSuggestions)
-
+# @views.route("/testCountryUser", methods=['GET', 'POST'])
+# @login_required
+# def testCountry():
+#     testResponse = json.loads(request.data)
+#     #print(testResponse)
+#     travelID = testResponse.get("travelID")
+#     #countryCode = testResponse.get("countryCode")
+#
+#
+#     #print("XXX")
+#     #print(AllCountries)
+#
+#     countries = Country.query.all()
+#
+#     AllCountries = []
+#     for country in countries:
+#         #print(type(country))
+#         AllCountries.append(country.country_code)
+#
+#     userSuggestions = userCountryScore(travelID, AllCountries)
+#
+#     return render_template("suggestions.html", user=current_user, best_countries=userSuggestions)
+#
 
 
 @views.route("userQuestionAnswer", methods=["POST"])

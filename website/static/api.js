@@ -65,9 +65,8 @@ class Api {
     }
 
     testUserAndCountryScores(travelID) {
-        return fetch("/testCountryUser", {
-            method: "POST",
-            body: JSON.stringify({travelID: travelID})
+        return fetch("/suggestions/" + travelID, {
+            method: "GET"
         })
     }
 

@@ -108,7 +108,7 @@ const integerQuestion = function (event, question, answers) {
                     "placeholder": placeholder,
                     "id": "entryInput",
                     "class": "form-control",
-                    "type": "text",
+                    "type": "number",
                 }),
             createElementX(
                 "button",
@@ -132,14 +132,6 @@ const integerQuestion = function (event, question, answers) {
     //                                                         "type": "text",
     //                                                         })
 
-    // element.appendChild(answerEntry)
-    // let submitButton = createElementX("button", {"class":"btn btn-outline-primary submitButton",
-    //                                                           "type": "button"})
-
-
-    // const node = document.createTextNode("Submit")
-    // elementButton.appendChild(submitButton)
-    // submitButton.appendChild(node)
 
     element.appendChild(elementButton)
 
