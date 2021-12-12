@@ -177,10 +177,26 @@ def suggestions(travelID):
     # for countryX in ranked_countries_UF:
     #     print(countryX)
 
+    user_travel_details = []
+    try:
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+        num_travellers = current_travel.num_travellers
+        travelling_time = current_travel.travelling_time
+        user_travel_details.append(num_travellers)
+        user_travel_details.append(travelling_time)
+        return render_template("suggestions.html",
+                           user=current_user,
+                           best_countries=ranked_countries_UF,
+                           user_travel=user_travel_details)
+
+    except AttributeError:
+        user_travel_details.append(0)
+        user_travel_details.append(1)
+        return f"A travel with travelID: {travelID} was not found", status.HTTP_404_NOT_FOUND
+
+
     print(ranked_countries_UF)
 
-
-    return render_template("suggestions.html", user=current_user, best_countries=ranked_countries_UF)
 
 
 

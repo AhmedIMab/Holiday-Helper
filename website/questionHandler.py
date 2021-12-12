@@ -39,7 +39,6 @@ def getQuestion(questionID):
     return None
 
 
-
 def isQuestionAnswered(travelID, questionID):
     questionAnswered = False
     #print(current_user.id)
@@ -110,6 +109,17 @@ def haveRequirementsBeenMet(travelID, questionID):
     return requirementsMet
 
 
+# def doesUserWantThisCountry(travelID, countryCode):
+#     try:
+#         x = select(UserCountry) \
+#             .where(UserCountry.user_id == current_user.id, UserCountry.country_code == countryCode)
+#
+#         result = db.session.connection().execute
+#         result = result.fetchall()
+#         print("This is the countries the user has travelled to: ", result)
+#     except:
+#         print("Error")
+
 
 def sortCountries(travelID):
     print("sort countries is running")
@@ -133,14 +143,11 @@ def sortCountries(travelID):
         valuesToDisplay = {}
         #print(type(score))
         #print(dir(score))
-        valuesToDisplay["Your journey will cost roughly"] = travel_cost
+        valuesToDisplay["Your journey will cost approximately"] = travel_cost
         userSuggestions.append((score.country_code, valuesToDisplay))
         #print(score.country_code)
         #print(score.total_score)
         #print(score.__getitem__("country_code"))
-
-    #print(userSuggestions)
-
 
     return userSuggestions
 
@@ -152,6 +159,8 @@ def sortCountries(travelID):
 
 def userCountryScore(travelID, countryCodesL):
     # multiple enum's as inconsistent naming in databases
+    # Every enum class has the have the same order for the names
+    # e.g. WATER_SPORTS has to be first one defined in every class
     class UserCountryScoreEnum(Enum):
         WATER_SPORTS = "water_sports_score"
         WINTER_SPORTS = "winter_sports_score"
@@ -205,22 +214,22 @@ def userCountryScore(travelID, countryCodesL):
                 factor_user_score = getattr(current_travel, n.value)
                 user_score[n.name] = (factor_user_score)
                 user_score_values.append(factor_user_score)
-    # winter_sports_user_score = getattr(current_travel, "winter_sports_user_score")
-    # culture_user_score = getattr(current_travel, "water_sports_user_score")
-    # safety_user_score = getattr(current_travel, "culture_user_score")
-    # budget_user_score = getattr(current_travel, "budget_user_score")
-    # print("This is the water sports user score", water_sports_user_score)
-    # print("This is the winter sports user score", winter_sports_user_score)
-    # print("This is the culture user score", culture_user_score)
-    # print("This is the safety user score", safety_user_score)
-    # print("This is the budgets user score", budget_user_score)
-    # user_score = []
-    # user_score.append(water_sports_user_score)
-    # user_score.append(winter_sports_user_score)
-    # user_score.append(culture_user_score)
-    # user_score.append(safety_user_score)
-    # user_score.append(budget_user_score)
-    #print(user_score)
+            # winter_sports_user_score = getattr(current_travel, "winter_sports_user_score")
+            # culture_user_score = getattr(current_travel, "water_sports_user_score")
+            # safety_user_score = getattr(current_travel, "culture_user_score")
+            # budget_user_score = getattr(current_travel, "budget_user_score")
+            # print("This is the water sports user score", water_sports_user_score)
+            # print("This is the winter sports user score", winter_sports_user_score)
+            # print("This is the culture user score", culture_user_score)
+            # print("This is the safety user score", safety_user_score)
+            # print("This is the budgets user score", budget_user_score)
+            # user_score = []
+            # user_score.append(water_sports_user_score)
+            # user_score.append(winter_sports_user_score)
+            # user_score.append(culture_user_score)
+            # user_score.append(safety_user_score)
+            # user_score.append(budget_user_score)
+            #print(user_score)
 
             most_important_user_score = max(user_score_values)
             country_scores = {}
@@ -242,9 +251,6 @@ def userCountryScore(travelID, countryCodesL):
             countryScore = Cost.query.get((countryCode))
             country_scores[CountryScoreEnum.BUDGET_SCORE.name] = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
             # country_budget_score = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
-
-            #print(country_scores)
-
 
 
 
@@ -270,7 +276,7 @@ def userCountryScore(travelID, countryCodesL):
             print(country_daily_cost.daily_cost)
             if country_daily_cost.daily_cost is not None:
                 total_cost_for_country = current_travel.num_travellers * current_travel.travelling_time * country_daily_cost.daily_cost
-                print(f"This is the cost for {countryCode} £{total_cost_for_country}")
+                #print(f"This is the cost for {countryCode} £{total_cost_for_country}")
 
                 setattr(current_country, "final_travel_cost", total_cost_for_country)
             else:
@@ -288,6 +294,7 @@ def userCountryScore(travelID, countryCodesL):
                 setattr(current_country, t.value, userCountryScoresD[t.name])
 
             setattr(current_country, "total_score", totalScoreForCountry)
+
     db.session.commit()
     return sortCountries(travelID)
 

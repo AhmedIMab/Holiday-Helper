@@ -6,18 +6,17 @@ import Api from "./api.js"
 //     return _res.json
 // })
 
-
 const showBestCountries = $(".showSuggestions")
 
 showBestCountries.click(function (event) {
     console.log("showinggggg")
     const travelID = $("#travelIDInput").val()
     console.log("This is the travelID", travelID)
-    Api.testUserAndCountryScores(1).then((_res) => {
+    Api.testUserAndCountryScores(travelID).then((_res) => {
         console.log("PASSED")
         console.log(_res.json)
+        window.location.href = "/suggestions/" + travelID
     })
-    window.location.href = "/suggestions/" + travelID
 })
 
 
