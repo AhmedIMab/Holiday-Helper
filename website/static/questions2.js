@@ -2,7 +2,7 @@ import Api from "./api.js"
 
 
 // Gets the element with the class of question text
-// tO later manipulate and display the current question's text
+// To later manipulate and display the current question's text
 const questionTextP = $(".question-text")
 
 
@@ -56,7 +56,6 @@ const nextQuestion = function (event) {
             if(_res.status === 406) {
                 throw Error("No more questions");
             }
-            console.log("TESTETSETET")
             // console.log(_res.json())
             return _res.json()
         }).then((question) => {

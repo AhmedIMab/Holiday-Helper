@@ -255,10 +255,11 @@ def userAnswer():
     userAnswerResponse = json.loads(request.data)
     questionID = userAnswerResponse.get("questionID")
     answerID = userAnswerResponse.get("answerID")
+    travelID = userAnswerResponse.get("travelID")
     print(questionID)
     print(answerID)
 
-    userQuestionAnswer(questionID, answerID, 1)
+    userQuestionAnswer(questionID, answerID, travelID)
 
     return jsonify({}), status.HTTP_200_OK
 

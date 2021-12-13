@@ -75,7 +75,7 @@
     {
       "questionID": 4,
       "mandatory": true,
-      "questionText": "What type of holiday would you like to go for?",
+      "questionText": "What primary activity would you like to do on your holiday?",
       "questionType": "Multiple Choice",
       "answers": [
         {
@@ -140,8 +140,8 @@
     {
       "questionID": 5,
       "mandatory": true,
-      "questionText": "How safe would you like the country to be?",
-      "questionHelper": "1 being minimal features, 10 being extremely safe",
+      "questionText": "How much importance do you place on safety during your trip?",
+      "questionHelper": "1 being 'I don't care', 10 being 'safety is extremely important'",
       "questionType": "Multiple Choice",
       "answers": [
         {
@@ -249,7 +249,7 @@
     {
       "questionID": 6,
       "mandatory": true,
-      "questionText": "What is your approximate budget?",
+      "questionText": "How expensive would you like your destination to be?",
       "questionHelper": "1 being low budget, 10 being high budget",
       "questionType": "Multiple Choice",
       "answers": [

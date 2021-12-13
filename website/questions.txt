@@ -34,15 +34,15 @@ USERSCORE: userID | prev countries | travelling for | number of travellers | wat
 
 
 
-user | water sports | winter sports | culture | safety | budget 
-
+user | water sports | winter sports | culture | safety | budget
 
 user1: 80, 30, 10, 90, 40
-user1.: 0.89, 0.33, 0.11, 1, 0.44 
+user1: 0.89, 0.33, 0.11, 1, 0.44
 each score ranked based off the highest score
 ####### (hmmmm) and to make normalised between 1 and 100, multiply by 100 as it matches current database tables
 
 
+e.g. Afghanistan: 0, 0, 3, 0, 0
 afghanistan * user: 0, 0, 0.33, 0, 0 = 0.33
 us * user: 38.27, 33.33, 4.51, 51, 28.16 = 155.27
 

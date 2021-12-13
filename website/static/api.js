@@ -56,11 +56,12 @@ class Api {
         })
     }
 
-    sendUserResponse(questionID, answerID) {
+    // Gives travelID a default value if none is entered
+    sendUserResponse(questionID, answerID, travelID = 1) {
         return fetch("userQuestionAnswer", {
             method: "POST",
             // sends the answer to the views.py function UserAnswerQuestion
-            body: JSON.stringify({questionID: questionID, answerID: answerID})
+            body: JSON.stringify({questionID: questionID, answerID: answerID, travelID: travelID})
         })
     }
 

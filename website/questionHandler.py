@@ -64,13 +64,16 @@ def isQuestionAnswered(travelID, questionID):
                 if int(questionID) == int(questionA):
                     questionAnswered = True
                     break
+
     except (UnboundLocalError, AttributeError) as e:
         print("NOTHING ANSWERED")
 
     if questionAnswered == True:
-        print("This question has been answered", {questionID})
+        pass
+        #print("This question has been answered", {questionID})
     else:
-        print("Not answered")
+        pass
+        #print("Not answered")
 
     return questionAnswered
 
@@ -110,15 +113,17 @@ def haveRequirementsBeenMet(travelID, questionID):
 
 
 def doesUserWantThisCountry(travelID, countryCode):
-    try:
-        x = select(UserCountry) \
-            .where(UserCountry.user_id == current_user.id, UserCountry.country_code == countryCode)
+    x = select(UserCountry) \
+        .where(UserCountry.user_id == current_user.id, UserCountry.country_code == countryCode)
 
-        result = db.session.connection().execute
-        result = result.fetchall()
-        print("This is the countries the user has travelled to: ", result)
-    except:
-        print("Error")
+    result = db.session.connection().execute
+    result = result.fetchall()
+    print("This is the countries the user has travelled to: ", result)
+
+    return True
+
+def filterPrevCountries(travelID, ranked_countries):
+    pass
 
 
 def sortCountries(travelID):
@@ -259,6 +264,8 @@ def userCountryScore(travelID, countryCodesL):
                 factor_relative_score = user_score[x.name] / most_important_user_score
                 user_relative_scores[x.name] = factor_relative_score
 
+            print("This is usesr relative scores", user_relative_scores)
+
             userCountryScores = []
             userCountryScoresD = {}
             for y in UserScoreEnum:
@@ -273,7 +280,7 @@ def userCountryScore(travelID, countryCodesL):
                 userCountryScoresD[y.name] = userCountryScoreT
 
             country_daily_cost = CountryDailyCost.query.get((countryCode))
-            print(country_daily_cost.daily_cost)
+            #print(country_daily_cost.daily_cost)
             if country_daily_cost.daily_cost is not None:
                 total_cost_for_country = current_travel.num_travellers * current_travel.travelling_time * country_daily_cost.daily_cost
                 #print(f"This is the cost for {countryCode} £{total_cost_for_country}")
@@ -380,15 +387,13 @@ def getAnswer(questionID, answerID):
 
     return None
 
-
-def questionAnswered(current_travel, questionID):
-    # every time their is current travel...
-    # Checks if the answer is in the users current answered questions
-    print("Question Answered Function Is Running")
-
-    print("Question Answered Function Is Running")
-    print(questionAnswered)
-    return questionAnswered
+#
+# def questionAnswered(current_travel, questionID):
+#     # every time their is current travel...
+#     # Checks if the answer is in the users current answered questions
+#     print("Question Answered Function Is Running")
+#     print(questionAnswered)
+#     return questionAnswered
 
 
 
@@ -396,7 +401,7 @@ def questionAnswered(current_travel, questionID):
 def userQuestionAnswer(questionID, answerValue, travelID):
     question = getQuestion(questionID)
     answerIntegerValue = int(answerValue)
-    print("The answer as an integer is: ", answerIntegerValue)
+    #print("The answer as an integer is: ", answerIntegerValue)
     answer = getAnswer(questionID, answerValue)
     answerI = getAnswer(questionID, answerIntegerValue)
     questionType = question.get("questionType")
@@ -487,11 +492,11 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                 if questionAnswered == False:
                     toModify = modifier.get("modifier")
                     modificationBy = modifier.get("value")
-                    print(modificationBy)
-                    print(type(modificationBy))
+                    #print(modificationBy)
+                    #print(type(modificationBy))
                     # Gets the attribute name in the database of the modifier
                     x = getattr(current_travel, toModify)
-                    print(x)
+                    #print(x)
                     if type(x) == int:
                         print("This is an integer answer")
                         # Changes the fields value by the modification
