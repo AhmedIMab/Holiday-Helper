@@ -158,4 +158,18 @@ MENTION WHY IMPLICATED FUNCTION FOR CREATING ELEMENTS:
             #     setattr(current_travel, "num_travellers", x + answerIntegerValue)
 
 
-
+    <tbody>
+        {% for country in best_countries %}
+        <!-- sets the country name to the first part of the tuple-->
+        {% set countryName = country[0] %}
+        <!-- sets the country dictionary Which has the rough cost and value for travelling to that country  -->
+        {% set countryDict = country[2] %}
+        {% for roughCostText, roughCost in countryDict.items() %}
+            <tr>
+                <th scope="row">{{ hello }}</th>
+                <td>{{ countryName }}</td>
+                <td>{{ roughCostText }}: <span class="cost-number">£{{ roughCost}}</span></td>
+            </tr>
+        {% endfor %}
+        {% endfor %}
+    </tbody>

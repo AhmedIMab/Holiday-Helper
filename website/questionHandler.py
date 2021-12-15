@@ -142,17 +142,23 @@ def sortCountries(travelID):
     print("this is RESULT", result)
     userSuggestions = []
 
-
+    i = 1
     for score in result:
         travel_cost = score.final_travel_cost
         valuesToDisplay = {}
         #print(type(score))
         #print(dir(score))
         valuesToDisplay["Your journey will cost approximately"] = travel_cost
-        userSuggestions.append((score.country_code, valuesToDisplay))
+        #print("This is i", i)
+        userSuggestions.append((score.country_code, int(i), valuesToDisplay))
+        #print(f"This is userSuggestions in the for loop: {i} ----- {userSuggestions}")
+        i += 1
+        #time.sleep(10)
         #print(score.country_code)
         #print(score.total_score)
         #print(score.__getitem__("country_code"))
+
+    #print("This is userSuggestions outside", userSuggestions)
 
     return userSuggestions
 
@@ -303,7 +309,9 @@ def userCountryScore(travelID, countryCodesL):
             setattr(current_country, "total_score", totalScoreForCountry)
 
     db.session.commit()
-    return sortCountries(travelID)
+    sortedCountries = sortCountries(travelID)
+
+    return sortedCountries
 
 
 

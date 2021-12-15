@@ -171,7 +171,7 @@ def suggestions(travelID):
         AllCountries[country.country_code] = country.country_name
         #AllCountries.append({country.country_code: country.country_name})
 
-    print(AllCountries)
+    #print(AllCountries)
 
 
     user_travel_details = []
@@ -180,13 +180,14 @@ def suggestions(travelID):
         # x[0] is the country code
         # the first part of the tuple will be replaced with value of the country code (country name) from all the countries
         # x[1] is the original second part of the tuple
-        ranked_countries_UF = list(map(lambda x: (AllCountries[x[0]], x[1]), ranked_countries))
+        ranked_countries_UF = list(map(lambda x: (AllCountries[x[0]], x[1], x[2]), ranked_countries))
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
         num_travellers = current_travel.num_travellers
         travelling_time = current_travel.travelling_time
         user_travel_details.append(travelID)
         user_travel_details.append(num_travellers)
         user_travel_details.append(travelling_time)
+        #print("This is ranked_countries before rendering", ranked_countries_UF)
         return render_template("suggestions.html",
                                user=current_user,
                                best_countries=ranked_countries_UF,

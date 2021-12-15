@@ -22,12 +22,10 @@
         <!-- sets the country name to the first part of the tuple-->
         {% set countryName = country[0] %}
         <!-- sets the country dictionary Which has the rough cost and value for travelling to that country  -->
-        {% set countryDict = country[1] %}
-        {% set rownumber = [-1] %}
+        {% set countryDict = country[2] %}
         {% for roughCostText, roughCost in countryDict.items() %}
-        {% if rownumber.append(rownumber.pop() + 1) %}{% endif %} {# increment rownumber by 1 #}
             <tr>
-                <th scope="row">{{ rownumber[0] }}</th>
+                <th scope="row">{{ country[1] }}</th>
                 <td>{{ countryName }}</td>
                 <td>{{ roughCostText }}: <span class="cost-number">£{{ roughCost}}</span></td>
             </tr>
@@ -37,23 +35,6 @@
 </table>
 
 
-
-
-<!--<div class="container py-4">-->
-<!--      <ul class="list-group list-group-flush pt-3" id="notes">-->
-<!--            {% for country in best_countries %}-->
-<!--            &lt;!&ndash; sets the country name to the first part of the tuple&ndash;&gt;-->
-<!--            {% set countryName = country[0] %}-->
-<!--            &lt;!&ndash; sets the country dictionary Which has the rough cost and value for travelling to that country  &ndash;&gt;-->
-<!--            {% set countryDict = country[1] %}-->
-<!--            {% for roughCostText, roughCost in countryDict.items() %}-->
-<!--            <li class="list-group-item">-->
-<!--                  {{ countryName}} <p class="cost-text">{{ roughCostText }}: <span class="cost-number">£{{ roughCost}}</span></p>-->
-<!--            </li>-->
-<!--            {% endfor %}-->
-<!--            {% endfor %}-->
-<!--      </ul>-->
-<!--</div>-->
 
 
 <script
