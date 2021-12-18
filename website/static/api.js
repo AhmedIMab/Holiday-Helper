@@ -1,5 +1,3 @@
-// import $ from jQuery
-
 class Api {
     addCountry(countryCode) {
         // fetch will send a request to the 'delete-note' endpoint

@@ -1,20 +1,15 @@
 import Api from "./api.js"
 
-
 const selectedCountry = document.querySelector("#selectedCountry");
 const optionsContainer = document.querySelector(".options-container");
-
 const optionsList = document.querySelectorAll(".option");
-
 const noCountry = document.querySelector("#noCountrySelected");
-
 
 // When clicked...
 selectedCountry.addEventListener("click", () => {
   // it will toggle the countries dropdown by adding the class 'active' to it
   optionsContainer.classList.toggle("active");
 });
-
 
 // For each element in the list referencing every element with variable 'o'
 optionsList.forEach(o => {
@@ -24,35 +19,28 @@ optionsList.forEach(o => {
         $(noCountry).hide()
         selectedCountry.innerHTML = o.querySelector("label").innerHTML;
         selectedCountry.countryName = selectedCountry.innerHTML
-        let testCode = (o.querySelector("label"));
-        testCode = testCode.getAttribute("for");
+        let countryCode = (o.querySelector("label"));
+        countryCode = countryCode.getAttribute("for");
         // Adds the id of the selected option to the class selected
-        selectedCountry.countryCode = testCode;
+        selectedCountry.countryCode = countryCode;
         // closes the dropdown
         optionsContainer.classList.remove("active");
     });
 });
 
-
-
 const deleteCountryButton = $(".deleteCountryButton");
 
 deleteCountryButton.click(function (event) {
-    console.log("HELLO")
+    // sets the country code to the value of the selected country
     const countryCode = event.currentTarget.attributes["country-code"].value;
-    console.log(countryCode)
-    console.log(event.currentTarget.attributes)
+    // Runs the deleteCountry function in the API.js
     Api.deleteCountry(countryCode)
         .then((_res) => {
                 window.location.href = "/countries";
         });
-
 })
 
-
-
 const addCountryButton = $(".addCountryButton");
-
 
 addCountryButton.click(function (event) {
     // Only check second condition if first one is null (short-circuit check)
@@ -62,17 +50,8 @@ addCountryButton.click(function (event) {
                 window.location.href = "/countries";
             });
     } else {
+        // If no country is selected / the default value of "Select Countries..." has not been changed
+        // shows the noCountry element
         $(noCountry).show();
     }
-
-    console.log(selectedCountry.countryCode)
-    console.log(selectedCountry.countryName)
-    /*    const country_name_selected = $(".optionSelected").text();
-        console.log(country_name_selected)*/
-    /*    const country_code_selected = event.currentTarget.attributes
-        console.log(country_code_selected)
-        const country_name_selected = $("#optionSelected").text().trim();
-        console.log(country_name_selected)*/
 })
-
-
