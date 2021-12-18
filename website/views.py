@@ -12,37 +12,7 @@ import os
 from website.questionHandler import *
 
 
-
 views = Blueprint('views', __name__)
-
-
-
-@views.route('/notes', methods=['POST'])
-@login_required
-def add_note():
-    if request.method == 'POST':
-        # Converts the JSON coming from api.js into a python dictionary
-        note = json.loads(request.data)
-        # Accessing the note value field from the dictionary
-        noteValue = note.get('noteValue')
-        # print(noteValue)
-        if len(noteValue) < 1:
-            flash('Note is too short!', category='error')
-        else:
-            new_note = Note(data=noteValue, user_id=current_user.id)
-            db.session.add(new_note)
-            db.session.commit()
-            flash('Note added!', category='success')
-
-    return render_template("notes.html", user=current_user)
-
-
-
-@views.route('/notes', methods=['GET'])
-@login_required
-def get_notes():
-    return render_template("notes.html", user=current_user)
-
 
 
 @views.route("/usercountries", methods=["DELETE"])
@@ -61,38 +31,10 @@ def delete_country():
 
     return jsonify({})
 
-
-
-# DELETE used as more standard way - RESTful
-@views.route('/notes', methods=['DELETE'])
-@login_required
-def delete_note():
-    # we are taking the data from the POST request (from api.js)
-    # loads it as a JSON object / Python dictionary
-    note = json.loads(request.data)
-    # then we access the noteId attribute (sent with the POST request)
-    noteId = note.get('noteId')
-    # then look for the note which has that id
-    note = Note.query.get(noteId)
-    # make sure it exists
-    if note:
-        # if the user that's signed in actually owns the note - stops other users deleting each others notes
-        if note.user_id == current_user.id:
-            # delete the note
-            db.session.delete(note)
-            db.session.commit()
-
-    # return an empty response
-    return jsonify({})
-
-
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    #email = current_user
-    #user = User.query.filter_by(email=email).first()
     return render_template("home.html", user=current_user)
-
 
 
 # @views.route("/test", methods=["GET"])
