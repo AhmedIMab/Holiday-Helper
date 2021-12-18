@@ -110,7 +110,7 @@ def test():
 # def questions():
 #     if request.method == "POST":
 #         #print(app.static_folder)
-#         filename = os.path.join(app.static_folder, "test2.json")
+#         filename = os.path.join(app.static_folder, "questions.json")
 #         f = open(filename, 'r')
 #         data = json.load(f)
 #

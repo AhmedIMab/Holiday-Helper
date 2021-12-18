@@ -9,7 +9,6 @@ from sqlalchemy.sql import *
 from sqlalchemy import desc
 from sqlalchemy.sql import func
 from . import db
-from .collectionStream import CollectionStream
 from enum import Enum
 
 
@@ -17,8 +16,8 @@ def getQuestions():
     print("Function is running")
 
     # print(os.getcwd())
-    # print(os.path.join("\\website\\static\\test2.json"))
-    filename = (os.getcwd() + os.path.join('\\website\\static\\test2.json'))
+    # print(os.path.join("\\website\\static\\questions.json"))
+    filename = (os.getcwd() + os.path.join('\\website\\static\\questions.json'))
     # print(filename)
 
     f = open(filename, 'r')
@@ -335,7 +334,7 @@ def nextQuestionID(travelID):
     questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
 
     if len(questionsStream) == 0:
-        # This will only run when there are no questions left or test2.json is empty/no questions to begin with
+        # This will only run when there are no questions left or questions.json is empty/no questions to begin with
         # this series of functions is for checking questions with requirements
         questionsStream = questions
         # so only looks at questions which have requirements (non mandatory)
