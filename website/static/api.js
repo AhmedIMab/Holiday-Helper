@@ -65,7 +65,7 @@ class Api {
         })
     }
 
-    UserCountrySuggestions(travelID) {
+    userCountrySuggestions(travelID) {
         return fetch("/suggestions/" + travelID, {
             method: "GET"
         })

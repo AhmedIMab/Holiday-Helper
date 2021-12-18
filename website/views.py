@@ -95,15 +95,15 @@ def home():
 
 
 
-@views.route("/test", methods=["GET"])
-@login_required
-def test():
-    countries = Country.query.all()
-    countriess = []
-    for country in countries:
-        countriess.append({country.country_code: country.country_name})
-
-    return render_template("travelID.html", user=current_user, countries=countriess)
+# @views.route("/test", methods=["GET"])
+# @login_required
+# def test():
+#     countries = Country.query.all()
+#     countriess = []
+#     for country in countries:
+#         countriess.append({country.country_code: country.country_name})
+#
+#     return render_template("travelID.html", user=current_user, countries=countriess)
 
 # @views.route("/api/answerquestion/", methods=["POST"])
 # @login_required
@@ -147,11 +147,11 @@ def test():
 
 
 
-# @views.route("/countrySuggestions", methods=["GET"])
-# @login_required
-# def suggestions():
-#     print("This is with a GET response!")
-#     return render_template("suggestions.html", user=current_user)
+@views.route("/travelSession", methods=["GET"])
+@login_required
+def travelsession():
+    print("This is with a GET response!")
+    return render_template("travelID.html", user=current_user)
 
 
 @views.route("/noTravel", methods=["GET"])

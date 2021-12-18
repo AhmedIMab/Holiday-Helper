@@ -18,7 +18,6 @@ def getQuestions():
     # print(os.getcwd())
     # print(os.path.join("\\website\\static\\questions.json"))
     filename = (os.getcwd() + os.path.join('\\website\\static\\questions.json'))
-    # print(filename)
 
     f = open(filename, 'r')
     data = json.load(f)
@@ -67,13 +66,6 @@ def isQuestionAnswered(travelID, questionID):
     except (UnboundLocalError, AttributeError) as e:
         print("NOTHING ANSWERED")
 
-    if questionAnswered == True:
-        pass
-        #print("This question has been answered", {questionID})
-    else:
-        pass
-        #print("Not answered")
-
     return questionAnswered
 
 
@@ -112,6 +104,8 @@ def haveRequirementsBeenMet(travelID, questionID):
 
 
 def doesUserWantThisCountry(travelID, countryCode):
+    # stores a sql command which will SELECT the country where the user.id is equal to the current user
+    # and where the country code is the countryCode passed into the function (countryCode)
     x = select(UserCountry) \
         .where(UserCountry.user_id == current_user.id, UserCountry.country_code == countryCode)
 
@@ -128,40 +122,30 @@ def filterPrevCountries(travelID, ranked_countries):
 def sortCountries(travelID):
     print("sort countries is running")
     print("this is the travelID", travelID)
-    #all_user_countries = UserCountryScore.query.all()
+    # stores a sql command which will SELECT the countries where the user.id is equal to the current user
+    # and where the travel id is the same as travelID
+    # Orders the countries by highest to lowest
     x = select(UserCountryScore)\
         .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
         .order_by(UserCountryScore.total_score.desc())
-    #print(x)
-    result = db.session.connection().execute(x)
 
-    # test = db.session.query('country_code').from_statement(x)
-    # print(test)
+    # Executes the command
+    result = db.session.connection().execute(x)
     result = result.fetchall()
-    print("this is RESULT", result)
     userSuggestions = []
 
-    i = 1
+    country_number = 1
     for score in result:
         travel_cost = score.final_travel_cost
+        # Creates a dictionary to later be manipulated by the Jinja templating to display journey cost
         valuesToDisplay = {}
-        #print(type(score))
-        #print(dir(score))
+        # Sets the key with text "your journey will cost approximately" to the travel cost in the table
         valuesToDisplay["Your journey will cost approximately"] = travel_cost
-        #print("This is i", i)
-        userSuggestions.append((score.country_code, int(i), valuesToDisplay))
-        #print(f"This is userSuggestions in the for loop: {i} ----- {userSuggestions}")
-        i += 1
-        #time.sleep(10)
-        #print(score.country_code)
-        #print(score.total_score)
-        #print(score.__getitem__("country_code"))
-
-    #print("This is userSuggestions outside", userSuggestions)
+        # Adds country as a tuple to the list of userSuggestions
+        userSuggestions.append((score.country_code, int(country_number), valuesToDisplay))
+        country_number += 1
 
     return userSuggestions
-
-    #x = UserCountryScore.query.all.order_by(desc(UserCountryScore.total_score))
 
 
 
@@ -198,7 +182,10 @@ def userCountryScore(travelID, countryCodesL):
     print("IN USER COUNTRY SCORE FUNCTION")
     for countryCode in countryCodesL:
         try:
+            # Sets the current travel to the UserTravelScore of the user with primary key values
+            # user_id as the current user id and travel id key as the travel id passed into the function
             current_travel = UserTravelScore.query.get((current_user.id, travelID))
+            # Does the same
             current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
         except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
             pass
@@ -269,26 +256,25 @@ def userCountryScore(travelID, countryCodesL):
                 factor_relative_score = user_score[x.name] / most_important_user_score
                 user_relative_scores[x.name] = factor_relative_score
 
-            print("This is usesr relative scores", user_relative_scores)
-
             userCountryScores = []
             userCountryScoresD = {}
             for y in UserScoreEnum:
+                # To deal with no data for that countries factor score
                 if country_scores[y.name] is not None:
                     userCountryScoreT = user_relative_scores[y.name] * country_scores[y.name]
                 else:
+                    # When the value is NULL, sets the value to 0
                     userCountryScoreT = 0
-                #print("inside for loop!")
-                #print(user_score[y.name])
-                #print(country_scores[y.name])
+
                 userCountryScores.append(userCountryScoreT)
                 userCountryScoresD[y.name] = userCountryScoreT
 
             country_daily_cost = CountryDailyCost.query.get((countryCode))
-            #print(country_daily_cost.daily_cost)
             if country_daily_cost.daily_cost is not None:
-                total_cost_for_country = current_travel.num_travellers * current_travel.travelling_time * country_daily_cost.daily_cost
-                #print(f"This is the cost for {countryCode} £{total_cost_for_country}")
+                # To get the daily cost for the country, it will multiply the number of travellers by the
+                # travelling time and the daily cost of the country using the CountryDailyCost table
+                total_cost_for_country = current_travel.num_travellers * current_travel.travelling_time \
+                                         * country_daily_cost.daily_cost
 
                 setattr(current_country, "final_travel_cost", total_cost_for_country)
             else:
@@ -297,10 +283,9 @@ def userCountryScore(travelID, countryCodesL):
 
 
             totalScoreForCountry = sum(userCountryScores)
-            #print(totalForCountry)
 
             for t in UserCountryScoreEnum:
-                # adds the value for the factor score, modifying the value in the Enumerator
+                # adds the value for the factor score, using the value in the Enumerator
                 # e.g. the first run of the loop, t.value = water_sports_score
                 # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
                 setattr(current_country, t.value, userCountryScoresD[t.name])
@@ -308,6 +293,7 @@ def userCountryScore(travelID, countryCodesL):
             setattr(current_country, "total_score", totalScoreForCountry)
 
     db.session.commit()
+    # Runs the sortCountries function to get a list of the countries in an ordered format
     sortedCountries = sortCountries(travelID)
 
     return sortedCountries
@@ -351,7 +337,9 @@ def nextQuestionID(travelID):
             # Will only run when there are no questions to ask/questions with requirements have been met as well
             return 0
         else:
+            # sets questionsStream to only the current question
             questionsStream = questionsStream[0]
+            # returns the ID of the current question so that it can display the question with the right question ID
             return questionsStream.get("questionID")
 
     else:
@@ -363,16 +351,6 @@ def nextQuestionID(travelID):
 
 
 
-def getMandatoryQuestions():
-    questions = getQuestions()
-    mandatoryQuestions = CollectionStream(questions).filter(lambda x:x.get("mandatory") == True).collect()
-    #print(len(mandatoryQuestions))
-    #print(mandatoryQuestions)
-    return mandatoryQuestions
-
-
-
-#getMandatoryQuestions()
 
 def getAnswers(questionID):
     question = getQuestion(questionID)
@@ -394,31 +372,13 @@ def getAnswer(questionID, answerID):
 
     return None
 
-#
-# def questionAnswered(current_travel, questionID):
-#     # every time their is current travel...
-#     # Checks if the answer is in the users current answered questions
-#     print("Question Answered Function Is Running")
-#     print(questionAnswered)
-#     return questionAnswered
-
-
 
 
 def userQuestionAnswer(questionID, answerValue, travelID):
     question = getQuestion(questionID)
-    answerIntegerValue = int(answerValue)
-    #print("The answer as an integer is: ", answerIntegerValue)
     answer = getAnswer(questionID, answerValue)
-    answerI = getAnswer(questionID, answerIntegerValue)
     questionType = question.get("questionType")
-
-
-
-
     questionAnswered = False
-    #print(current_user.id)
-    #print(travelID)
 
     try:
         #print("TTTTTTTTT")
@@ -490,7 +450,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
             toModify = modifiers[0].get("modifier")
             #print(toModify)
             x = getattr(current_travel, toModify)
-            setattr(current_travel, toModify, x + answerIntegerValue)
+            setattr(current_travel, toModify, x + int(answerValue))
 
         elif questionType == "Multiple Choice":
             print("This is a Multiple Choice Question")
@@ -526,40 +486,6 @@ def userQuestionAnswer(questionID, answerValue, travelID):
         print("This question has been answered")
 
 
-
-
-
-
-
-
-    # try:
-    #     new_user_travel = UserTravelScore(user_id=current_user.id,
-    #                                       prev_countries=None,
-    #                                       travelling_time=0,
-    #                                       num_travellers=0,
-    #                                       water_sports_user_score=0,
-    #                                       winter_sports_user_score=0,
-    #                                       culture_user_score=0,
-    #                                       safety_user_score=0,
-    #                                       budget_user_score=0,
-    #                                       final_travel_cost=0)
-    #     db.session.add(new_user_travel)
-    #     db.session.commit()
-    # except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-    #     print("User has already travelled")
-    #     user_travel = UserTravelScore.query().filter(UserTravelScore.travel_id == travelID)
-    #     print(user_travel)
-    #
-    # for modifier in answers.get("modifiers"):
-    #     toModify = modifier.get("modifier")
-    #     modificationBy = modifier.get("value")
-    #     print(type(toModify))
-    #     print(toModify)
-    #     print(type(modificationBy))
-    #     print(modificationBy)
-    #     x = getattr(new_user_travel, toModify)
-    #     setattr(new_user_travel, toModify, x + modificationBy)
-    #     db.session.commit()
 
 
 

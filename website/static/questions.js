@@ -78,7 +78,7 @@ const nextQuestion = function (event) {
             // console.log(error)
             if (error == "Error: No more questions") {
                 console.log("CCC")
-                window.location.href = "/test";
+                window.location.href = "/travelSession";
             }
         })
 }
