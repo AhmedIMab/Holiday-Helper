@@ -13,44 +13,56 @@ from enum import Enum
 
 
 def getQuestions():
-    print("Function is running")
-
-    # print(os.getcwd())
-    # print(os.path.join("\\website\\static\\questions.json"))
+    # Access's the questions in the json file
     filename = (os.getcwd() + os.path.join('\\website\\static\\questions.json'))
 
     f = open(filename, 'r')
+    # uses the json module to load it as a JSON object in python
     data = json.load(f)
     allQuestions = data.get("questions")
     return allQuestions
 
 
 def getQuestion(questionID):
+    # For finding the specific question's dictionary of values
     questions = getQuestions()
-    print(questionID)
-    print("Function 2 is running")
 
     for question in questions:
+        # iterates through all the questions
         if question.get("questionID") == int(questionID):
+            # if it finds the question with the ID passed into the function, returns it
             return question
 
     return None
 
 
+def getAnswers(questionID):
+    question = getQuestion(questionID)
+    answers = question.get("answers")
+    # returns a list of all the answers for the particular question
+    # this is a dictionary which includes the answerID, text and modifiers
+    return answers
+
+
+def getAnswer(questionID, answerID):
+    answers = getAnswers(questionID)
+
+    for answer in answers:
+        if answer.get("answerID") == int(answerID):
+            # returns the specific answers' values
+            return answer
+
+    # if the answerID is not found, return None
+    return None
+
+
 def isQuestionAnswered(travelID, questionID):
     questionAnswered = False
-    #print(current_user.id)
-    #print(travelID)
-
     try:
+        # tries to get the user's current travel
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
-
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         pass
-
-    if current_travel == None:
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-
 
     try:
         y = getattr(current_travel, 'questions_answered')
@@ -64,24 +76,22 @@ def isQuestionAnswered(travelID, questionID):
                     break
 
     except (UnboundLocalError, AttributeError) as e:
-        print("NOTHING ANSWERED")
+        # Runs when no questions have been answered
+        # print("No questions answered")
+        pass
 
+    # Returns a boolean value of whether the question has or has not been answered
     return questionAnswered
 
 
 def haveRequirementsBeenMet(travelID, questionID):
     question = getQuestion(questionID)
     requirementsMet = True
-
     try:
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
 
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         pass
-
-    if current_travel == None:
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-
 
     try:
         questionRequirements = question.get("questionRequirements")
@@ -91,14 +101,13 @@ def haveRequirementsBeenMet(travelID, questionID):
             x = getattr(current_travel, requiredModifier)
             if x >= requiredValue:
                 print("requirement met")
-                #requirementsMet = True
             else:
+                # If the user does not have a greater than or equal score for the required factor
                 requirementsMet = False
                 break
-
     except:
+        # This will run when the question does not have any question requirements
         return False
-
 
     return requirementsMet
 
@@ -111,9 +120,10 @@ def doesUserWantThisCountry(travelID, countryCode):
 
     result = db.session.connection().execute
     result = result.fetchall()
-    print("This is the countries the user has travelled to: ", result)
+    print("These are the countries the user has travelled to: ", result)
 
     return True
+
 
 def filterPrevCountries(travelID, ranked_countries):
     pass
@@ -148,9 +158,6 @@ def sortCountries(travelID):
     return userSuggestions
 
 
-
-
-
 def userCountryScore(travelID, countryCodesL):
     # multiple enum's as inconsistent naming in databases
     # Every enum class has the have the same order for the names
@@ -181,16 +188,19 @@ def userCountryScore(travelID, countryCodesL):
 
     print("IN USER COUNTRY SCORE FUNCTION")
     for countryCode in countryCodesL:
+        # Loops through every country's code in the list of all countryCodes
         try:
             # Sets the current travel to the UserTravelScore of the user with primary key values
             # user_id as the current user id and travel id key as the travel id passed into the function
             current_travel = UserTravelScore.query.get((current_user.id, travelID))
-            # Does the same
+            # Does the same for the current country
             current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
         except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
             pass
 
         if current_travel == None or current_country == None:
+            # When the country does not have a score
+            # Adds a new default record
             new_user_country = UserCountryScore(user_id=current_user.id,
                                                 travel_id=travelID,
                                                 country_code=countryCode,
@@ -203,6 +213,7 @@ def userCountryScore(travelID, countryCodesL):
                                                 final_travel_cost=1)
             db.session.add(new_user_country)
             db.session.commit()
+            # sets the current_country to a query of country's newly created record
             current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
             user_score = {}
             user_score_values = []
@@ -211,45 +222,23 @@ def userCountryScore(travelID, countryCodesL):
                 factor_user_score = getattr(current_travel, n.value)
                 user_score[n.name] = (factor_user_score)
                 user_score_values.append(factor_user_score)
-            # winter_sports_user_score = getattr(current_travel, "winter_sports_user_score")
-            # culture_user_score = getattr(current_travel, "water_sports_user_score")
-            # safety_user_score = getattr(current_travel, "culture_user_score")
-            # budget_user_score = getattr(current_travel, "budget_user_score")
-            # print("This is the water sports user score", water_sports_user_score)
-            # print("This is the winter sports user score", winter_sports_user_score)
-            # print("This is the culture user score", culture_user_score)
-            # print("This is the safety user score", safety_user_score)
-            # print("This is the budgets user score", budget_user_score)
-            # user_score = []
-            # user_score.append(water_sports_user_score)
-            # user_score.append(winter_sports_user_score)
-            # user_score.append(culture_user_score)
-            # user_score.append(safety_user_score)
-            # user_score.append(budget_user_score)
-            #print(user_score)
 
             most_important_user_score = max(user_score_values)
+
             country_scores = {}
             countryScore = Sport.query.get((countryCode))
             # Adds a dictionary key of the Water Sports to the attribute of enum value for water sports
             country_scores[CountryScoreEnum.WATER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WATER_SPORTS.value)
             country_scores[CountryScoreEnum.WINTER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WINTER_SPORTS.value)
-            # country_water_sports_score = getattr(countryScore, CountryScoreEnum.WATER_SPORTS.value)
-            # country_winter_sports_score = getattr(countryScore, CountryScoreEnum.WINTER_SPORTS.value)
 
             countryScore = CulturalValue.query.get((countryCode))
             country_scores[CountryScoreEnum.CULTURE_SCORE.name] = getattr(countryScore, CountryScoreEnum.CULTURE_SCORE.value)
-            # country_culture_score = getattr(countryScore, CountryScoreEnum.CULTURE_SPORTS.value)
 
             countryScore = Safety.query.get((countryCode))
             country_scores[CountryScoreEnum.SAFETY_SCORE.name] = getattr(countryScore, CountryScoreEnum.SAFETY_SCORE.value)
-            # country_safety_score = getattr(countryScore, CountryScoreEnum.SAFETY_SCORE.value)
 
             countryScore = Cost.query.get((countryCode))
             country_scores[CountryScoreEnum.BUDGET_SCORE.name] = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
-            # country_budget_score = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
-
-
 
             user_relative_scores = {}
             for x in UserScoreEnum:
@@ -282,15 +271,16 @@ def userCountryScore(travelID, countryCodesL):
                 setattr(current_country, "final_travel_cost", total_cost_for_country)
 
 
-            totalScoreForCountry = sum(userCountryScores)
-
             for t in UserCountryScoreEnum:
-                # adds the value for the factor score, using the value in the Enumerator
+                # adds the value for the factor score, using the value in the Enumerator of the UserCountryScore table
                 # e.g. the first run of the loop, t.value = water_sports_score
                 # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
                 setattr(current_country, t.value, userCountryScoresD[t.name])
 
+            # sets the total score
+            totalScoreForCountry = sum(userCountryScores)
             setattr(current_country, "total_score", totalScoreForCountry)
+
 
     db.session.commit()
     # Runs the sortCountries function to get a list of the countries in an ordered format
@@ -351,29 +341,6 @@ def nextQuestionID(travelID):
 
 
 
-
-def getAnswers(questionID):
-    question = getQuestion(questionID)
-    #print(type(question))
-    answers = question.get("answers")
-    print("Function 3 is running")
-    #print(answers)
-    return answers
-
-
-
-def getAnswer(questionID, answerID):
-    question = getQuestion(questionID)
-    answers = question.get("answers")
-
-    for answer in answers:
-        if answer.get("answerID") == int(answerID):
-            return answer
-
-    return None
-
-
-
 def userQuestionAnswer(questionID, answerValue, travelID):
     question = getQuestion(questionID)
     answer = getAnswer(questionID, answerValue)
@@ -381,14 +348,8 @@ def userQuestionAnswer(questionID, answerValue, travelID):
     questionAnswered = False
 
     try:
-        #print("TTTTTTTTT")
-        #print(current_user.id)
-        #print(travelID)
         # Tries to get a users possible travel record
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
-
-        #print(current_travel)
-
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         pass
 
@@ -412,43 +373,26 @@ def userQuestionAnswer(questionID, answerValue, travelID):
         # sets the current_travel to a query of user's newly created record
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
 
-
-
+    # Gets the current users answered questions
     y = getattr(current_travel, 'questions_answered')
+    # splits the string at each comma to get a list containing the question ID of the questions answered
     questionsAnsweredArray = y.split(',')
     for questionA in questionsAnsweredArray:
         if questionA == "":
             pass
         else:
-            #print(f"This is the question in the array: {questionA}")
-            #print(type(questionA))
-            #print(f"This is the id of the question asked: {questionID}")
-            #print(type(questionID))
             if int(questionID) == int(questionA):
                 questionAnswered = True
                 break
 
-    # print(f"This question has been answered? {questionAnswered}")
-
-
-
-
+    # If the question hasn't been answered
     if questionAnswered == False:
-        # could use if answer == None (?) -> answer hasn't been written in JSON file yet
         if questionType == "Integer":
             print("This is an integer question")
-            # Try to make lines 153 to 162 a recursive function?
-            # Ask Dom
             answers = getAnswers(questionID)
-            #print(answers)
             modifiersX = answers[0]
-            #print(modifiersX)
-            #print(type(modifiersX))
             modifiers = modifiersX.get("modifiers")
-            #print(modifiers)
-            #print(type(modifiers))
             toModify = modifiers[0].get("modifier")
-            #print(toModify)
             x = getattr(current_travel, toModify)
             setattr(current_travel, toModify, x + int(answerValue))
 
@@ -456,14 +400,13 @@ def userQuestionAnswer(questionID, answerValue, travelID):
             print("This is a Multiple Choice Question")
             # Modifies the values of the user's score
             for modifier in answer.get("modifiers"):
+                # For every modifier in the modifiers of this answer
                 if questionAnswered == False:
+                    # checks again if the question is answered
                     toModify = modifier.get("modifier")
                     modificationBy = modifier.get("value")
-                    #print(modificationBy)
-                    #print(type(modificationBy))
                     # Gets the attribute name in the database of the modifier
                     x = getattr(current_travel, toModify)
-                    #print(x)
                     if type(x) == int:
                         print("This is an integer answer")
                         # Changes the fields value by the modification
@@ -475,7 +418,6 @@ def userQuestionAnswer(questionID, answerValue, travelID):
 
         # Adds the question to the user's questions answered
         current_travel.questions_answered = current_travel.questions_answered + (str(questionID) + ",")
-        #current_travel.questions_answered = ((y) + "," + questionID)
 
         db.session.commit()
 
@@ -489,6 +431,30 @@ def userQuestionAnswer(questionID, answerValue, travelID):
 
 
 
+
+
+
+
+
+
+# old non enum way:
+# winter_sports_user_score = getattr(current_travel, "winter_sports_user_score")
+# culture_user_score = getattr(current_travel, "water_sports_user_score")
+# safety_user_score = getattr(current_travel, "culture_user_score")
+# budget_user_score = getattr(current_travel, "budget_user_score")
+# print("This is the water sports user score", water_sports_user_score)
+# print("This is the winter sports user score", winter_sports_user_score)
+# print("This is the culture user score", culture_user_score)
+# print("This is the safety user score", safety_user_score)
+# print("This is the budgets user score", budget_user_score)
+# user_score = []
+# user_score.append(water_sports_user_score)
+# user_score.append(winter_sports_user_score)
+# user_score.append(culture_user_score)
+# user_score.append(safety_user_score)
+# user_score.append(budget_user_score)
+# print(user_score)
+# most_important_user_score = max(user_score_values)
 
 
 

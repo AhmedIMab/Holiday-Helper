@@ -70,7 +70,6 @@ const nextQuestion = function (event) {
 }
 
 
-
 const integerQuestion = function (question, answers) {
     const placeholder = question.answerPlaceholder
 
