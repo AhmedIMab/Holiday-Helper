@@ -105,23 +105,18 @@ def noTravel():
 @views.route("/suggestions/<travelID>", methods=["GET"])
 @login_required
 def suggestions(travelID):
-    travel_response = travelID
-
     countries = Country.query.all()
     AllCountries = {}
     for country in countries:
         AllCountries[country.country_code] = country.country_name
-        #AllCountries.append({country.country_code: country.country_name})
-
-    #print(AllCountries)
 
 
     user_travel_details = []
     try:
         ranked_countries = userCountryScore(travelID, AllCountries)
         # x[0] is the country code
-        # the first part of the tuple will be replaced with value of the country code (country name) from all the countries
-        # x[1] is the original second part of the tuple
+        # the first part of the tuple (x[0]) will be replaced with the the country name
+        # x[1] is the original second part of the tuple and x[2] is the 3rd part
         ranked_countries_UF = list(map(lambda x: (AllCountries[x[0]], x[1], x[2]), ranked_countries))
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
         num_travellers = current_travel.num_travellers
@@ -129,22 +124,16 @@ def suggestions(travelID):
         user_travel_details.append(travelID)
         user_travel_details.append(num_travellers)
         user_travel_details.append(travelling_time)
-        #print("This is ranked_countries before rendering", ranked_countries_UF)
         return render_template("suggestions.html",
                                user=current_user,
                                best_countries=ranked_countries_UF,
                                user_travel=user_travel_details)
 
-    except (AttributeError, sqlalchemy.exc.IntegrityError):
+    except (AttributeError, sqlalchemy.exc.IntegrityError) as e:
+        print("ERROR", e)
         user_travel_details.append(0)
         user_travel_details.append(1)
         return redirect(url_for('views.noTravel'))
-        #return f"A travel with travelID: {travelID} was not found", status.HTTP_404_NOT_FOUND
-
-
-    print(ranked_countries_UF)
-
-
 
 
 # @views.route("/countrySuggestions", methods=["GET", "POST"])
@@ -211,7 +200,6 @@ def userAnswer():
 @views.route("/api/questions/", methods=["GET"])
 @login_required
 def AllQuestions():
-    #print(app.static_folder)
     data = getQuestions()
 
     return jsonify(data)

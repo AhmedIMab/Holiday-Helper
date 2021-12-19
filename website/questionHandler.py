@@ -112,22 +112,51 @@ def haveRequirementsBeenMet(travelID, questionID):
     return requirementsMet
 
 
-def doesUserWantThisCountry(travelID, countryCode):
-    # stores a sql command which will SELECT the country where the user.id is equal to the current user
-    # and where the country code is the countryCode passed into the function (countryCode)
-    x = select(UserCountry) \
-        .where(UserCountry.user_id == current_user.id, UserCountry.country_code == countryCode)
+# Remember to add specific country code
+def doesUserWantThisCountry(countryCode):
+    # Retrieves all countries in the user country table
+    countries = UserCountry.query.all()
+    users_countries = []
 
-    result = db.session.connection().execute
-    result = result.fetchall()
-    print("These are the countries the user has travelled to: ", result)
+    # loops through every record in the list of objects (records in the table)
+    for country in countries:
+        # if the user id is the same as the current user
+        if country.user_id == current_user.id:
+            # add the country code to the list of users visited countries
+            users_countries.append(country.country_code)
 
-    return True
+    # loops through each country in the users countries
+    for country in users_countries:
+        # if the inputted country code is located in the users countries
+        if countryCode in users_countries:
+            return True
+        else:
+            return False
 
 
-def filterPrevCountries(travelID, ranked_countries):
-    pass
+def filterPrevCountries(travelID):
+    print("In filter prev countries")
+    countries = Country.query.all()
+    AllCountryCodes = []
+    for country in countries:
+        AllCountryCodes.append(country.country_code)
 
+    #print("These are all the country codes", AllCountryCodes)
+
+    # For every country code
+    # it will check if the country code is one of the users visited countries
+    # by applying a not, if the country is one of the users countries
+    # the doesUserWantThisCountry will return True
+    # as it's a not, the value will become false
+    # as a filter function which will extract elements from a list which return True
+    # it means only the countries which return false in the doesUserWantThisCountry function will be extracted
+    suggestionsStream = filter(lambda x:not(doesUserWantThisCountry(x)), AllCountryCodes)
+    suggestionsStream = list(suggestionsStream)
+
+    # print(suggestionsStream)
+    # print(len(suggestionsStream))
+
+    return suggestionsStream
 
 def sortCountries(travelID):
     print("sort countries is running")
@@ -158,7 +187,7 @@ def sortCountries(travelID):
     return userSuggestions
 
 
-def userCountryScore(travelID, countryCodesL):
+def userCountryScore(travelID, countryCodes):
     # multiple enum's as inconsistent naming in databases
     # Every enum class has the have the same order for the names
     # e.g. WATER_SPORTS has to be first one defined in every class
@@ -185,101 +214,196 @@ def userCountryScore(travelID, countryCodesL):
         BUDGET_SCORE = "budget_user_score"
 
 
+    try:
+        # Sets the current travel to the UserTravelScore of the user with primary key values
+        # user_id as the current user id and travel id key as the travel id passed into the function
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+        print(e)
 
-    print("IN USER COUNTRY SCORE FUNCTION")
-    for countryCode in countryCodesL:
-        # Loops through every country's code in the list of all countryCodes
-        try:
-            # Sets the current travel to the UserTravelScore of the user with primary key values
-            # user_id as the current user id and travel id key as the travel id passed into the function
-            current_travel = UserTravelScore.query.get((current_user.id, travelID))
+    prev_countries = getattr(current_travel, "prev_countries")
+    print(prev_countries)
+
+    if prev_countries == True:
+        # countryCode will be the key in countryCodesL
+        # So it will loop through each key and run the code for that
+        for countryCode in countryCodes:
+            # Loops through every country's code in the list of all countryCodes
             # Does the same for the current country
             current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-        except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-            pass
+            if current_travel == None or current_country == None:
+                # When the country does not have a score
+                # Adds a new default record
+                new_user_country = UserCountryScore(user_id=current_user.id,
+                                                    travel_id=travelID,
+                                                    country_code=countryCode,
+                                                    water_sports_score=0,
+                                                    winter_sports_score=0,
+                                                    culture_score=0,
+                                                    safety_score=0,
+                                                    budget_score=0,
+                                                    total_score=0,
+                                                    final_travel_cost=1)
+                db.session.add(new_user_country)
+                db.session.commit()
+                # sets the current_country to a query of country's newly created record
+                current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
+                user_score = {}
+                user_score_values = []
 
-        if current_travel == None or current_country == None:
-            # When the country does not have a score
-            # Adds a new default record
-            new_user_country = UserCountryScore(user_id=current_user.id,
-                                                travel_id=travelID,
-                                                country_code=countryCode,
-                                                water_sports_score=0,
-                                                winter_sports_score=0,
-                                                culture_score=0,
-                                                safety_score=0,
-                                                budget_score=0,
-                                                total_score=0,
-                                                final_travel_cost=1)
-            db.session.add(new_user_country)
-            db.session.commit()
-            # sets the current_country to a query of country's newly created record
-            current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-            user_score = {}
-            user_score_values = []
+                for n in UserScoreEnum:
+                    factor_user_score = getattr(current_travel, n.value)
+                    user_score[n.name] = (factor_user_score)
+                    user_score_values.append(factor_user_score)
 
-            for n in UserScoreEnum:
-                factor_user_score = getattr(current_travel, n.value)
-                user_score[n.name] = (factor_user_score)
-                user_score_values.append(factor_user_score)
+                most_important_user_score = max(user_score_values)
 
-            most_important_user_score = max(user_score_values)
+                country_scores = {}
+                countryScore = Sport.query.get((countryCode))
+                # Adds a dictionary key of the Water Sports to the attribute of enum value for water sports
+                country_scores[CountryScoreEnum.WATER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WATER_SPORTS.value)
+                country_scores[CountryScoreEnum.WINTER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WINTER_SPORTS.value)
 
-            country_scores = {}
-            countryScore = Sport.query.get((countryCode))
-            # Adds a dictionary key of the Water Sports to the attribute of enum value for water sports
-            country_scores[CountryScoreEnum.WATER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WATER_SPORTS.value)
-            country_scores[CountryScoreEnum.WINTER_SPORTS.name] = getattr(countryScore, CountryScoreEnum.WINTER_SPORTS.value)
+                countryScore = CulturalValue.query.get((countryCode))
+                country_scores[CountryScoreEnum.CULTURE_SCORE.name] = getattr(countryScore, CountryScoreEnum.CULTURE_SCORE.value)
 
-            countryScore = CulturalValue.query.get((countryCode))
-            country_scores[CountryScoreEnum.CULTURE_SCORE.name] = getattr(countryScore, CountryScoreEnum.CULTURE_SCORE.value)
+                countryScore = Safety.query.get((countryCode))
+                country_scores[CountryScoreEnum.SAFETY_SCORE.name] = getattr(countryScore, CountryScoreEnum.SAFETY_SCORE.value)
 
-            countryScore = Safety.query.get((countryCode))
-            country_scores[CountryScoreEnum.SAFETY_SCORE.name] = getattr(countryScore, CountryScoreEnum.SAFETY_SCORE.value)
+                countryScore = Cost.query.get((countryCode))
+                country_scores[CountryScoreEnum.BUDGET_SCORE.name] = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
 
-            countryScore = Cost.query.get((countryCode))
-            country_scores[CountryScoreEnum.BUDGET_SCORE.name] = getattr(countryScore, CountryScoreEnum.BUDGET_SCORE.value)
+                user_relative_scores = {}
+                for x in UserScoreEnum:
+                    factor_relative_score = user_score[x.name] / most_important_user_score
+                    user_relative_scores[x.name] = factor_relative_score
 
-            user_relative_scores = {}
-            for x in UserScoreEnum:
-                factor_relative_score = user_score[x.name] / most_important_user_score
-                user_relative_scores[x.name] = factor_relative_score
+                userCountryScores = []
+                userCountryScoresD = {}
+                for y in UserScoreEnum:
+                    # To deal with no data for that countries factor score
+                    if country_scores[y.name] is not None:
+                        userCountryScoreT = user_relative_scores[y.name] * country_scores[y.name]
+                    else:
+                        # When the value is NULL, sets the value to 0
+                        userCountryScoreT = 0
 
-            userCountryScores = []
-            userCountryScoresD = {}
-            for y in UserScoreEnum:
-                # To deal with no data for that countries factor score
-                if country_scores[y.name] is not None:
-                    userCountryScoreT = user_relative_scores[y.name] * country_scores[y.name]
+                    userCountryScores.append(userCountryScoreT)
+                    userCountryScoresD[y.name] = userCountryScoreT
+
+                country_daily_cost = CountryDailyCost.query.get((countryCode))
+                if country_daily_cost.daily_cost is not None:
+                    # To get the daily cost for the country, it will multiply the number of travellers by the
+                    # travelling time and the daily cost of the country using the CountryDailyCost table
+                    total_cost_for_country = current_travel.num_travellers * current_travel.travelling_time \
+                                             * country_daily_cost.daily_cost
+
+                    setattr(current_country, "final_travel_cost", total_cost_for_country)
                 else:
-                    # When the value is NULL, sets the value to 0
-                    userCountryScoreT = 0
-
-                userCountryScores.append(userCountryScoreT)
-                userCountryScoresD[y.name] = userCountryScoreT
-
-            country_daily_cost = CountryDailyCost.query.get((countryCode))
-            if country_daily_cost.daily_cost is not None:
-                # To get the daily cost for the country, it will multiply the number of travellers by the
-                # travelling time and the daily cost of the country using the CountryDailyCost table
-                total_cost_for_country = current_travel.num_travellers * current_travel.travelling_time \
-                                         * country_daily_cost.daily_cost
-
-                setattr(current_country, "final_travel_cost", total_cost_for_country)
-            else:
-                total_cost_for_country = 0
-                setattr(current_country, "final_travel_cost", total_cost_for_country)
+                    total_cost_for_country = 0
+                    setattr(current_country, "final_travel_cost", total_cost_for_country)
 
 
-            for t in UserCountryScoreEnum:
-                # adds the value for the factor score, using the value in the Enumerator of the UserCountryScore table
-                # e.g. the first run of the loop, t.value = water_sports_score
-                # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
-                setattr(current_country, t.value, userCountryScoresD[t.name])
+                for t in UserCountryScoreEnum:
+                    # adds the value for the factor score, using the value in the Enumerator of the UserCountryScore table
+                    # e.g. the first run of the loop, t.value = water_sports_score
+                    # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
+                    setattr(current_country, t.value, userCountryScoresD[t.name])
 
-            # sets the total score
-            totalScoreForCountry = sum(userCountryScores)
-            setattr(current_country, "total_score", totalScoreForCountry)
+                # sets the total score
+                totalScoreForCountry = sum(userCountryScores)
+                setattr(current_country, "total_score", totalScoreForCountry)
+    else:
+        # Runs when they do not want to go back to previous countries
+        countryCodes = filterPrevCountries(travelID)
+        for countryCode in countryCodes:
+            current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
+            if current_travel == None or current_country == None:
+                # When the country does not have a score
+                # Adds a new default record
+                new_user_country = UserCountryScore(user_id=current_user.id,
+                                                    travel_id=travelID,
+                                                    country_code=countryCode,
+                                                    water_sports_score=0,
+                                                    winter_sports_score=0,
+                                                    culture_score=0,
+                                                    safety_score=0,
+                                                    budget_score=0,
+                                                    total_score=0,
+                                                    final_travel_cost=1)
+                db.session.add(new_user_country)
+                db.session.commit()
+                # sets the current_country to a query of country's newly created record
+                current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
+                user_score = {}
+                user_score_values = []
+
+                for n in UserScoreEnum:
+                    factor_user_score = getattr(current_travel, n.value)
+                    user_score[n.name] = (factor_user_score)
+                    user_score_values.append(factor_user_score)
+
+                most_important_user_score = max(user_score_values)
+
+                country_scores = {}
+                countryScore = Sport.query.get((countryCode))
+                # Adds a dictionary key of the Water Sports to the attribute of enum value for water sports
+                country_scores[CountryScoreEnum.WATER_SPORTS.name] = getattr(countryScore,
+                                                                             CountryScoreEnum.WATER_SPORTS.value)
+                country_scores[CountryScoreEnum.WINTER_SPORTS.name] = getattr(countryScore,
+                                                                              CountryScoreEnum.WINTER_SPORTS.value)
+
+                countryScore = CulturalValue.query.get((countryCode))
+                country_scores[CountryScoreEnum.CULTURE_SCORE.name] = getattr(countryScore,
+                                                                              CountryScoreEnum.CULTURE_SCORE.value)
+
+                countryScore = Safety.query.get((countryCode))
+                country_scores[CountryScoreEnum.SAFETY_SCORE.name] = getattr(countryScore,
+                                                                             CountryScoreEnum.SAFETY_SCORE.value)
+
+                countryScore = Cost.query.get((countryCode))
+                country_scores[CountryScoreEnum.BUDGET_SCORE.name] = getattr(countryScore,
+                                                                             CountryScoreEnum.BUDGET_SCORE.value)
+
+                user_relative_scores = {}
+                for x in UserScoreEnum:
+                    factor_relative_score = user_score[x.name] / most_important_user_score
+                    user_relative_scores[x.name] = factor_relative_score
+
+                userCountryScores = []
+                userCountryScoresD = {}
+                for y in UserScoreEnum:
+                    # To deal with no data for that countries factor score
+                    if country_scores[y.name] is not None:
+                        userCountryScoreT = user_relative_scores[y.name] * country_scores[y.name]
+                    else:
+                        # When the value is NULL, sets the value to 0
+                        userCountryScoreT = 0
+
+                    userCountryScores.append(userCountryScoreT)
+                    userCountryScoresD[y.name] = userCountryScoreT
+
+                country_daily_cost = CountryDailyCost.query.get((countryCode))
+                if country_daily_cost.daily_cost is not None:
+                    # To get the daily cost for the country, it will multiply the number of travellers by the
+                    # travelling time and the daily cost of the country using the CountryDailyCost table
+                    total_cost_for_country = current_travel.num_travellers * current_travel.travelling_time \
+                                             * country_daily_cost.daily_cost
+
+                    setattr(current_country, "final_travel_cost", total_cost_for_country)
+                else:
+                    total_cost_for_country = 0
+                    setattr(current_country, "final_travel_cost", total_cost_for_country)
+
+                for t in UserCountryScoreEnum:
+                    # adds the value for the factor score, using the value in the Enumerator of the UserCountryScore table
+                    # e.g. the first run of the loop, t.value = water_sports_score
+                    # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
+                    setattr(current_country, t.value, userCountryScoresD[t.name])
+
+                # sets the total score
+                totalScoreForCountry = sum(userCountryScores)
+                setattr(current_country, "total_score", totalScoreForCountry)
 
 
     db.session.commit()
@@ -287,10 +411,6 @@ def userCountryScore(travelID, countryCodesL):
     sortedCountries = sortCountries(travelID)
 
     return sortedCountries
-
-
-
-
 
 
 def nextQuestionID(travelID):
@@ -303,7 +423,7 @@ def nextQuestionID(travelID):
     # so by applying a not, the value will be False
     # and the filter function extracts elements from a list which return True therefore ignoring answered questions
     # x is the current element the method is looking at (filter)
-    questionsStream = filter(lambda x:not(isQuestionAnswered(1, x.get("questionID"))), questionsStream)
+    questionsStream = filter(lambda x:not(isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
     # second filter will make sure only mandatory questions are asked
     questionsStream = filter(lambda x:x.get("mandatory") == True, questionsStream)
     # Sort the questions by the smallest to biggest questionID (integer)
@@ -318,7 +438,7 @@ def nextQuestionID(travelID):
         # same as above filter
         # needed so that if a question with requirements is answered we need to make sure it's filtered out
         # and only ask non answered questions
-        questionsStream = filter(lambda x: not(isQuestionAnswered(1, x.get("questionID"))), questionsStream)
+        questionsStream = filter(lambda x: not(isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
         # runs the function haveRequirementsBeenMet to get the questions which the user meets requirements for
         questionsStream = filter(lambda x:haveRequirementsBeenMet(travelID, x.get("questionID")), questionsStream)
         questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
