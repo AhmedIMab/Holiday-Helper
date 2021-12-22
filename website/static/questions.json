@@ -5,6 +5,7 @@
       "mandatory": true,
       "questionRequirements": null,
       "questionText": "How many people are travelling?",
+      "questionHelper": "",
       "questionType": "Integer",
       "answerPlaceholder": "Enter the number of people...",
       "answers": [
@@ -24,6 +25,7 @@
       "questionID": 2,
       "mandatory": true,
       "questionText": "Would you like to go to previous countries?",
+      "questionHelper": "",
       "questionType": "Multiple Choice",
       "ToNote": "Boolean",
       "answers": [
@@ -55,6 +57,7 @@
       "questionID": 3,
       "mandatory": true,
       "questionText": "How long would you like to travel for?",
+      "questionHelper": "",
       "questionType": "Integer",
       "answerPlaceholder": "Enter the number of days...",
       "answers": [
@@ -76,6 +79,7 @@
       "questionID": 4,
       "mandatory": true,
       "questionText": "What primary activity would you like to do on your holiday?",
+      "questionHelper": "",
       "questionType": "Multiple Choice",
       "answers": [
         {
@@ -141,7 +145,7 @@
       "questionID": 5,
       "mandatory": true,
       "questionText": "How much importance do you place on safety during your trip?",
-      "questionHelper": "1 being 'I don't care', 10 being 'safety is extremely important'",
+      "questionHelper": "1 being 'I don't mind', 10 being 'safety is extremely important'",
       "questionType": "Multiple Choice",
       "answers": [
         {
@@ -359,6 +363,7 @@
       "questionID": 7,
       "mandatory": true,
       "questionText": "Would you like to factor in current covid restrictions?",
+      "questionHelper": "",
       "questionType": "Multiple Choice",
       "ToNote": "Boolean",
       "answers": [
@@ -396,6 +401,7 @@
         }
       ],
       "questionText": "How much time do you plan to allocate to water sport activities?",
+      "questionHelper": "",
       "questionType": "Multiple Choice",
       "answers": [
         {
@@ -510,6 +516,7 @@
         }
       ],
       "questionText": "How much time do you plan to allocate to winter sport activities?",
+      "questionHelper": "",
       "questionType": "Multiple Choice",
       "answers": [
         {
@@ -624,6 +631,7 @@
         }
       ],
       "questionText": "How much time do you plan to allocate to tourist activities",
+      "questionHelper": "",
       "questionType": "Multiple Choice",
       "answers": [
         {

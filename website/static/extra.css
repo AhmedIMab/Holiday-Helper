@@ -128,3 +128,12 @@
 #no-travel-p {
   font-size: 18px;
 }
+
+.helper-text {
+  font-size: 15px;
+  color: #33a133;
+}
+
+.signup-warning {
+  color: #f8bb21;
+}

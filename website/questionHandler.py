@@ -153,9 +153,6 @@ def filterPrevCountries(travelID):
     suggestionsStream = filter(lambda x:not(doesUserWantThisCountry(x)), AllCountryCodes)
     suggestionsStream = list(suggestionsStream)
 
-    # print(suggestionsStream)
-    # print(len(suggestionsStream))
-
     return suggestionsStream
 
 def sortCountries(travelID):
@@ -185,7 +182,6 @@ def sortCountries(travelID):
         country_number += 1
 
     return userSuggestions
-
 
 def calculateCountryScores(travelID, countryCodes):
     # multiple enum's as inconsistent naming in databases
@@ -313,6 +309,7 @@ def calculateCountryScores(travelID, countryCodes):
             setattr(current_country, "total_score", totalScoreForCountry)
 
     db.session.commit()
+
 
 def userCountryScore(travelID, countryCodes):
     try:

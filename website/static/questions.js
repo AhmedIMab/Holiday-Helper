@@ -52,6 +52,7 @@ const nextQuestion = function (event) {
             // 'question' here is the same as _res.json
             // Removes all the old answers
             removeAllChildNodes(document.getElementById("answer-container"))
+            removeAllChildNodes(document.getElementsByClassName("helper-text"))
             // Changes the questionTextP element's text to the current questions text
             questionTextP.text(question.questionText)
             const questionType = question.questionType
@@ -123,6 +124,8 @@ const integerQuestion = function (question, answers) {
 
 const multipleChoiceQuestion = function (question, answers) {
     const element = document.getElementById("answer-container")
+    const questionContainer = document.getElementById("question-container")
+
     const answer_buttons = createElementX(
             "section",
             {
@@ -138,6 +141,28 @@ const multipleChoiceQuestion = function (question, answers) {
             ])
 
     element.appendChild(answer_buttons)
+
+    const helper = question.questionHelper
+
+    console.log(helper)
+
+    if (helper == "") {
+        // Do nothing
+    }
+    else {
+        console.log("TEST")
+        const question_helper = createElementX(
+            "p",
+            {
+                "align": "center",
+                "class": "pt-3 helper-text",
+                "id": "q-helper"
+            },
+            [
+                document.createTextNode(helper)
+            ])
+        answer_buttons.appendChild(question_helper)
+    }
 
     for (let i = 0; i < answers.length; i++) {
         // Loops through the list of dictionaries of the answers

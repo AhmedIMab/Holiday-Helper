@@ -50,11 +50,9 @@ def sigh_up():
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Email already exists', category='error')
-        elif len(email) < 4:
+        elif len(first_name) < 2:
             # You can 'flash' a message to the user if their are any messages to send
             # via the built-in flask flash method
-            flash('Email must be greater than 3 characters', category='error')
-        elif len(first_name) < 2:
             flash('First name must be greater than 1 character', category='error')
         elif password1 != password2:
             # The backslash escapes the issue of clashing speech marks and apostrophes
