@@ -102,6 +102,7 @@ def noTravel():
     return render_template("NoTravel.html", user=current_user)
 
 
+
 @views.route("/suggestions/<travelID>", methods=["GET"])
 @login_required
 def suggestions(travelID):

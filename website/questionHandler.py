@@ -112,7 +112,6 @@ def haveRequirementsBeenMet(travelID, questionID):
     return requirementsMet
 
 
-# Remember to add specific country code
 def doesUserWantThisCountry(countryCode):
     # Retrieves all countries in the user country table
     countries = UserCountry.query.all()
@@ -134,14 +133,12 @@ def doesUserWantThisCountry(countryCode):
             return False
 
 
-def filterPrevCountries(travelID):
+def filterPrevCountries():
     print("In filter prev countries")
     countries = Country.query.all()
     AllCountryCodes = []
     for country in countries:
         AllCountryCodes.append(country.country_code)
-
-    #print("These are all the country codes", AllCountryCodes)
 
     # For every country code
     # it will check if the country code is one of the users visited countries
@@ -155,33 +152,58 @@ def filterPrevCountries(travelID):
 
     return suggestionsStream
 
+# def sortCountries(travelID):
+#     print("sort countries is running")
+#     # stores a sql command which will SELECT the countries where the user.id is equal to the current user
+#     # and where the travel id is the same as travelID
+#     # Orders the countries by highest to lowest
+#     x = select(UserCountryScore)\
+#         .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
+#         .order_by(UserCountryScore.total_score.desc())
+#
+#     # Executes the command
+#     result = db.session.connection().execute(x)
+#     result = result.fetchall()
+#     userSuggestions = []
+#
+#     country_number = 1
+#     for score in result:
+#         travel_cost = score.final_travel_cost
+#         # Creates a dictionary to later be manipulated by the Jinja templating to display journey cost
+#         valuesToDisplay = {}
+#         # Sets the key with text "your journey will cost approximately" to the travel cost in the table
+#         valuesToDisplay["Your journey will cost approximately"] = travel_cost
+#         # Adds country as a tuple to the list of userSuggestions
+#         userSuggestions.append((score.country_code, int(country_number), valuesToDisplay))
+#         country_number += 1
+#
+#     return userSuggestions
+
+
 def sortCountries(travelID):
     print("sort countries is running")
-    print("this is the travelID", travelID)
-    # stores a sql command which will SELECT the countries where the user.id is equal to the current user
-    # and where the travel id is the same as travelID
-    # Orders the countries by highest to lowest
-    x = select(UserCountryScore)\
-        .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
-        .order_by(UserCountryScore.total_score.desc())
-
     # Executes the command
-    result = db.session.connection().execute(x)
-    result = result.fetchall()
     userSuggestions = []
 
+    filteredCountries = filterPrevCountries()
+
     country_number = 1
-    for score in result:
-        travel_cost = score.final_travel_cost
+    for country in filteredCountries:
+        #print(score)
+        result = UserCountryScore.query.get((current_user.id, travelID, country))
+        #print(result)
+        travelCost = result.final_travel_cost
         # Creates a dictionary to later be manipulated by the Jinja templating to display journey cost
         valuesToDisplay = {}
         # Sets the key with text "your journey will cost approximately" to the travel cost in the table
-        valuesToDisplay["Your journey will cost approximately"] = travel_cost
+        valuesToDisplay["Your journey will cost approximately"] = travelCost
         # Adds country as a tuple to the list of userSuggestions
-        userSuggestions.append((score.country_code, int(country_number), valuesToDisplay))
+        userSuggestions.append((country, int(country_number), valuesToDisplay))
         country_number += 1
 
+
     return userSuggestions
+
 
 def calculateCountryScores(travelID, countryCodes):
     # multiple enum's as inconsistent naming in databases
@@ -322,15 +344,14 @@ def userCountryScore(travelID, countryCodes):
     prev_countries = getattr(current_travel, "prev_countries")
     print(prev_countries)
 
-    if prev_countries == True:
-        calculateCountryScores(travelID, countryCodes)
-    else:
-        # Runs when they do not want to go back to previous countries
-        countryCodes = filterPrevCountries(travelID)
-        calculateCountryScores(travelID, countryCodes)
+    calculateCountryScores(travelID, countryCodes)
+
+    sortedCountries = filterPrevCountries()
 
     # Runs the sortCountries function to get a list of the countries in an ordered format
     sortedCountries = sortCountries(travelID)
+
+
     return sortedCountries
 
 
@@ -398,7 +419,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
         # if the user has not travelled yet
         # Creates a new record for them
         new_user_travel = UserTravelScore(user_id=current_user.id,
-                                          travel_id=1,
+                                          travel_id=travelID+1,
                                           questions_answered="",
                                           prev_countries=None,
                                           travelling_time=0,
