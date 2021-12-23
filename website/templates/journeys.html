@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block title %}Journeys{% endblock %}
+{% block content %}
+<div class="container pt-5">
+      <h1 align="center">Find your Journey Suggestions</h1>
+</div>
+
+
+
+<div class="container pt-3" align="center">
+    <button type="submit" class="bte btn-primary newJourney">New Journey</button>
+</div>
+
+
+
+
+<script
+    type="module"
+    src="{{ url_for('static', filename='journeys.js') }}"
+></script>
+{% endblock %}
