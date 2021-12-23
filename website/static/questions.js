@@ -4,6 +4,9 @@ import Api from "./api.js"
 // To later manipulate and display the current question's text
 const questionTextP = $(".question-text")
 const questionAnswerP = $("#answer-container")
+const showBestCountries = $(".showSuggestions")
+const waitMessage = document.querySelector("#pleaseWait");
+
 
 const removeAllChildNodes = function (parent) {
     // When the parent has a child
@@ -38,8 +41,8 @@ function createElementX (type, attributes, children=[]) {
     return element
 }
 
-const nextQuestion = function (event) {
-    Api.getLatestQuestion()
+const nextQuestion = function (travelID) {
+    Api.getLatestQuestion(travelID)
         .then((_res) => {
             // If there is a Not Acceptable error (code: 406)
             if(_res.status === 406) {
@@ -58,20 +61,22 @@ const nextQuestion = function (event) {
             const questionType = question.questionType
             const answers = question.answers
             if (questionType == "Multiple Choice") {
-                multipleChoiceQuestion(question, answers)
+                multipleChoiceQuestion(question, answers, travelID)
 
             } else if (questionType == "Integer") {
-                integerQuestion(question, answers)
+                integerQuestion(question, answers, travelID)
             }
         }).catch((error) => {
+            console.log("This is the error", error)
             if (error == "Error: No more questions") {
-                window.location.href = "/travelSession";
+
+                window.location.href = "/suggestions/" + travelID;
             }
         })
 }
 
 
-const integerQuestion = function (question, answers) {
+const integerQuestion = function (question, answers, travelID) {
     const placeholder = question.answerPlaceholder
 
     const element = document.getElementById("answer-container")
@@ -114,15 +119,15 @@ const integerQuestion = function (question, answers) {
         console.log("submit button clicked!")
         const answerValue = $("#entryInput").val();
         const questionID = question.questionID
-        Api.sendUserResponse(questionID, answerValue).then(() => {
-            nextQuestion(event)
+        Api.sendUserResponse(questionID, answerValue, travelID).then(() => {
+            nextQuestion(travelID)
         });
 
     })
 }
 
 
-const multipleChoiceQuestion = function (question, answers) {
+const multipleChoiceQuestion = function (question, answers, travelID) {
     const element = document.getElementById("answer-container")
     const questionContainer = document.getElementById("question-container")
 
@@ -150,7 +155,6 @@ const multipleChoiceQuestion = function (question, answers) {
         // Do nothing
     }
     else {
-        console.log("TEST")
         const question_helper = createElementX(
             "p",
             {
@@ -193,17 +197,22 @@ const multipleChoiceQuestion = function (question, answers) {
     answerButton.click(function (event) {
         const questionID = event.currentTarget.attributes["questionID"].value;
         const answerID = event.currentTarget.attributes["answerID"].value;
-        Api.sendUserResponse(questionID, answerID).then(() => {
+        Api.sendUserResponse(questionID, answerID, travelID).then(() => {
             // After it runs the sendUserResponse function in api.js
             // runs the nextQuestion function which displays the next question
-            nextQuestion()
+            nextQuestion(travelID)
         });
     })
 }
 
 // shows the next question the user should get
-nextQuestion()
-
+Api.newTravel()
+    .then((_res) => {
+        return _res.json()
+    }).then((travelID) => {
+        console.log("This is the newest travelID", travelID)
+        nextQuestion(travelID)
+    })
 
 
 

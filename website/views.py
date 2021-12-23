@@ -89,11 +89,20 @@ def home():
 
 
 
-@views.route("/travelSession", methods=["GET"])
+@views.route("/travelID", methods=["GET"])
 @login_required
-def travelsession():
-    print("This is with a GET response!")
-    return render_template("travelID.html", user=current_user)
+def newTravel():
+    newTravelID = getNewTravelID()
+    return jsonify(newTravelID)
+
+
+
+@views.route("/journeys", methods=["GET"])
+@login_required
+def journey():
+    getNewTravelID()
+    return render_template("journeys.html", user=current_user)
+
 
 
 @views.route("/noTravel", methods=["GET"])
@@ -185,12 +194,11 @@ def suggestions(travelID):
 @views.route("userQuestionAnswer", methods=["POST"])
 @login_required
 def userAnswer():
+    print("userQuestionAnswer VIEWS is running")
     userAnswerResponse = json.loads(request.data)
     questionID = userAnswerResponse.get("questionID")
     answerID = userAnswerResponse.get("answerID")
     travelID = userAnswerResponse.get("travelID")
-    print(questionID)
-    print(answerID)
 
     userQuestionAnswer(questionID, answerID, travelID)
 
@@ -207,20 +215,15 @@ def AllQuestions():
 
 
 
-
-
-@views.route("/api/questions/nextQuestion", methods=["GET"])
+@views.route("/api/questions/nextQuestion/<travelID>", methods=["GET"])
 @login_required
-def nextQuestion():
-    travelID = 1
+def nextQuestion(travelID):
     questionID = nextQuestionID(travelID)
     question = getQuestion(questionID)
-    print("THIS IS QUESTION ID in next question views", questionID)
+    print("This is question in nextQuestion VIEWS.py", question)
 
     if question == None:
         return f"A question with questionID: {questionID} was not found", status.HTTP_406_NOT_ACCEPTABLE
-
-
     else:
         return question, status.HTTP_200_OK
 

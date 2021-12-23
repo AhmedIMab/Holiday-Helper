@@ -20,20 +20,27 @@ class Api {
         })
     }
 
-    getLatestQuestion() {
-        return fetch("/api/questions/nextQuestion", {
+    getLatestQuestion(travelID) {
+        return fetch("/api/questions/nextQuestion/" + travelID, {
             method: "GET"
         })
     }
 
     // Gives travelID a default value if none is entered
-    sendUserResponse(questionID, answerID, travelID = 1) {
+    sendUserResponse(questionID, answerID, travelID) {
         return fetch("userQuestionAnswer", {
             method: "POST",
             // sends the answer to the views.py function UserAnswerQuestion
             body: JSON.stringify({questionID: questionID, answerID: answerID, travelID: travelID})
         })
     }
+
+    newTravel() {
+        return fetch("travelID", {
+            method: "GET"
+        })
+    }
+
 
     userCountrySuggestions(travelID) {
         return fetch("/suggestions/" + travelID, {

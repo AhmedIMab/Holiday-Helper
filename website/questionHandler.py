@@ -2,14 +2,29 @@ import json
 import os
 import sqlite3
 import sqlalchemy.exc
-from .models import Note, User, Country, UserCountry, UserTravelScore, Sport, Cost, CulturalValue, CovidRestrictions, Safety
-from .models import UserCountryScore, CountryDailyCost
+from .models import Note, User, Country, UserCountry, UserTravelScore, Sport, Cost, CulturalValue
+from .models import UserCountryScore, CountryDailyCost, CovidRestrictions, Safety
 from flask_login import login_required, current_user
 from sqlalchemy.sql import *
 from sqlalchemy import desc
 from sqlalchemy.sql import func
 from . import db
 from enum import Enum
+
+
+def getNewTravelID():
+    x = select(UserTravelScore)\
+            .where(UserTravelScore.user_id == current_user.id)
+    result = db.session.connection().execute(x)
+    result = result.fetchall()
+    travelIDs = []
+    for travel in result:
+        travelID = travel[1]
+        travelIDs.append(travelID)
+
+    newTravelID = max(travelIDs) + 1
+    #print(newTravelID)
+    return newTravelID
 
 
 def getQuestions():
@@ -62,10 +77,13 @@ def isQuestionAnswered(travelID, questionID):
         # tries to get the user's current travel
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        pass
+        print("E4 i guess", e)
+
+    print("current travel in isQuestionAnswered", current_travel)
 
     try:
         y = getattr(current_travel, 'questions_answered')
+        print("this is yyyy", y)
         questionsAnsweredArray = y.split(',')
         for questionA in questionsAnsweredArray:
             if questionA == "":
@@ -78,7 +96,9 @@ def isQuestionAnswered(travelID, questionID):
     except (UnboundLocalError, AttributeError) as e:
         # Runs when no questions have been answered
         # print("No questions answered")
-        pass
+        print("E3", e)
+
+    print("questionAnswered", questionAnswered)
 
     # Returns a boolean value of whether the question has or has not been answered
     return questionAnswered
@@ -91,7 +111,7 @@ def haveRequirementsBeenMet(travelID, questionID):
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
 
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        pass
+        print("THIS IS E2", e)
 
     try:
         questionRequirements = question.get("questionRequirements")
@@ -110,6 +130,50 @@ def haveRequirementsBeenMet(travelID, questionID):
         return False
 
     return requirementsMet
+
+
+def nextQuestionID(travelID):
+    questions = getQuestions()
+    questionsStream = questions
+
+    # filter will ask the questions which have not been answered
+    # by applying a not to the return of isQuestionAnswered so isQuestionAnswered will take the questionID and travelID
+    # it will return True if the question has been answered
+    # so by applying a not, the value will be False
+    # and the filter function extracts elements from a list which return True therefore ignoring answered questions
+    # x is the current element the method is looking at (filter)
+    questionsStream = filter(lambda x:not(isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
+    # second filter will make sure only mandatory questions are asked
+    questionsStream = filter(lambda x:x.get("mandatory") == True, questionsStream)
+    # Sort the questions by the smallest to biggest questionID (integer)
+    questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
+
+    if len(questionsStream) == 0:
+        # This will only run when there are no questions left or questions.json is empty/no questions to begin with
+        # this series of functions is for checking questions with requirements
+        questionsStream = questions
+        # so only looks at questions which have requirements (non mandatory)
+        questionsStream = filter(lambda x:x.get("mandatory") == False, questionsStream)
+        # same as above filter
+        # needed so that if a question with requirements is answered we need to make sure it's filtered out
+        # and only ask non answered questions
+        questionsStream = filter(lambda x: not(isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
+        # runs the function haveRequirementsBeenMet to get the questions which the user meets requirements for
+        questionsStream = filter(lambda x:haveRequirementsBeenMet(travelID, x.get("questionID")), questionsStream)
+        questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
+
+        if len(questionsStream) == 0:
+            # Will only run when there are no questions to ask/questions with requirements have been met as well
+            return 0
+        else:
+            # sets questionsStream to only the current question
+            questionsStream = questionsStream[0]
+            # returns the ID of the current question so that it can display the question with the right question ID
+            return questionsStream.get("questionID")
+
+    else:
+        questionsStream = questionsStream[0]
+        return questionsStream.get("questionID")
 
 
 def doesUserWantThisCountry(countryCode):
@@ -355,52 +419,6 @@ def userCountryScore(travelID, countryCodes):
     return sortedCountries
 
 
-def nextQuestionID(travelID):
-    questions = getQuestions()
-    questionsStream = questions
-
-    # filter will ask the questions which have not been answered
-    # by applying a not to the return of isQuestionAnswered so isQuestionAnswered will take the questionID and travelID
-    # it will return True if the question has been answered
-    # so by applying a not, the value will be False
-    # and the filter function extracts elements from a list which return True therefore ignoring answered questions
-    # x is the current element the method is looking at (filter)
-    questionsStream = filter(lambda x:not(isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
-    # second filter will make sure only mandatory questions are asked
-    questionsStream = filter(lambda x:x.get("mandatory") == True, questionsStream)
-    # Sort the questions by the smallest to biggest questionID (integer)
-    questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
-
-    if len(questionsStream) == 0:
-        # This will only run when there are no questions left or questions.json is empty/no questions to begin with
-        # this series of functions is for checking questions with requirements
-        questionsStream = questions
-        # so only looks at questions which have requirements (non mandatory)
-        questionsStream = filter(lambda x:x.get("mandatory") == False, questionsStream)
-        # same as above filter
-        # needed so that if a question with requirements is answered we need to make sure it's filtered out
-        # and only ask non answered questions
-        questionsStream = filter(lambda x: not(isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
-        # runs the function haveRequirementsBeenMet to get the questions which the user meets requirements for
-        questionsStream = filter(lambda x:haveRequirementsBeenMet(travelID, x.get("questionID")), questionsStream)
-        questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
-
-        if len(questionsStream) == 0:
-            # Will only run when there are no questions to ask/questions with requirements have been met as well
-            return 0
-        else:
-            # sets questionsStream to only the current question
-            questionsStream = questionsStream[0]
-            # returns the ID of the current question so that it can display the question with the right question ID
-            return questionsStream.get("questionID")
-
-    else:
-        questionsStream = questionsStream[0]
-        return questionsStream.get("questionID")
-
-
-    print(questionsStream)
-
 
 
 def userQuestionAnswer(questionID, answerValue, travelID):
@@ -408,18 +426,22 @@ def userQuestionAnswer(questionID, answerValue, travelID):
     answer = getAnswer(questionID, answerValue)
     questionType = question.get("questionType")
     questionAnswered = False
+    print("IN USER QUESTION ANSWER")
+    print("QuestionID:", questionID)
+    print("answerValue:", answerValue)
+    print("travelID:", travelID)
 
     try:
         # Tries to get a users possible travel record
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        pass
+        print("This is E", e)
 
     if current_travel == None:
         # if the user has not travelled yet
         # Creates a new record for them
         new_user_travel = UserTravelScore(user_id=current_user.id,
-                                          travel_id=travelID+1,
+                                          travel_id=travelID,
                                           questions_answered="",
                                           prev_countries=None,
                                           travelling_time=0,
@@ -435,7 +457,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
         # sets the current_travel to a query of user's newly created record
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
 
-    # Gets the current users answered questions
+    print("This current travel", current_travel)
     y = getattr(current_travel, 'questions_answered')
     # splits the string at each comma to get a list containing the question ID of the questions answered
     questionsAnsweredArray = y.split(',')
