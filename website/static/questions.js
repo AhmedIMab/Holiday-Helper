@@ -230,9 +230,10 @@ const multipleChoiceQuestion = function (question, answers, travelID) {
 // shows the next question the user should get
 Api.newTravel()
     .then((_res) => {
-        return _res.json()
+        const travelID = _res.json()
+        return travelID
     }).then((travelID) => {
-        console.log("This is the newest travelID", travelID)
+        console.log("This is travelIIIIID", travelID)
         nextQuestion(travelID)
     })
 

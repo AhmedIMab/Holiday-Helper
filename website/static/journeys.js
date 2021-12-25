@@ -2,6 +2,8 @@ import Api from "./api.js"
 
 const newJourneyButton = $(".newJourney")
 const journeyButton = $(".travel")
+const waitMessage = $("#pleaseWait");
+
 
 newJourneyButton.click(function () {
     console.log("Hello")
@@ -11,7 +13,7 @@ newJourneyButton.click(function () {
         }).then((travelID) => {
             console.log("This is the newest travelID", travelID)
             window.location.href = "/questions";
-            console.log("after href")
+            return travelID
         })
 })
 
@@ -37,9 +39,7 @@ journeyButton.click(function (event) {
                 $(waitMessage).show();
                 Api.userCountrySuggestions(travelID)
                     // Gets the response from the userCountrySuggestions API function
-                    .then((_res) => {
-                        console.log("PASSED")
-                        console.log(_res.json)
+                    .then(() => {
                         window.location.href = "/suggestions/" + travelID
                     })
             }
