@@ -1,8 +1,7 @@
 import Api from "./api.js"
 
-
 const newJourneyButton = $(".newJourney")
-
+const journeyButton = $(".travel")
 
 newJourneyButton.click(function () {
     console.log("Hello")
@@ -15,3 +14,37 @@ newJourneyButton.click(function () {
             console.log("after href")
         })
 })
+
+
+journeyButton.click(function (event) {
+    const travelID = event.currentTarget.id;
+    console.log(travelID)
+    Api.getLatestQuestion(travelID)
+        .then((_res) => {
+            // If there is a Not Acceptable error (code: 406)
+            if (_res.status === 406) {
+                // Generates an error object which says the message "No more questions"
+                // as this status code will only be returned by views.py when there are no more questions
+                throw Error("No more questions");
+            }
+            else {
+                window.location.href = "/questions"
+            }
+        }).catch((error) => {
+            console.log("This is the error", error)
+            if (error == "Error: No more questions") {
+                // Wait message displayed while running the algorithm for ranking countries
+                $(waitMessage).show();
+                Api.userCountrySuggestions(travelID)
+                    // Gets the response from the userCountrySuggestions API function
+                    .then((_res) => {
+                        console.log("PASSED")
+                        console.log(_res.json)
+                        window.location.href = "/suggestions/" + travelID
+                    })
+            }
+        })
+})
+
+
+

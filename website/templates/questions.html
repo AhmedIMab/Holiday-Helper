@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title %}Travelling{% endblock %}
 {% block content %}
 <div class="container pt-5" id="question-container">
-    <h2 align="center">Hello {{ user.first_name }}, Journey Number: </h2>
+    <h2 align="center">Hello {{ user.first_name }}</h2>
     <p class="question-text pt-4" align="center"></p>
 </div>
 
@@ -9,10 +9,8 @@
 
 </div>
 
-
 <div class="container pt-3" align="center">
-    <button type="button" class="btn btn-outline-primary mt-4 showSuggestions">Show best countries</button>
-    <p id="pleaseWait" class="text-success pt-3" style="display:none" class="pt-3">
+    <p id="pleaseWait" class="text-success pt-3" style="display:none">
         Please wait...
     </p>
 </div>

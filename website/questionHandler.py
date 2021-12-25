@@ -10,6 +10,7 @@ from sqlalchemy import desc
 from sqlalchemy.sql import func
 from . import db
 from enum import Enum
+from datetime import datetime
 
 
 def getNewTravelID():
@@ -17,14 +18,20 @@ def getNewTravelID():
             .where(UserTravelScore.user_id == current_user.id)
     result = db.session.connection().execute(x)
     result = result.fetchall()
-    travelIDs = []
-    for travel in result:
-        travelID = travel[1]
-        travelIDs.append(travelID)
+    print("THIS IS RESULT", result)
 
-    newTravelID = max(travelIDs) + 1
-    #print(newTravelID)
-    return newTravelID
+    travelIDs = []
+    try:
+        for travel in result:
+            travelID = travel[1]
+            travelIDs.append(travelID)
+
+        newTravelID = max(travelIDs) + 1
+        return newTravelID
+    except (ValueError):
+        # When the user hasn't travelled yet
+        travelID = 1
+        return travelID
 
 
 def getQuestions():
@@ -77,13 +84,10 @@ def isQuestionAnswered(travelID, questionID):
         # tries to get the user's current travel
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print("E4 i guess", e)
-
-    print("current travel in isQuestionAnswered", current_travel)
+        print(e)
 
     try:
         y = getattr(current_travel, 'questions_answered')
-        print("this is yyyy", y)
         questionsAnsweredArray = y.split(',')
         for questionA in questionsAnsweredArray:
             if questionA == "":
@@ -95,10 +99,9 @@ def isQuestionAnswered(travelID, questionID):
 
     except (UnboundLocalError, AttributeError) as e:
         # Runs when no questions have been answered
-        # print("No questions answered")
-        print("E3", e)
+        pass
 
-    print("questionAnswered", questionAnswered)
+    #print("questionAnswered", questionAnswered)
 
     # Returns a boolean value of whether the question has or has not been answered
     return questionAnswered
@@ -197,12 +200,12 @@ def doesUserWantThisCountry(countryCode):
             return False
 
 
-def filterPrevCountries():
+def filterPrevCountries(codes):
     print("In filter prev countries")
-    countries = Country.query.all()
-    AllCountryCodes = []
-    for country in countries:
-        AllCountryCodes.append(country.country_code)
+    # countries = Country.query.all()
+    # AllCountryCodes = []
+    # for country in countries:
+    #     AllCountryCodes.append(country.country_code)
 
     # For every country code
     # it will check if the country code is one of the users visited countries
@@ -211,7 +214,7 @@ def filterPrevCountries():
     # as it's a not, the value will become false
     # as a filter function which will extract elements from a list which return True
     # it means only the countries which return false in the doesUserWantThisCountry function will be extracted
-    suggestionsStream = filter(lambda x:not(doesUserWantThisCountry(x)), AllCountryCodes)
+    suggestionsStream = filter(lambda x:not(doesUserWantThisCountry(x)), codes)
     suggestionsStream = list(suggestionsStream)
 
     return suggestionsStream
@@ -247,13 +250,33 @@ def filterPrevCountries():
 def sortCountries(travelID):
     print("sort countries is running")
     # Executes the command
+    # stores a sql command which will SELECT the countries where the user.id is equal to the current user
+    # and where the travel id is the same as travelID
+    # Orders the countries by highest to lowest
+    x = select(UserCountryScore)\
+        .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
+        .order_by(UserCountryScore.total_score.desc())
+
+    # Executes the command
+    result = db.session.connection().execute(x)
+    result = result.fetchall()
+
+    print("This is result", result)
+
+    uCountryCodes = []
+    for country in result:
+        countryCode = country[2]
+        uCountryCodes.append(countryCode)
+
+    print(uCountryCodes)
+
     userSuggestions = []
 
-    filteredCountries = filterPrevCountries()
+    filteredCountries = filterPrevCountries(uCountryCodes)
+    print("filteredCountries in sort countries", filteredCountries)
 
     country_number = 1
     for country in filteredCountries:
-        #print(score)
         result = UserCountryScore.query.get((current_user.id, travelID, country))
         #print(result)
         travelCost = result.final_travel_cost
@@ -265,6 +288,7 @@ def sortCountries(travelID):
         userSuggestions.append((country, int(country_number), valuesToDisplay))
         country_number += 1
 
+    print("this is userSuggestions", userSuggestions)
 
     return userSuggestions
 
@@ -405,16 +429,14 @@ def userCountryScore(travelID, countryCodes):
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         print(e)
 
+
     prev_countries = getattr(current_travel, "prev_countries")
-    print(prev_countries)
+    print("This is prev countries", prev_countries)
 
     calculateCountryScores(travelID, countryCodes)
 
-    sortedCountries = filterPrevCountries()
-
     # Runs the sortCountries function to get a list of the countries in an ordered format
     sortedCountries = sortCountries(travelID)
-
 
     return sortedCountries
 
@@ -426,10 +448,11 @@ def userQuestionAnswer(questionID, answerValue, travelID):
     answer = getAnswer(questionID, answerValue)
     questionType = question.get("questionType")
     questionAnswered = False
-    print("IN USER QUESTION ANSWER")
-    print("QuestionID:", questionID)
-    print("answerValue:", answerValue)
-    print("travelID:", travelID)
+    now = datetime.now()
+    # print("IN USER QUESTION ANSWER")
+    # print("QuestionID:", questionID)
+    # print("answerValue:", answerValue)
+    # print("travelID:", travelID)
 
     try:
         # Tries to get a users possible travel record
@@ -442,6 +465,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
         # Creates a new record for them
         new_user_travel = UserTravelScore(user_id=current_user.id,
                                           travel_id=travelID,
+                                          date_added=datetime.date(now),
                                           questions_answered="",
                                           prev_countries=None,
                                           travelling_time=0,
@@ -457,7 +481,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
         # sets the current_travel to a query of user's newly created record
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
 
-    print("This current travel", current_travel)
+
     y = getattr(current_travel, 'questions_answered')
     # splits the string at each comma to get a list containing the question ID of the questions answered
     questionsAnsweredArray = y.split(',')

@@ -7,7 +7,7 @@ from flask_login import login_required, current_user
 from .models import Note, User, Country, UserCountry
 from . import db
 import json
-import datetime
+from datetime import datetime
 import os
 from website.questionHandler import *
 
@@ -100,8 +100,21 @@ def newTravel():
 @views.route("/journeys", methods=["GET"])
 @login_required
 def journey():
-    getNewTravelID()
-    return render_template("journeys.html", user=current_user)
+    x = select(UserTravelScore)\
+            .where(UserTravelScore.user_id == current_user.id)
+    result = db.session.connection().execute(x)
+    result = result.fetchall()
+    travels = []
+    for travel in result:
+        travelID = travel[1]
+        dateAdded = travel[2]
+        dateString = dateAdded.strftime("%d/%m/%Y")
+        travels.append({travelID: dateString})
+
+    print(travels)
+
+
+    return render_template("journeys.html", user=current_user, journeys=travels)
 
 
 
@@ -124,6 +137,7 @@ def suggestions(travelID):
     user_travel_details = []
     try:
         ranked_countries = userCountryScore(travelID, AllCountries)
+        print("This is ranked countries", ranked_countries)
         # x[0] is the country code
         # the first part of the tuple (x[0]) will be replaced with the the country name
         # x[1] is the original second part of the tuple and x[2] is the 3rd part
@@ -134,6 +148,7 @@ def suggestions(travelID):
         user_travel_details.append(travelID)
         user_travel_details.append(num_travellers)
         user_travel_details.append(travelling_time)
+        print("This is ranked_countries_UF", ranked_countries_UF)
         return render_template("suggestions.html",
                                user=current_user,
                                best_countries=ranked_countries_UF,
@@ -194,7 +209,6 @@ def suggestions(travelID):
 @views.route("userQuestionAnswer", methods=["POST"])
 @login_required
 def userAnswer():
-    print("userQuestionAnswer VIEWS is running")
     userAnswerResponse = json.loads(request.data)
     questionID = userAnswerResponse.get("questionID")
     answerID = userAnswerResponse.get("answerID")
@@ -220,7 +234,6 @@ def AllQuestions():
 def nextQuestion(travelID):
     questionID = nextQuestionID(travelID)
     question = getQuestion(questionID)
-    print("This is question in nextQuestion VIEWS.py", question)
 
     if question == None:
         return f"A question with questionID: {questionID} was not found", status.HTTP_406_NOT_ACCEPTABLE
@@ -249,7 +262,6 @@ def questionsPage():
 
 
 
-
 @views.route('/countries', methods=['GET', 'POST'])
 @login_required
 def countries():
@@ -257,6 +269,9 @@ def countries():
     countriess = []
     for country in countries:
         countriess.append({country.country_code: country.country_name})
+
+
+    print(countriess)
 
     return render_template("countries.html", user=current_user, countries=countriess)
 
@@ -266,9 +281,13 @@ def countries():
 def addCountry():
     if request.method == "POST":
         try:
+            now = datetime.now()
             country = json.loads(request.data)
             country_code = country.get("countryCode")
-            new_user_country = UserCountry(user_id=current_user.id, country_code=country_code, data_added=datetime.datetime.now(), rating=0)
+            new_user_country = UserCountry(user_id=current_user.id,
+                                           country_code=country_code,
+                                           date_added=datetime.date(now),
+                                           rating=0)
             db.session.add(new_user_country)
             # the commit will confirm that the changes are added together
             # ensuring consistency
