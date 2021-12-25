@@ -17,6 +17,11 @@
     background-color: #976cd7;
 }
 
+.cardTravel {
+  background-color: #1f6394;
+  /*background-image: url("semiglobe.png");*/
+}
+
 
 .select-box {
   display: flex;

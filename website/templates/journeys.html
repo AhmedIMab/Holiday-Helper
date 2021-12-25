@@ -4,20 +4,33 @@
       <h1 align="center">Your Journeys</h1>
 </div>
 
-
-
 <div class="container pt-3" align="center">
     <button type="submit" class="btn btn-outline-primary mt-3 newJourney">New Journey</button>
 </div>
 
-
-<div class="container py-4">
-    {% for travel in journeys %}
-    {% for travelID, travelDate in travel.items() %}
-    <button class="btn btn-outline-info travel" id="{{ travelID }}">{{ travelID }} {{ travelDate }}</button>
-    {% endfor %}
-    {% endfor %}
-</div>
+<section class="p-5">
+    <div class="container">
+        <div class="row text-center g-4">
+            {% for travel in journeys %}
+            {% for travelID, travelDate in travel.items() %}
+            <div class="col-md">
+                <div class="card cardTravel text-light">
+                    <div class="card-body text-center">
+                        <h3 class="card-title mb-3">
+                            Travel ID: <span style="color:#ffbb11">{{ travelID }}</span>
+                        </h3>
+                        <p class="card-text">
+                            Travel Date: {{ travelDate }}
+                        </p>
+                        <button class="btn btn-outline-info travel" id="{{ travelID }}">Countries</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
 
 
 <div class="container pt-3" align="center">
