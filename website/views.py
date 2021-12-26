@@ -124,6 +124,11 @@ def noTravel():
     return render_template("NoTravel.html", user=current_user)
 
 
+@views.route("/questions", methods=["GET"])
+@login_required
+def questionsPage():
+    return render_template("questions.html", user=current_user)
+
 
 @views.route("/suggestions/<travelID>", methods=["GET"])
 @login_required
@@ -251,15 +256,6 @@ def questions(questionID):
 
     else:
         return question, status.HTTP_200_OK
-
-
-
-
-@views.route("/questions", methods=["GET"])
-@login_required
-def questionsPage():
-    return render_template("questions.html", user=current_user)
-
 
 
 @views.route('/countries', methods=['GET', 'POST'])
