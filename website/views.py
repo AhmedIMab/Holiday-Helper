@@ -124,10 +124,10 @@ def noTravel():
     return render_template("NoTravel.html", user=current_user)
 
 
-@views.route("/questions", methods=["GET"])
+@views.route("/questions/<travelID>", methods=["GET"])
 @login_required
-def questionsPage():
-    return render_template("questions.html", user=current_user)
+def questionsPage(travelID):
+    return render_template("questions.html", user=current_user, travelID=travelID)
 
 
 @views.route("/suggestions/<travelID>", methods=["GET"])
@@ -138,11 +138,11 @@ def suggestions(travelID):
     for country in countries:
         AllCountries[country.country_code] = country.country_name
 
+    covidrestrictions = []
 
     user_travel_details = []
     try:
         ranked_countries = userCountryScore(travelID, AllCountries)
-        print("This is ranked countries", ranked_countries)
         # x[0] is the country code
         # the first part of the tuple (x[0]) will be replaced with the the country name
         # x[1] is the original second part of the tuple and x[2] is the 3rd part
@@ -153,7 +153,7 @@ def suggestions(travelID):
         user_travel_details.append(travelID)
         user_travel_details.append(num_travellers)
         user_travel_details.append(travelling_time)
-        print("This is ranked_countries_UF", ranked_countries_UF)
+        print("THIS IS ALL COUNTRIES", AllCountries)
         return render_template("suggestions.html",
                                user=current_user,
                                best_countries=ranked_countries_UF,
@@ -211,7 +211,7 @@ def suggestions(travelID):
 #
 
 
-@views.route("userQuestionAnswer", methods=["POST"])
+@views.route("/userQuestionAnswer", methods=["POST"])
 @login_required
 def userAnswer():
     userAnswerResponse = json.loads(request.data)

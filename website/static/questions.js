@@ -171,8 +171,6 @@ const multipleChoiceQuestion = function (question, answers, travelID) {
 
     const helper = question.questionHelper
 
-    console.log(helper)
-
     if (helper == "") {
         // Do nothing
     }
@@ -227,15 +225,12 @@ const multipleChoiceQuestion = function (question, answers, travelID) {
     })
 }
 
+const travelElement = document.querySelector("#travelElement");
+const travelID = travelElement.attributes["travelID"].value;
+console.log(travelID);
+
 // shows the next question the user should get
-Api.newTravel()
-    .then((_res) => {
-        const travelID = _res.json()
-        return travelID
-    }).then((travelID) => {
-        console.log("This is travelIIIIID", travelID)
-        nextQuestion(travelID)
-    })
+nextQuestion(travelID);
 
 
 

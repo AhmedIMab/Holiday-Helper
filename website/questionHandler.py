@@ -201,11 +201,7 @@ def doesUserWantThisCountry(countryCode):
 
 
 def filterPrevCountries(codes):
-    print("In filter prev countries")
-    # countries = Country.query.all()
-    # AllCountryCodes = []
-    # for country in countries:
-    #     AllCountryCodes.append(country.country_code)
+    #print("In filter prev countries")
 
     # For every country code
     # it will check if the country code is one of the users visited countries
@@ -261,8 +257,6 @@ def sortCountries(travelID):
     result = db.session.connection().execute(x)
     result = result.fetchall()
 
-    print("This is result", result)
-
     uCountryCodes = []
     for country in result:
         countryCode = country[2]
@@ -288,7 +282,6 @@ def sortCountries(travelID):
         userSuggestions.append((country, int(country_number), valuesToDisplay))
         country_number += 1
 
-    print("this is userSuggestions", userSuggestions)
 
     return userSuggestions
 

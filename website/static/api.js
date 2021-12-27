@@ -26,11 +26,15 @@ class Api {
         })
     }
 
-    // Gives travelID a default value if none is entered
     sendUserResponse(questionID, answerID, travelID) {
-        return fetch("userQuestionAnswer", {
+        console.log("HERE")
+        return fetch("/userQuestionAnswer", {
             method: "POST",
-            // sends the answer to the views.py function UserAnswerQuestion
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            // sends the answer to the views.py function /UserAnswerQuestion
             body: JSON.stringify({questionID: questionID, answerID: answerID, travelID: travelID})
         })
     }

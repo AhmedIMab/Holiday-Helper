@@ -12,7 +12,7 @@ newJourneyButton.click(function () {
             return _res.json()
         }).then((travelID) => {
             console.log("This is the newest travelID", travelID)
-            window.location.href = "/questions";
+            window.location.href = "/questions/" + travelID;
             return travelID
         })
 })
@@ -30,7 +30,8 @@ journeyButton.click(function (event) {
                 throw Error("No more questions");
             }
             else {
-                window.location.href = "/questions"
+                console.log("TEST")
+                window.location.href = "/questions/" + travelID
             }
         }).catch((error) => {
             console.log("This is the error", error)
