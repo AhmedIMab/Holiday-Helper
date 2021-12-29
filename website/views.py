@@ -100,16 +100,55 @@ def newTravel():
 @views.route("/journeys", methods=["GET"])
 @login_required
 def journey():
+    countries = Country.query.all()
+    AllCountries = {}
+    for country in countries:
+        AllCountries[country.country_code] = country.country_name
+
     x = select(UserTravelScore)\
             .where(UserTravelScore.user_id == current_user.id)
     result = db.session.connection().execute(x)
     result = result.fetchall()
     travels = []
     for travel in result:
+        num_country_scores = 0
         travelID = travel[1]
         dateAdded = travel[2]
         dateString = dateAdded.strftime("%d/%m/%Y")
-        travels.append({travelID: dateString})
+        # To find if the current journey is complete, check...
+        # if all 197 countries have been added as that is the only guaranteed common factor for all completed travels
+        # Cannot use questions answered as number of questions each user gets may be different
+        countryX = select(UserCountryScore)\
+            .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)
+        result_country = db.session.connection().execute(countryX)
+        result_countries = result_country.fetchall()
+        if countryX is None:
+            print("Incomplete")
+            travels.append((travelID, dateString, {'Status': 'Incomplete'}))
+        else:
+            for country_score in result_countries:
+                num_country_scores += 1
+            # If there are 197 records / 197 country scores as there are 197 countries in the database
+            # consider this a complete travel
+            if num_country_scores == 197:
+                highestCountryScoreX = select(UserCountryScore)\
+                    .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
+                    .order_by(UserCountryScore.total_score.desc())
+                result_best_countries = db.session.connection().execute(highestCountryScoreX)
+                result_all_countries = result_best_countries.fetchall()
+                result_top_country = result_all_countries[0][2]
+                result_top_country_name = AllCountries[result_top_country]
+                print(result_top_country_name)
+                travels.append((travelID, dateString, {'Top Country': result_top_country_name}))
+            else:
+                # This else will only run if there is at least one country score, otherwise the first else will catch it
+                # As the code that adds countries only ever adds all countries, there might have been a database error
+                print("Incomplete - possible server error")
+                travels.append((travelID, dateString, {'Status': 'Incomplete'}))
+
+
+
+
 
     print(travels)
 
@@ -138,13 +177,12 @@ def suggestions(travelID):
     for country in countries:
         AllCountries[country.country_code] = country.country_name
 
-    covidrestrictions = []
-
     user_travel_details = []
     try:
         ranked_countries = userCountryScore(travelID, AllCountries)
         # x[0] is the country code
         # the first part of the tuple (x[0]) will be replaced with the the country name
+        # By the country with country code index of x[0]
         # x[1] is the original second part of the tuple and x[2] is the 3rd part
         ranked_countries_UF = list(map(lambda x: (AllCountries[x[0]], x[1], x[2]), ranked_countries))
         current_travel = UserTravelScore.query.get((current_user.id, travelID))

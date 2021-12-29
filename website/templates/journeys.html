@@ -12,17 +12,21 @@
     <div class="container">
         <div class="row text-center g-4">
             {% for travel in journeys %}
-            {% for travelID, travelDate in travel.items() %}
+            {% for journeyS, journeyT in travel[2].items() %}
             <div class="col-md">
                 <div class="card cardTravel text-light">
                     <div class="card-body text-center">
                         <h3 class="card-title mb-3">
-                            Travel ID: <span style="color:#ffbb11">{{ travelID }}</span>
+                            Travel ID: <span style="color:#ffbb11">{{ travel[0] }}</span>
                         </h3>
                         <p class="card-text">
-                            Travel Date: {{ travelDate }}
+                            Session Date: <span style="color:#ffbb11">{{ travel[1] }}</span>
                         </p>
-                        <button class="btn btn-outline-info travel" id="{{ travelID }}">Suggestions</button>
+                        {% if journeyT == "Incomplete" %}
+                        <button class="btn btn-outline-danger travel" id="{{ travel[0] }}">Incomplete</button>
+                        {% else %}
+                        <button class="btn btn-outline-success travel" id="{{ travel[0] }}">{{ journeyT }}</button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
