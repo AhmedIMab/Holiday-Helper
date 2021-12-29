@@ -56,6 +56,10 @@ const nextQuestion = function (travelID) {
             // Removes all the old answers
             removeAllChildNodes(document.getElementById("answer-container"))
             removeAllChildNodes(document.getElementsByClassName("helper-text"))
+            // document.getElementsByClassName("question-text").style.display = "none" does not work as...
+            // document.getElementsByClassName delivers a nodeList
+            // Could use jquery: $(".question-text").css("display", "none")
+            // document.getElementsByClassName("question-text")[0].style.display = "none"
             // Changes the questionTextP element's text to the current questions text
             questionTextP.text(question.questionText)
             const questionType = question.questionType
@@ -70,6 +74,8 @@ const nextQuestion = function (travelID) {
             console.log("This is the error", error)
             if (error == "Error: No more questions") {
                 // Wait message displayed while running the algorithm for ranking countries
+                // All options are removed so that further unnecessary requests cannot be made
+                removeAllChildNodes(document.getElementById("answer-container"))
                 $(waitMessage).show();
                 Api.userCountrySuggestions(travelID)
                 // Gets the response from the userCountrySuggestions API function
@@ -82,7 +88,6 @@ const nextQuestion = function (travelID) {
                     return _res
                 })
                 .then((_res) => {
-                    console.log("PASSED")
                     console.log(_res.json)
                     window.location.href = "/suggestions/" + travelID
                 }).catch((error) => {
