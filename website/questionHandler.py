@@ -101,8 +101,6 @@ def isQuestionAnswered(travelID, questionID):
         # Runs when no questions have been answered
         pass
 
-    #print("questionAnswered", questionAnswered)
-
     # Returns a boolean value of whether the question has or has not been answered
     return questionAnswered
 
@@ -200,20 +198,28 @@ def doesUserWantThisCountry(countryCode):
             return False
 
 
-def filterPrevCountries(codes):
-    #print("In filter prev countries")
+def filterPrevCountries(codes, travelID):
+    try:
+        # Sets the current travel to the UserTravelScore of the user with primary key values
+        # user_id as the current user id and travel id key as the travel id passed into the function
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+        print(e)
 
-    # For every country code
-    # it will check if the country code is one of the users visited countries
-    # by applying a not, if the country is one of the users countries
-    # the doesUserWantThisCountry will return True
-    # as it's a not, the value will become false
-    # as a filter function which will extract elements from a list which return True
-    # it means only the countries which return false in the doesUserWantThisCountry function will be extracted
-    suggestionsStream = filter(lambda x:not(doesUserWantThisCountry(x)), codes)
-    suggestionsStream = list(suggestionsStream)
-
-    return suggestionsStream
+    prev_countries = getattr(current_travel, "prev_countries")
+    if prev_countries == True:
+        return codes
+    else:
+        # For every country code
+        # it will check if the country code is one of the users visited countries
+        # by applying a not, if the country is one of the users countries
+        # the doesUserWantThisCountry will return True
+        # as it's a not, the value will become false
+        # as a filter function which will extract elements from a list which return True
+        # it means only the countries which return false in the doesUserWantThisCountry function will be extracted
+        suggestionsStream = filter(lambda x:not(doesUserWantThisCountry(x)), codes)
+        suggestionsStream = list(suggestionsStream)
+        return suggestionsStream
 
 # def sortCountries(travelID):
 #     print("sort countries is running")
@@ -266,7 +272,7 @@ def sortCountries(travelID):
 
     userSuggestions = []
 
-    filteredCountries = filterPrevCountries(uCountryCodes)
+    filteredCountries = filterPrevCountries(uCountryCodes, travelID)
     print("filteredCountries in sort countries", filteredCountries)
 
     country_number = 1

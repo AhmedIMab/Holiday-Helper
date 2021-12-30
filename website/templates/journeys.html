@@ -23,9 +23,9 @@
                             Session Date: <span style="color:#ffbb11">{{ travel[1] }}</span>
                         </p>
                         {% if journeyT == "Incomplete" %}
-                        <button class="btn btn-outline-danger travel" id="{{ travel[0] }}">Incomplete</button>
+                        <button class="btn btn-danger travel" id="{{ travel[0] }}">Incomplete</button>
                         {% else %}
-                        <button class="btn btn-outline-success travel" id="{{ travel[0] }}">{{ journeyT }}</button>
+                        <button class="btn btn-success travel" id="{{ travel[0] }}">{{ journeyT }}</button>
                         {% endif %}
                     </div>
                 </div>

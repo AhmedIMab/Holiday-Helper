@@ -44,6 +44,7 @@ function createElementX (type, attributes, children=[]) {
 const nextQuestion = function (travelID) {
     Api.getLatestQuestion(travelID)
         .then((_res) => {
+            // _res is the variable name of the response
             // If there is a Not Acceptable error (code: 406)
             if(_res.status === 406) {
                 // Generates an error object which says the message "No more questions"
@@ -242,33 +243,7 @@ nextQuestion(travelID);
 
 
 
-// Api.getLatestQuestion()
-//     // _res is the response (can be named anything)
-//     .then((_res) => {
-//
-//         // console.log(_res)
-//         // change the body in a JSON string format to a JSON object
-//         return _res.json()
-//     }).then((question) => {
-//     // console.log(question)
-//     // Much simpler from JSON to js
-//     // Manipulate the object to get the question text of the question
-//     // .text is a js method to change the text of the element to whats in the bracket (question.questionText)
-//     questionTextP.text(question.questionText)
-//     const questionType = question.questionType
-//     // console.log(questionType)
-//     const answers = question.answers
-//     // console.log(answers)
-//
-//     if (questionType == "Multiple Choice") {
-//         console.log("THIS IS A MULTIPLE CHOICE QUESTION")
-//         multipleChoiceQuestion(event, question, answers)
-//
-//     } else if (questionType == "Integer") {
-//         console.log("THIS IS AN INTEGER QUESTION")
-//         integerQuestion(event, question, answers)
-//     }
-// })
+
 
 
 

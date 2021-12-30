@@ -401,7 +401,7 @@
         }
       ],
       "questionText": "How much time do you plan to allocate to water sport activities?",
-      "questionHelper": "",
+      "questionHelper": "1 being 'barely any of my holiday', 10 being 'all water activities' ",
       "questionType": "Multiple Choice",
       "answers": [
         {
@@ -516,7 +516,7 @@
         }
       ],
       "questionText": "How much time do you plan to allocate to winter sport activities?",
-      "questionHelper": "",
+      "questionHelper": "1 being 'barely any of my holiday', 10 being 'all winter activities' ",
       "questionType": "Multiple Choice",
       "answers": [
         {
@@ -631,7 +631,7 @@
         }
       ],
       "questionText": "How much time do you plan to allocate to tourist activities",
-      "questionHelper": "",
+      "questionHelper": "1 being 'barely any of my holiday', 10 being 'all tourism activities'",
       "questionType": "Multiple Choice",
       "answers": [
         {
