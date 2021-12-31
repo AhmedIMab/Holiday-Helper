@@ -19,7 +19,7 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    from .models import User, Note, Country, UserCountry, Safety, Cost, CulturalValue, CovidRestrictions
+    from .models import User, Country, UserCountry, Safety, Cost, CulturalValue, CovidRestrictions
 
     create_database(app)
 

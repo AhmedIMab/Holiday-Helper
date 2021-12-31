@@ -4,12 +4,13 @@ from flask import Blueprint, render_template, request, flash, jsonify, url_for, 
 from flask_api import status
 import flask_sqlalchemy
 from flask_login import login_required, current_user
-from .models import Note, User, Country, UserCountry
+from .models import User, Country, UserCountry
 from . import db
 import json
 from datetime import datetime
 import os
 from website.questionHandler import *
+import traceback
 
 
 views = Blueprint('views', __name__)
@@ -193,6 +194,7 @@ def suggestions(travelID):
     user_travel_details = []
     try:
         ranked_countries = userCountryScore(travelID, AllCountries)
+        print("RANKED", ranked_countries)
         # x[0] is the country code
         # the first part of the tuple (x[0]) will be replaced with the the country name
         # By the country with country code index of x[0]
@@ -211,8 +213,8 @@ def suggestions(travelID):
                                best_countries=ranked_countries_UF,
                                user_travel=user_travel_details)
 
-    except (AttributeError, sqlalchemy.exc.IntegrityError) as e:
-        print("ERROR", e)
+    except (AttributeError):
+        print("ERROR", traceback.format_exc())
         user_travel_details.append(0)
         user_travel_details.append(1)
         return redirect(url_for('views.noTravel'))

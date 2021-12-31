@@ -9,7 +9,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
-    notes = db.relationship('Note')
+    # notes = db.relationship('Note')
     countries = db.relationship('UserCountry')
     travel_score = db.relationship('UserTravelScore')
 
@@ -27,39 +27,62 @@ class UserCountry(db.Model):
     rating = db.Column(db.Integer)
 
 
-class Note(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    data = db.Column(db.String(10000))
-    date = db.Column(db.DateTime(timezone=True), default=func.now())
-    # User.id will reference the id field in the User table
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-
 class Sport(db.Model):
     country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
     # Add min/max?
-    water_sports_score = db.Column(db.Integer)
-    winter_sports_score = db.Column(db.Integer)
+    water_sports_score = db.Column(db.Float)
+    winter_sports_score = db.Column(db.Float)
 
 
 class Safety(db.Model):
     country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    safety_score = db.Column(db.Integer)
+    safety_score = db.Column(db.Float)
 
 
 class Cost(db.Model):
     country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    cost_score = db.Column(db.Integer)
-
-
-class CountryDailyCost(db.Model):
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    daily_cost = db.Column(db.Integer)
+    cost_score = db.Column(db.Float)
 
 
 class CulturalValue(db.Model):
     country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    heritage_score = db.Column(db.Integer)
+    heritage_score = db.Column(db.Float)
+
+
+class CountryDailyCost(db.Model):
+    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
+    daily_cost = db.Column(db.Float)
+
+
+class YearlyTemperatures(db.Model):
+    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
+    yearly_temp = db.Column(db.Float)
+
+
+class MonthlyTemperatures(db.Model):
+    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
+    january_temp = db.Column(db.Float)
+    february_temp = db.Column(db.Float)
+    march_temp = db.Column(db.Float)
+    april_temp = db.Column(db.Float)
+    may_temp = db.Column(db.Float)
+    june_temp = db.Column(db.Float)
+    july_temp = db.Column(db.Float)
+    august_temp = db.Column(db.Float)
+    september_temp = db.Column(db.Float)
+    october_temp = db.Column(db.Float)
+    november_temp = db.Column(db.Float)
+    december_temp = db.Column(db.Float)
+
+
+class Nature(db.Model):
+    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
+    nature_score = db.Column(db.Float)
+
+
+class PopulationDensity(db.Model):
+    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
+    pop_density_score = db.Column(db.Float)
 
 
 class CovidRestrictions(db.Model):
@@ -88,7 +111,7 @@ class UserCountryScore(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     travel_id = db.Column(db.Integer, primary_key=True)
     country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    # The score for the user * the countries winter sports score
+    # The score for the user * the countries water sports score
     water_sports_score = db.Column(db.Float)
     winter_sports_score = db.Column(db.Float)
     culture_score = db.Column(db.Float)

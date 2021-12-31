@@ -2,7 +2,7 @@ import json
 import os
 import sqlite3
 import sqlalchemy.exc
-from .models import Note, User, Country, UserCountry, UserTravelScore, Sport, Cost, CulturalValue
+from .models import User, Country, UserCountry, UserTravelScore, Sport, Cost, CulturalValue
 from .models import UserCountryScore, CountryDailyCost, CovidRestrictions, Safety
 from flask_login import login_required, current_user
 from sqlalchemy.sql import *
@@ -329,6 +329,7 @@ def calculateCountryScores(travelID, countryCodes):
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
         # Does the same for the current country
+        print(countryCode)
         current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
         if current_travel == None or current_country == None:
             # When the country does not have a score
@@ -358,7 +359,8 @@ def calculateCountryScores(travelID, countryCodes):
             most_important_user_score = max(user_score_values)
 
             country_scores = {}
-            countryScore = Sport.query.get((countryCode))
+            countryScore = Sport.query.get(countryCode)
+            print("This is first country score", countryScore)
             # Adds a dictionary key of the Water Sports to the attribute of enum value for water sports
             country_scores[CountryScoreEnum.WATER_SPORTS.name] = getattr(countryScore,
                                                                          CountryScoreEnum.WATER_SPORTS.value)
