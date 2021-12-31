@@ -268,12 +268,11 @@ def sortCountries(travelID):
         countryCode = country[2]
         uCountryCodes.append(countryCode)
 
-    print(uCountryCodes)
 
     userSuggestions = []
 
     filteredCountries = filterPrevCountries(uCountryCodes, travelID)
-    print("filteredCountries in sort countries", filteredCountries)
+    #print("filteredCountries in sort countries", filteredCountries)
 
     country_number = 1
     for country in filteredCountries:
@@ -283,7 +282,7 @@ def sortCountries(travelID):
         # Creates a dictionary to later be manipulated by the Jinja templating to display journey cost
         valuesToDisplay = {}
         # Sets the key with text "your journey will cost approximately" to the travel cost in the table
-        valuesToDisplay["Your journey will cost approximately"] = travelCost
+        valuesToDisplay["Your journey will cost approximately"] = f"{travelCost:0.2f}"
         # Adds country as a tuple to the list of userSuggestions
         userSuggestions.append((country, int(country_number), valuesToDisplay))
         country_number += 1
@@ -329,7 +328,6 @@ def calculateCountryScores(travelID, countryCodes):
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
         # Does the same for the current country
-        print(countryCode)
         current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
         if current_travel == None or current_country == None:
             # When the country does not have a score
@@ -360,7 +358,6 @@ def calculateCountryScores(travelID, countryCodes):
 
             country_scores = {}
             countryScore = Sport.query.get(countryCode)
-            print("This is first country score", countryScore)
             # Adds a dictionary key of the Water Sports to the attribute of enum value for water sports
             country_scores[CountryScoreEnum.WATER_SPORTS.name] = getattr(countryScore,
                                                                          CountryScoreEnum.WATER_SPORTS.value)
@@ -432,7 +429,7 @@ def userCountryScore(travelID, countryCodes):
 
 
     prev_countries = getattr(current_travel, "prev_countries")
-    print("This is prev countries", prev_countries)
+    #print("This is prev countries", prev_countries)
 
     calculateCountryScores(travelID, countryCodes)
 
