@@ -70,6 +70,8 @@ const nextQuestion = function (travelID) {
 
             } else if (questionType == "Integer") {
                 integerQuestion(question, answers, travelID)
+            } else if (questionType == "Range") {
+                rangeQuestion(question, answers, travelID)
             }
         }).catch((error) => {
             console.log("This is the error", error)
@@ -77,6 +79,7 @@ const nextQuestion = function (travelID) {
                 // Wait message displayed while running the algorithm for ranking countries
                 // All options are removed so that further unnecessary requests cannot be made
                 removeAllChildNodes(document.getElementById("answer-container"))
+                questionTextP.text("")
                 $(waitMessage).show();
                 Api.userCountrySuggestions(travelID)
                 // Gets the response from the userCountrySuggestions API function
@@ -103,6 +106,122 @@ const nextQuestion = function (travelID) {
         })
 }
 
+const rangeQuestion = function (question, answers, travelID) {
+    const element = document.getElementById("answer-container")
+
+    const slider =
+        createElementX(
+            "div",
+            {
+                "class": "rangeContainer"
+            },
+            [
+            createElementX(
+                "div",
+                {
+                    "class": "range"
+                },
+                [
+                    createElementX(
+                        "div",
+                        {
+                            "class": "sliderValue"
+                        },
+                        [
+                            createElementX(
+                                "span",
+                                {
+                                    "id": "slideV"
+                                },
+                                [
+                                   document.createTextNode(7.5)
+                                ]
+                            )
+                        ]
+                    ),
+                    createElementX(
+                        "div",
+                        {
+                            "class": "field"
+                        },
+                        [
+                            createElementX(
+                                "div",
+                                {
+                                    "class": "value left"
+                                },
+                                [
+                                    document.createTextNode(-15)
+                                ]
+                            ),
+                            createElementX(
+                                "input",
+                                {
+                                    "id": "slideI",
+                                    "type": "range",
+                                    "min": -15,
+                                    "max": 30,
+                                    "value": 7.5,
+                                    "steps": 1
+                                }
+                            ),
+                            createElementX(
+                                "div",
+                                {
+                                    "class": "value right"
+                                },
+                                [
+                                    document.createTextNode(30)
+                                ]
+                            )
+                        ]
+                    )
+                ]
+            ),
+            createElementX(
+                "button",
+                {
+                    "class": "btn btn-outline-primary submitButton",
+                    "style": "text-align: center",
+                    "type": "button"
+                },
+                [
+                    document.createTextNode("Submit")
+                ]
+            )]
+        )
+
+
+    element.appendChild(slider)
+
+    const slideValue = document.getElementById("slideV")
+    const inputSlider = document.getElementById("slideI")
+
+    // When the slider is moved...
+    inputSlider.oninput = (() => {
+        // Use of let as it's a constantly changing value, const more appropriate for a set value
+        let value = inputSlider.value;
+        slideValue.textContent = value;
+        // Moves the value pointer as the slider is moved
+        slideValue.style.left = (((value+15)/45) + 33) + "%";
+    })
+
+
+    const submitButtonX = $(".submitButton");
+
+
+    submitButtonX.click(function (event) {
+        console.log("submit button clicked!")
+        const answerValue = inputSlider.value;
+        console.log(answerValue)
+        const questionID = question.questionID
+        // Api.sendUserResponse(questionID, answerValue, travelID).then(() => {
+        //     nextQuestion(travelID)
+        // });
+
+    })
+
+}
 
 const integerQuestion = function (question, answers, travelID) {
     const placeholder = question.answerPlaceholder
@@ -206,7 +325,7 @@ const multipleChoiceQuestion = function (question, answers, travelID) {
         const answer_button = createElementX(
                 "button",
                 {
-                    "class":"btn btn-outline-primary answerButtons",
+                    "class":"btn btn-outline-primary mt-3 answerButtons",
                     "questionID": question.questionID,
                     "answerID": answer.answerID
                 },

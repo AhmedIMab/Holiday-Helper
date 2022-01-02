@@ -741,8 +741,8 @@
       "mandatory": true,
       "questionText": "Which month would you like to start your journey?",
       "questionHelper": "",
-      "questionType": "range",
-      "answersType": "integer",
+      "questionType": "Multiple Choice",
+      "answersType": "",
       "answers": [
         {
           "answerID": 120,
@@ -871,6 +871,26 @@
             {
               "modifier": "budget_user_score",
               "value": 42
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 12,
+      "mandatory": true,
+      "questionText": "What is your preferred temperature during your stay",
+      "questionHelper": "",
+      "questionType": "Range",
+      "answersType": "Integer",
+      "answers": [
+        {
+          "answerID": 140,
+          "answerText": "1",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 2
             }
           ]
         }
