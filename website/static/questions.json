@@ -735,6 +735,146 @@
           ]
         }
       ]
+    },
+    {
+      "questionID": 11,
+      "mandatory": true,
+      "questionText": "Which month would you like to start your journey?",
+      "questionHelper": "",
+      "questionType": "range",
+      "answersType": "integer",
+      "answers": [
+        {
+          "answerID": 120,
+          "answerText": "January",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 121,
+          "answerText": "February",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 122,
+          "answerText": "March",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 123,
+          "answerText": "April",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 124,
+          "answerText": "May",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 125,
+          "answerText": "June",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 126,
+          "answerText": "July",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 127,
+          "answerText": "August",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 128,
+          "answerText": "September",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 129,
+          "answerText": "October",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 130,
+          "answerText": "November",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 131,
+          "answerText": "December",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        },
+        {
+          "answerID": 132,
+          "answerText": "Not Sure",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 42
+            }
+          ]
+        }
+      ]
     }
   ]
 }  

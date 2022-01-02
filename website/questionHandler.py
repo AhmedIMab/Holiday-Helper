@@ -445,12 +445,9 @@ def userQuestionAnswer(questionID, answerValue, travelID):
     question = getQuestion(questionID)
     answer = getAnswer(questionID, answerValue)
     questionType = question.get("questionType")
+    answersType = question.get("answersType")
     questionAnswered = False
     now = datetime.now()
-    # print("IN USER QUESTION ANSWER")
-    # print("QuestionID:", questionID)
-    # print("answerValue:", answerValue)
-    # print("travelID:", travelID)
 
     try:
         # Tries to get a users possible travel record
@@ -493,7 +490,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
 
     # If the question hasn't been answered
     if questionAnswered == False:
-        if questionType == "Integer":
+        if questionType == "Integer" or answersType == "Integer":
             print("This is an integer question")
             answers = getAnswers(questionID)
             modifiersX = answers[0]
