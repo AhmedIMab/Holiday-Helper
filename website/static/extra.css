@@ -15,7 +15,7 @@
 
 .range {
   height: 80px;
-  width: 180px;
+  width: 380px;
 }
 
 .range .sliderValue {
@@ -40,17 +40,17 @@
   content: "";
   height: 45px;
   width: 45px;
-  background: #2861ef;
+  background: #005cc8;
   left: 50%;
   transform: translateX(-50%) rotate(45deg);
   bottom: -8%;
-  border: 3px solid black;
+/*/  border: 3px solid black;/*/
   box-shadow: 0px 0px 8px rgba(0,0,0,0.1);
   z-index: -1;
-  /*border-top-left-radius: 50%;*/
-  /*border-top-right-radius: 50%;*/
-  /*border-bottom-left-radius: 50%;*/
-  /*border-bottom-right-radius: 50%;*/
+  border-top-left-radius: 50%;
+  border-top-right-radius: 50%;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
 }
 
 .range .field {
@@ -65,7 +65,7 @@
   position: absolute;
   font-size: 18px;
   font-weight: 600;
-  color: #664AFF;
+  color: #005cc8;
 }
 
 .range .field .value.left {

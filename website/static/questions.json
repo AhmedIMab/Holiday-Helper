@@ -180,7 +180,7 @@
       "questionID": 5,
       "mandatory": true,
       "questionText": "How much importance do you place on safety during your trip?",
-      "questionHelper": "1 being 'I don't mind', 10 being 'safety is extremely important'",
+      "questionHelper": "1 being 'safety is not a concern', 10 being 'safety is extremely important'",
       "questionType": "Multiple Choice",
       "answers": [
         {
