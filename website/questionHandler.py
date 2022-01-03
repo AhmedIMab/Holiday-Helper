@@ -2,8 +2,9 @@ import json
 import os
 import sqlite3
 import sqlalchemy.exc
-from .models import User, Country, UserCountry, UserTravelScore, Sport, Cost, CulturalValue
-from .models import UserCountryScore, CountryDailyCost, CovidRestrictions, Safety
+from .models import User, Country, UserCountry, UserTravelScore, Sport, Cost, CulturalValue, MonthlyTemperatures
+from .models import UserCountryScore, CountryDailyCost, CovidRestrictions, Safety, Nature, PopulationDensity
+from .models import YearlyTemperatures
 from flask_login import login_required, current_user
 from sqlalchemy.sql import *
 from sqlalchemy import desc
@@ -28,7 +29,7 @@ def getNewTravelID():
 
         newTravelID = max(travelIDs) + 1
         return newTravelID
-    except (ValueError):
+    except ValueError:
         # When the user hasn't travelled yet
         travelID = 1
         return travelID
@@ -299,23 +300,29 @@ def calculateCountryScores(travelID, countryCodes):
         WATER_SPORTS = "water_sports_score"
         WINTER_SPORTS = "winter_sports_score"
         CULTURE_SCORE = "culture_score"
+        NATURE_SCORE = "nature_score"
         SAFETY_SCORE = "safety_score"
         BUDGET_SCORE = "budget_score"
+        DENSITY_SCORE = "pop_density_score"
 
     class CountryScoreEnum(Enum):
         WATER_SPORTS = "water_sports_score"
         WINTER_SPORTS = "winter_sports_score"
         CULTURE_SCORE = "heritage_score"
+        NATURE_SCORE = "nature_score"
         SAFETY_SCORE = "safety_score"
         BUDGET_SCORE = "cost_score"
+        DENSITY_SCORE = "pop_density_score"
 
 
     class UserScoreEnum(Enum):
         WATER_SPORTS = "water_sports_user_score"
         WINTER_SPORTS = "winter_sports_user_score"
         CULTURE_SCORE = "culture_user_score"
+        NATURE_SCORE = "nature_user_score"
         SAFETY_SCORE = "safety_user_score"
         BUDGET_SCORE = "budget_user_score"
+        DENSITY_SCORE = "pop_density_user_score"
 
     try:
         # Sets the current travel to the UserTravelScore of the user with primary key values
@@ -379,10 +386,25 @@ def calculateCountryScores(travelID, countryCodes):
             country_scores[CountryScoreEnum.BUDGET_SCORE.name] = getattr(countryScore,
                                                                          CountryScoreEnum.BUDGET_SCORE.value)
 
+            countryScore = Nature.query.get((countryCode))
+            country_scores[CountryScoreEnum.NATURE_SCORE.name] = getattr(countryScore,
+                                                                         CountryScoreEnum.NATURE_SCORE.value)
+
+            countryScore = PopulationDensity.query.get((countryCode))
+            country_scores[CountryScoreEnum.DENSITY_SCORE.name] = getattr(countryScore,
+                                                                          CountryScoreEnum.DENSITY_SCORE.value)
+
+
             user_relative_scores = {}
             for x in UserScoreEnum:
                 factor_relative_score = user_score[x.name] / most_important_user_score
                 user_relative_scores[x.name] = factor_relative_score
+
+
+            #print("This is country_scores", country_scores)
+
+            print("This is relative scores", user_relative_scores)
+
 
             userCountryScores = []
             userCountryScoresD = {}
@@ -390,6 +412,8 @@ def calculateCountryScores(travelID, countryCodes):
                 # To deal with no data for that countries factor score
                 if country_scores[y.name] is not None:
                     userCountryScoreT = user_relative_scores[y.name] * country_scores[y.name]
+                    print("country", countryCode)
+                    print("This is userCountryScoreT", userCountryScoreT)
                 else:
                     # When the value is NULL, sets the value to 0
                     userCountryScoreT = 0
@@ -418,6 +442,7 @@ def calculateCountryScores(travelID, countryCodes):
             # sets the total score
             totalScoreForCountry = sum(userCountryScores)
             setattr(current_country, "total_score", totalScoreForCountry)
+
 
     db.session.commit()
 

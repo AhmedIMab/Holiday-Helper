@@ -35,6 +35,7 @@ def delete_country():
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
+    print(os.getcwd())
     return render_template("home.html", user=current_user)
 
 
