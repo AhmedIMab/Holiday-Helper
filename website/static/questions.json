@@ -98,6 +98,10 @@
             {
               "modifier": "culture_user_score",
               "value": -20
+            },
+            {
+              "modifier": "nature_user_score",
+              "value": -20
             }
           ]
         },
@@ -117,6 +121,10 @@
             {
               "modifier": "culture_user_score",
               "value": -20
+            },
+            {
+              "modifier": "nature_user_score",
+              "value": -20
             }
           ]
         },
@@ -135,6 +143,33 @@
             },
             {
               "modifier": "culture_user_score",
+              "value": 50
+            },
+            {
+              "modifier": "nature_user_score",
+              "value": -20
+            }
+          ]
+        },
+        {
+          "choice": 4,
+          "answerID": 63,
+          "answerText": "Nature",
+          "modifiers": [
+            {
+              "modifier": "winter_sports_user_score",
+              "value": -20
+            },
+            {
+              "modifier": "water_sports_user_score",
+              "value": -20
+            },
+            {
+              "modifier": "culture_user_score",
+              "value": -20
+            },
+            {
+              "modifier": "nature_user_score",
               "value": 50
             }
           ]
@@ -738,139 +773,114 @@
     },
     {
       "questionID": 11,
-      "mandatory": true,
-      "questionText": "Which month would you like to start your journey?",
-      "questionHelper": "",
+      "mandatory": false,
+      "questionRequirements": [
+        {
+          "modifier": "nature_user_score",
+          "value": 50
+        }
+      ],
+      "questionText": "How much time do you plan to allocate to nature activities",
+      "questionHelper": "1 being 'barely any of my holiday', 10 being 'all nature'",
       "questionType": "Multiple Choice",
-      "answersType": "",
       "answers": [
         {
           "answerID": 120,
-          "answerText": "January",
+          "answerText": "1",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
-              "value": 42
+              "modifier": "nature_user_score",
+              "value": 10
             }
           ]
         },
         {
           "answerID": 121,
-          "answerText": "February",
+          "answerText": "2",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
-              "value": 42
+              "modifier": "nature_user_score",
+              "value": 20
             }
           ]
         },
         {
           "answerID": 122,
-          "answerText": "March",
+          "answerText": "3",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
-              "value": 42
+              "modifier": "nature_user_score",
+              "value": 30
             }
           ]
         },
         {
           "answerID": 123,
-          "answerText": "April",
+          "answerText": "4",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
-              "value": 42
+              "modifier": "nature_user_score",
+              "value": 40
             }
           ]
         },
         {
           "answerID": 124,
-          "answerText": "May",
+          "answerText": "5",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
-              "value": 42
+              "modifier": "nature_user_score",
+              "value": 50
             }
           ]
         },
         {
           "answerID": 125,
-          "answerText": "June",
+          "answerText": "6",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
-              "value": 42
+              "modifier": "nature_user_score",
+              "value": 60
             }
           ]
         },
         {
           "answerID": 126,
-          "answerText": "July",
+          "answerText": "7",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
-              "value": 42
+              "modifier": "nature_user_score",
+              "value": 70
             }
           ]
         },
         {
           "answerID": 127,
-          "answerText": "August",
+          "answerText": "8",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
-              "value": 42
+              "modifier": "nature_user_score",
+              "value": 80
             }
           ]
         },
         {
           "answerID": 128,
-          "answerText": "September",
+          "answerText": "9",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
-              "value": 42
+              "modifier": "nature_user_score",
+              "value": 90
             }
           ]
         },
         {
           "answerID": 129,
-          "answerText": "October",
+          "answerText": "10",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
-              "value": 42
-            }
-          ]
-        },
-        {
-          "answerID": 130,
-          "answerText": "November",
-          "modifiers": [
-            {
-              "modifier": "budget_user_score",
-              "value": 42
-            }
-          ]
-        },
-        {
-          "answerID": 131,
-          "answerText": "December",
-          "modifiers": [
-            {
-              "modifier": "budget_user_score",
-              "value": 42
-            }
-          ]
-        },
-        {
-          "answerID": 132,
-          "answerText": "Not Sure",
-          "modifiers": [
-            {
-              "modifier": "budget_user_score",
-              "value": 42
+              "modifier": "nature_user_score",
+              "value": 100
             }
           ]
         }
@@ -879,18 +889,267 @@
     {
       "questionID": 12,
       "mandatory": true,
+      "questionText": "Which month would you like to start your journey?",
+      "questionHelper": "",
+      "questionType": "Multiple Choice",
+      "answersType": "",
+      "answers": [
+        {
+          "answerID": 130,
+          "answerText": "January",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "january"
+            }
+          ]
+        },
+        {
+          "answerID": 131,
+          "answerText": "February",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "february"
+            }
+          ]
+        },
+        {
+          "answerID": 132,
+          "answerText": "March",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "march"
+            }
+          ]
+        },
+        {
+          "answerID": 133,
+          "answerText": "April",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "april"
+            }
+          ]
+        },
+        {
+          "answerID": 134,
+          "answerText": "May",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "may"
+            }
+          ]
+        },
+        {
+          "answerID": 135,
+          "answerText": "June",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "june"
+            }
+          ]
+        },
+        {
+          "answerID": 136,
+          "answerText": "July",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "july"
+            }
+          ]
+        },
+        {
+          "answerID": 137,
+          "answerText": "August",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "august"
+            }
+          ]
+        },
+        {
+          "answerID": 138,
+          "answerText": "September",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "september"
+            }
+          ]
+        },
+        {
+          "answerID": 139,
+          "answerText": "October",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "october"
+            }
+          ]
+        },
+        {
+          "answerID": 140,
+          "answerText": "November",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "november"
+            }
+          ]
+        },
+        {
+          "answerID": 141,
+          "answerText": "December",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "december"
+            }
+          ]
+        },
+        {
+          "answerID": 142,
+          "answerText": "Not sure",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "not sure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 13,
+      "mandatory": true,
       "questionText": "What is your preferred temperature during your stay",
       "questionHelper": "",
       "questionType": "Range",
       "answersType": "Integer",
       "answers": [
         {
-          "answerID": 140,
+          "answerID": 150,
           "answerText": "1",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
-              "value": 2
+              "modifier": "pref_user_temp",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 14,
+      "mandatory": true,
+      "questionText": "How busy would you like the location you're travelling to be?",
+      "questionHelper": "1 being 'as low populated as possible', 10 being 'as populated as possible'",
+      "questionType": "Multiple Choice",
+      "answers": [
+        {
+          "answerID": 160,
+          "answerText": "1",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "answerID": 161,
+          "answerText": "2",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 20
+            }
+          ]
+        },
+        {
+          "answerID": 162,
+          "answerText": "3",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 30
+            }
+          ]
+        },
+        {
+          "answerID": 163,
+          "answerText": "4",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 40
+            }
+          ]
+        },
+        {
+          "answerID": 164,
+          "answerText": "5",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 50
+            }
+          ]
+        },
+        {
+          "answerID": 165,
+          "answerText": "6",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 60
+            }
+          ]
+        },
+        {
+          "answerID": 166,
+          "answerText": "7",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 70
+            }
+          ]
+        },
+        {
+          "answerID": 167,
+          "answerText": "8",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 80
+            }
+          ]
+        },
+        {
+          "answerID": 168,
+          "answerText": "9",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 90
+            }
+          ]
+        },
+        {
+          "answerID": 169,
+          "answerText": "10",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 100
             }
           ]
         }

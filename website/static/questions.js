@@ -215,9 +215,9 @@ const rangeQuestion = function (question, answers, travelID) {
         const answerValue = inputSlider.value;
         console.log(answerValue)
         const questionID = question.questionID
-        // Api.sendUserResponse(questionID, answerValue, travelID).then(() => {
-        //     nextQuestion(travelID)
-        // });
+        Api.sendUserResponse(questionID, answerValue, travelID).then(() => {
+             nextQuestion(travelID)
+        });
 
     })
 

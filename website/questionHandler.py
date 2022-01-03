@@ -338,8 +338,11 @@ def calculateCountryScores(travelID, countryCodes):
                                                 water_sports_score=0,
                                                 winter_sports_score=0,
                                                 culture_score=0,
+                                                nature_score=0,
+                                                temp_score=0,
                                                 safety_score=0,
                                                 budget_score=0,
+                                                pop_density_score=0,
                                                 total_score=0,
                                                 final_travel_cost=1)
             db.session.add(new_user_country)
@@ -464,12 +467,16 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                                           questions_answered="",
                                           prev_countries=None,
                                           travelling_time=0,
+                                          journey_start="",
+                                          pref_user_temp=0,
                                           num_travellers=0,
                                           water_sports_user_score=0,
                                           winter_sports_user_score=0,
                                           culture_user_score=0,
+                                          nature_user_score=0,
                                           safety_user_score=0,
-                                          budget_user_score=0)
+                                          budget_user_score=0,
+                                          pop_density_user_score=0)
         db.session.add(new_user_travel)
         db.session.commit()
 
