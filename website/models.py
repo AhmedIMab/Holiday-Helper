@@ -98,13 +98,18 @@ class UserTravelScore(db.Model):
     questions_skipped = db.Column(db.String)
     prev_countries = db.Column(db.Boolean)
     travelling_time = db.Column(db.Integer)
+    journey_start = db.Column(db.String(15))
     covid_feature = db.Column(db.Boolean)
     num_travellers = db.Column(db.Integer)
+    pref_user_temp = db.Column(db.Integer)
     water_sports_user_score = db.Column(db.Integer)
     winter_sports_user_score = db.Column(db.Integer)
     culture_user_score = db.Column(db.Integer)
+    nature_user_score = db.Column(db.Integer)
     safety_user_score = db.Column(db.Integer)
     budget_user_score = db.Column(db.Integer)
+    pop_density_user_score = db.Column(db.Integer)
+
 
 
 class UserCountryScore(db.Model):
@@ -117,6 +122,7 @@ class UserCountryScore(db.Model):
     culture_score = db.Column(db.Float)
     safety_score = db.Column(db.Float)
     budget_score = db.Column(db.Float)
+    pop_density_score = db.Column(db.Float)
     total_score = db.Column(db.Float)
     final_travel_cost = db.Column(db.Float)
 
