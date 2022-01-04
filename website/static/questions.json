@@ -10,7 +10,7 @@
       "answerPlaceholder": "Enter the number of people...",
       "answers": [
         {
-          "answerID": 30,
+          "answerID": 10,
           "answerText": "1",
           "modifiers": [
             {
@@ -24,45 +24,13 @@
     {
       "questionID": 2,
       "mandatory": true,
-      "questionText": "Would you like to go to previous countries?",
-      "questionHelper": "",
-      "questionType": "Multiple Choice",
-      "ToNote": "Boolean",
-      "answers": [
-        {
-          "choice": 1,
-          "answerID": 40,
-          "answerText": "Yes",
-          "modifiers": [
-            {
-              "modifier": "prev_countries",
-              "value": true
-            }
-          ]
-        },
-        {
-          "choice": 2,
-          "answerID": 41,
-          "answerText": "No",
-          "modifiers": [
-            {
-              "modifier": "prev_countries",
-              "value": false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "questionID": 3,
-      "mandatory": true,
       "questionText": "How long would you like to travel for?",
       "questionHelper": "",
       "questionType": "Integer",
       "answerPlaceholder": "Enter the number of days...",
       "answers": [
         {
-          "answerID": 50,
+          "answerID": 200,
           "answerText": "1",
           "minValue": 1,
           "maxValue": 10000,
@@ -76,15 +44,184 @@
       ]
     },
     {
+      "questionID": 3,
+      "mandatory": true,
+      "questionText": "Which month would you like to start your journey?",
+      "questionHelper": "",
+      "questionType": "Multiple Choice",
+      "answersType": "",
+      "answers": [
+        {
+          "answerID": 300,
+          "answerText": "January",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "january"
+            }
+          ]
+        },
+        {
+          "answerID": 301,
+          "answerText": "February",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "february"
+            }
+          ]
+        },
+        {
+          "answerID": 302,
+          "answerText": "March",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "march"
+            }
+          ]
+        },
+        {
+          "answerID": 303,
+          "answerText": "April",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "april"
+            }
+          ]
+        },
+        {
+          "answerID": 304,
+          "answerText": "May",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "may"
+            }
+          ]
+        },
+        {
+          "answerID": 305,
+          "answerText": "June",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "june"
+            }
+          ]
+        },
+        {
+          "answerID": 306,
+          "answerText": "July",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "july"
+            }
+          ]
+        },
+        {
+          "answerID": 307,
+          "answerText": "August",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "august"
+            }
+          ]
+        },
+        {
+          "answerID": 308,
+          "answerText": "September",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "september"
+            }
+          ]
+        },
+        {
+          "answerID": 309,
+          "answerText": "October",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "october"
+            }
+          ]
+        },
+        {
+          "answerID": 310,
+          "answerText": "November",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "november"
+            }
+          ]
+        },
+        {
+          "answerID": 311,
+          "answerText": "December",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "december"
+            }
+          ]
+        },
+        {
+          "answerID": 312,
+          "answerText": "Not sure",
+          "modifiers": [
+            {
+              "modifier": "journey_start",
+              "value": "not sure"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "questionID": 4,
+      "mandatory": true,
+      "questionText": "Would you like to go to previous countries?",
+      "questionHelper": "",
+      "questionType": "Multiple Choice",
+      "ToNote": "Boolean",
+      "answers": [
+        {
+          "answerID": 400,
+          "answerText": "Yes",
+          "modifiers": [
+            {
+              "modifier": "prev_countries",
+              "value": true
+            }
+          ]
+        },
+        {
+          "answerID": 401,
+          "answerText": "No",
+          "modifiers": [
+            {
+              "modifier": "prev_countries",
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 5,
       "mandatory": true,
       "questionText": "What primary activity would you like to do on your holiday?",
       "questionHelper": "",
       "questionType": "Multiple Choice",
       "answers": [
         {
-          "choice": 1,
-          "answerID": 60,
+          "answerID": 500,
           "answerText": "Winter Activities",
           "modifiers": [
             {
@@ -106,8 +243,7 @@
           ]
         },
         {
-          "choice": 2,
-          "answerID": 61,
+          "answerID": 501,
           "answerText": "Beach Activities",
           "modifiers": [
             {
@@ -129,8 +265,7 @@
           ]
         },
         {
-          "choice": 3,
-          "answerID": 62,
+          "answerID": 502,
           "answerText": "Tourism",
           "modifiers": [
             {
@@ -152,8 +287,7 @@
           ]
         },
         {
-          "choice": 4,
-          "answerID": 63,
+          "answerID": 503,
           "answerText": "Nature",
           "modifiers": [
             {
@@ -177,218 +311,119 @@
       ]
     },
     {
-      "questionID": 5,
-      "mandatory": true,
-      "questionText": "How much importance do you place on safety during your trip?",
-      "questionHelper": "1 being 'safety is not a concern', 10 being 'safety is extremely important'",
-      "questionType": "Multiple Choice",
-      "answers": [
-        {
-          "answerID": 70,
-          "answerText": "1",
-          "modifiers": [
-            {
-              "modifier": "safety_user_score",
-              "value": 10
-            }
-          ]
-        },
-        {
-          "answerID": 71,
-          "answerText": "2",
-          "modifiers": [
-            {
-              "modifier": "safety_user_score",
-              "value": 20
-            }
-          ]
-        },
-        {
-          "answerID": 72,
-          "answerText": "3",
-          "modifiers": [
-            {
-              "modifier": "safety_user_score",
-              "value": 30
-            }
-          ]
-        },
-        {
-          "answerID": 73,
-          "answerText": "4",
-          "modifiers": [
-            {
-              "modifier": "safety_user_score",
-              "value": 40
-            }
-          ]
-        },
-        {
-          "answerID": 74,
-          "answerText": "5",
-          "modifiers": [
-            {
-              "modifier": "safety_user_score",
-              "value": 50
-            }
-          ]
-        },
-        {
-          "answerID": 75,
-          "answerText": "6",
-          "modifiers": [
-            {
-              "modifier": "safety_user_score",
-              "value": 60
-            }
-          ]
-        },
-        {
-          "answerID": 76,
-          "answerText": "7",
-          "modifiers": [
-            {
-              "modifier": "safety_user_score",
-              "value": 70
-            }
-          ]
-        },
-        {
-          "answerID": 77,
-          "answerText": "8",
-          "modifiers": [
-            {
-              "modifier": "safety_user_score",
-              "value": 80
-            }
-          ]
-        },
-        {
-          "answerID": 78,
-          "answerText": "9",
-          "modifiers": [
-            {
-              "modifier": "safety_user_score",
-              "value": 90
-            }
-          ]
-        },
-        {
-          "answerID": 79,
-          "answerText": "10",
-          "modifiers": [
-            {
-              "modifier": "safety_user_score",
-              "value": 100
-            }
-          ]
-        }
-      ]
-    },
-    {
       "questionID": 6,
       "mandatory": true,
-      "questionText": "How expensive would you like your destination to be?",
-      "questionHelper": "1 being low budget, 10 being high budget",
+      "questionText": "How safe do you want your destination to be?",
+      "questionHelper": "-5 being 'very unsafe', 0 being 'I don't mind', 5 being 'very safe'",
       "questionType": "Multiple Choice",
       "answers": [
         {
-          "answerID": 80,
+          "answerID": 600,
+          "answerText": "-5",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "value": -50
+            }
+          ]
+        },
+        {
+          "answerID": 601,
+          "answerText": "-4",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "value": -40
+            }
+          ]
+        },
+        {
+          "answerID": 602,
+          "answerText": "-3",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "value": -30
+            }
+          ]
+        },
+        {
+          "answerID": 603,
+          "answerText": "-2",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "value": -20
+            }
+          ]
+        },
+        {
+          "answerID": 604,
+          "answerText": "-1",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "value": -10
+            }
+          ]
+        },
+        {
+          "answerID": 605,
+          "answerText": "0",
+          "modifiers": [
+            {
+              "modifier": "safety_user_score",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "answerID": 606,
           "answerText": "1",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
+              "modifier": "safety_user_score",
               "value": 10
             }
           ]
         },
         {
-          "answerID": 81,
+          "answerID": 607,
           "answerText": "2",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
+              "modifier": "safety_user_score",
               "value": 20
             }
           ]
         },
         {
-          "answerID": 82,
+          "answerID": 608,
           "answerText": "3",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
+              "modifier": "safety_user_score",
               "value": 30
             }
           ]
         },
         {
-          "answerID": 83,
+          "answerID": 609,
           "answerText": "4",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
+              "modifier": "safety_user_score",
               "value": 40
             }
           ]
         },
         {
-          "answerID": 84,
+          "answerID": 610,
           "answerText": "5",
           "modifiers": [
             {
-              "modifier": "budget_user_score",
+              "modifier": "safety_user_score",
               "value": 50
-            }
-          ]
-        },
-        {
-          "answerID": 85,
-          "answerText": "6",
-          "modifiers": [
-            {
-              "modifier": "budget_user_score",
-              "value": 60
-            }
-          ]
-        },
-        {
-          "answerID": 86,
-          "answerText": "7",
-          "modifiers": [
-            {
-              "modifier": "budget_user_score",
-              "value": 70
-            }
-          ]
-        },
-        {
-          "answerID": 87,
-          "answerText": "8",
-          "modifiers": [
-            {
-              "modifier": "budget_user_score",
-              "value": 80
-            }
-          ]
-        },
-        {
-          "answerID": 88,
-          "answerText": "9",
-          "modifiers": [
-            {
-              "modifier": "budget_user_score",
-              "value": 90
-            }
-          ]
-        },
-        {
-          "answerID": 89,
-          "answerText": "10",
-          "modifiers": [
-            {
-              "modifier": "budget_user_score",
-              "value": 100
             }
           ]
         }
@@ -397,14 +432,251 @@
     {
       "questionID": 7,
       "mandatory": true,
+      "questionText": "How expensive would you like your destination to be?",
+      "questionHelper": "-5 being low budget, 5 being high budget",
+      "questionType": "Multiple Choice",
+      "answers": [
+        {
+          "answerID": 700,
+          "answerText": "-5",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": -50
+            }
+          ]
+        },
+        {
+          "answerID": 701,
+          "answerText": "-4",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": -40
+            }
+          ]
+        },
+        {
+          "answerID": 702,
+          "answerText": "-3",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": -30
+            }
+          ]
+        },
+        {
+          "answerID": 703,
+          "answerText": "-2",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": -20
+            }
+          ]
+        },
+        {
+          "answerID": 704,
+          "answerText": "-1",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": -10
+            }
+          ]
+        },
+        {
+          "answerID": 705,
+          "answerText": "0",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "answerID": 706,
+          "answerText": "1",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "answerID": 707,
+          "answerText": "2",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 20
+            }
+          ]
+        },
+        {
+          "answerID": 708,
+          "answerText": "3",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 30
+            }
+          ]
+        },
+        {
+          "answerID": 709,
+          "answerText": "4",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 40
+            }
+          ]
+        },
+        {
+          "answerID": 710,
+          "answerText": "5",
+          "modifiers": [
+            {
+              "modifier": "budget_user_score",
+              "value": 50
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 8,
+      "mandatory": true,
+      "questionText": "How busy would you like your destination to be?",
+      "questionHelper": "-5 being 'sparsely populated', 5 being 'densely populated'",
+      "questionType": "Multiple Choice",
+      "answers": [
+        {
+          "answerID": 800,
+          "answerText": "-5",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": -50
+            }
+          ]
+        },
+        {
+          "answerID": 801,
+          "answerText": "-4",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": -40
+            }
+          ]
+        },
+        {
+          "answerID": 802,
+          "answerText": "-3",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": -30
+            }
+          ]
+        },
+        {
+          "answerID": 803,
+          "answerText": "-2",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": -20
+            }
+          ]
+        },
+        {
+          "answerID": 804,
+          "answerText": "-1",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": -10
+            }
+          ]
+        },
+        {
+          "answerID": 805,
+          "answerText": "0",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "answerID": 806,
+          "answerText": "1",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 10
+            }
+          ]
+        },
+        {
+          "answerID": 807,
+          "answerText": "2",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 20
+            }
+          ]
+        },
+        {
+          "answerID": 808,
+          "answerText": "3",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 30
+            }
+          ]
+        },
+        {
+          "answerID": 809,
+          "answerText": "4",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 40
+            }
+          ]
+        },
+        {
+          "answerID": 810,
+          "answerText": "5",
+          "modifiers": [
+            {
+              "modifier": "pop_density_user_score",
+              "value": 50
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "questionID": 9,
+      "mandatory": true,
       "questionText": "Would you like to factor in current covid restrictions?",
       "questionHelper": "",
       "questionType": "Multiple Choice",
       "ToNote": "Boolean",
       "answers": [
         {
-          "choice": 1,
-          "answerID": 90,
+          "answerID": 900,
           "answerText": "Yes",
           "modifiers": [
             {
@@ -414,8 +686,7 @@
           ]
         },
         {
-          "choice": 2,
-          "answerID": 91,
+          "answerID": 901,
           "answerText": "No",
           "modifiers": [
             {
@@ -427,7 +698,7 @@
       ]
     },
     {
-      "questionID": 8,
+      "questionID": 10,
       "mandatory": false,
       "questionRequirements": [
         {
@@ -440,7 +711,7 @@
       "questionType": "Multiple Choice",
       "answers": [
         {
-          "answerID": 90,
+          "answerID": 1000,
           "answerText": "1",
           "modifiers": [
             {
@@ -450,7 +721,7 @@
           ]
         },
         {
-          "answerID": 91,
+          "answerID": 1001,
           "answerText": "2",
           "modifiers": [
             {
@@ -460,7 +731,7 @@
           ]
         },
         {
-          "answerID": 92,
+          "answerID": 1002,
           "answerText": "3",
           "modifiers": [
             {
@@ -470,7 +741,7 @@
           ]
         },
         {
-          "answerID": 93,
+          "answerID": 1003,
           "answerText": "4",
           "modifiers": [
             {
@@ -480,7 +751,7 @@
           ]
         },
         {
-          "answerID": 94,
+          "answerID": 1004,
           "answerText": "5",
           "modifiers": [
             {
@@ -490,7 +761,7 @@
           ]
         },
         {
-          "answerID": 95,
+          "answerID": 1005,
           "answerText": "6",
           "modifiers": [
             {
@@ -500,7 +771,7 @@
           ]
         },
         {
-          "answerID": 96,
+          "answerID": 1006,
           "answerText": "7",
           "modifiers": [
             {
@@ -510,7 +781,7 @@
           ]
         },
         {
-          "answerID": 97,
+          "answerID": 1007,
           "answerText": "8",
           "modifiers": [
             {
@@ -520,7 +791,7 @@
           ]
         },
         {
-          "answerID": 98,
+          "answerID": 1008,
           "answerText": "9",
           "modifiers": [
             {
@@ -530,7 +801,7 @@
           ]
         },
         {
-          "answerID": 99,
+          "answerID": 1009,
           "answerText": "10",
           "modifiers": [
             {
@@ -542,7 +813,7 @@
       ]
     },
     {
-      "questionID": 9,
+      "questionID": 11,
       "mandatory": false,
       "questionRequirements": [
         {
@@ -555,7 +826,7 @@
       "questionType": "Multiple Choice",
       "answers": [
         {
-          "answerID": 100,
+          "answerID": 1100,
           "answerText": "1",
           "modifiers": [
             {
@@ -565,7 +836,7 @@
           ]
         },
         {
-          "answerID": 101,
+          "answerID": 1101,
           "answerText": "2",
           "modifiers": [
             {
@@ -575,7 +846,7 @@
           ]
         },
         {
-          "answerID": 102,
+          "answerID": 1102,
           "answerText": "3",
           "modifiers": [
             {
@@ -585,7 +856,7 @@
           ]
         },
         {
-          "answerID": 103,
+          "answerID": 1103,
           "answerText": "4",
           "modifiers": [
             {
@@ -595,7 +866,7 @@
           ]
         },
         {
-          "answerID": 104,
+          "answerID": 1104,
           "answerText": "5",
           "modifiers": [
             {
@@ -605,7 +876,7 @@
           ]
         },
         {
-          "answerID": 105,
+          "answerID": 1105,
           "answerText": "6",
           "modifiers": [
             {
@@ -615,7 +886,7 @@
           ]
         },
         {
-          "answerID": 106,
+          "answerID": 1106,
           "answerText": "7",
           "modifiers": [
             {
@@ -625,7 +896,7 @@
           ]
         },
         {
-          "answerID": 107,
+          "answerID": 1107,
           "answerText": "8",
           "modifiers": [
             {
@@ -635,7 +906,7 @@
           ]
         },
         {
-          "answerID": 108,
+          "answerID": 1108,
           "answerText": "9",
           "modifiers": [
             {
@@ -645,7 +916,7 @@
           ]
         },
         {
-          "answerID": 109,
+          "answerID": 1109,
           "answerText": "10",
           "modifiers": [
             {
@@ -657,7 +928,7 @@
       ]
     },
     {
-      "questionID": 10,
+      "questionID": 12,
       "mandatory": false,
       "questionRequirements": [
         {
@@ -670,7 +941,7 @@
       "questionType": "Multiple Choice",
       "answers": [
         {
-          "answerID": 110,
+          "answerID": 1200,
           "answerText": "1",
           "modifiers": [
             {
@@ -680,7 +951,7 @@
           ]
         },
         {
-          "answerID": 111,
+          "answerID": 1201,
           "answerText": "2",
           "modifiers": [
             {
@@ -690,7 +961,7 @@
           ]
         },
         {
-          "answerID": 112,
+          "answerID": 1202,
           "answerText": "3",
           "modifiers": [
             {
@@ -700,7 +971,7 @@
           ]
         },
         {
-          "answerID": 113,
+          "answerID": 1203,
           "answerText": "4",
           "modifiers": [
             {
@@ -710,7 +981,7 @@
           ]
         },
         {
-          "answerID": 114,
+          "answerID": 1204,
           "answerText": "5",
           "modifiers": [
             {
@@ -720,7 +991,7 @@
           ]
         },
         {
-          "answerID": 115,
+          "answerID": 1205,
           "answerText": "6",
           "modifiers": [
             {
@@ -730,7 +1001,7 @@
           ]
         },
         {
-          "answerID": 116,
+          "answerID": 1206,
           "answerText": "7",
           "modifiers": [
             {
@@ -740,7 +1011,7 @@
           ]
         },
         {
-          "answerID": 117,
+          "answerID": 1207,
           "answerText": "8",
           "modifiers": [
             {
@@ -750,7 +1021,7 @@
           ]
         },
         {
-          "answerID": 118,
+          "answerID": 1208,
           "answerText": "9",
           "modifiers": [
             {
@@ -760,7 +1031,7 @@
           ]
         },
         {
-          "answerID": 119,
+          "answerID": 1209,
           "answerText": "10",
           "modifiers": [
             {
@@ -772,7 +1043,7 @@
       ]
     },
     {
-      "questionID": 11,
+      "questionID": 13,
       "mandatory": false,
       "questionRequirements": [
         {
@@ -785,7 +1056,7 @@
       "questionType": "Multiple Choice",
       "answers": [
         {
-          "answerID": 120,
+          "answerID": 1300,
           "answerText": "1",
           "modifiers": [
             {
@@ -795,7 +1066,7 @@
           ]
         },
         {
-          "answerID": 121,
+          "answerID": 1301,
           "answerText": "2",
           "modifiers": [
             {
@@ -805,7 +1076,7 @@
           ]
         },
         {
-          "answerID": 122,
+          "answerID": 1302,
           "answerText": "3",
           "modifiers": [
             {
@@ -815,7 +1086,7 @@
           ]
         },
         {
-          "answerID": 123,
+          "answerID": 1303,
           "answerText": "4",
           "modifiers": [
             {
@@ -825,7 +1096,7 @@
           ]
         },
         {
-          "answerID": 124,
+          "answerID": 1304,
           "answerText": "5",
           "modifiers": [
             {
@@ -835,7 +1106,7 @@
           ]
         },
         {
-          "answerID": 125,
+          "answerID": 1305,
           "answerText": "6",
           "modifiers": [
             {
@@ -845,7 +1116,7 @@
           ]
         },
         {
-          "answerID": 126,
+          "answerID": 1306,
           "answerText": "7",
           "modifiers": [
             {
@@ -855,7 +1126,7 @@
           ]
         },
         {
-          "answerID": 127,
+          "answerID": 1307,
           "answerText": "8",
           "modifiers": [
             {
@@ -865,7 +1136,7 @@
           ]
         },
         {
-          "answerID": 128,
+          "answerID": 1308,
           "answerText": "9",
           "modifiers": [
             {
@@ -875,172 +1146,12 @@
           ]
         },
         {
-          "answerID": 129,
+          "answerID": 1309,
           "answerText": "10",
           "modifiers": [
             {
               "modifier": "nature_user_score",
               "value": 100
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "questionID": 12,
-      "mandatory": true,
-      "questionText": "Which month would you like to start your journey?",
-      "questionHelper": "",
-      "questionType": "Multiple Choice",
-      "answersType": "",
-      "answers": [
-        {
-          "answerID": 130,
-          "answerText": "January",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "january"
-            }
-          ]
-        },
-        {
-          "answerID": 131,
-          "answerText": "February",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "february"
-            }
-          ]
-        },
-        {
-          "answerID": 132,
-          "answerText": "March",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "march"
-            }
-          ]
-        },
-        {
-          "answerID": 133,
-          "answerText": "April",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "april"
-            }
-          ]
-        },
-        {
-          "answerID": 134,
-          "answerText": "May",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "may"
-            }
-          ]
-        },
-        {
-          "answerID": 135,
-          "answerText": "June",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "june"
-            }
-          ]
-        },
-        {
-          "answerID": 136,
-          "answerText": "July",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "july"
-            }
-          ]
-        },
-        {
-          "answerID": 137,
-          "answerText": "August",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "august"
-            }
-          ]
-        },
-        {
-          "answerID": 138,
-          "answerText": "September",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "september"
-            }
-          ]
-        },
-        {
-          "answerID": 139,
-          "answerText": "October",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "october"
-            }
-          ]
-        },
-        {
-          "answerID": 140,
-          "answerText": "November",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "november"
-            }
-          ]
-        },
-        {
-          "answerID": 141,
-          "answerText": "December",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "december"
-            }
-          ]
-        },
-        {
-          "answerID": 142,
-          "answerText": "Not sure",
-          "modifiers": [
-            {
-              "modifier": "journey_start",
-              "value": "not sure"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "questionID": 13,
-      "mandatory": true,
-      "questionText": "What is your preferred temperature during your stay",
-      "questionHelper": "",
-      "questionType": "Range",
-      "answersType": "Integer",
-      "answers": [
-        {
-          "answerID": 150,
-          "answerText": "1",
-          "modifiers": [
-            {
-              "modifier": "pref_user_temp",
-              "value": 1
             }
           ]
         }
@@ -1049,107 +1160,18 @@
     {
       "questionID": 14,
       "mandatory": true,
-      "questionText": "How busy would you like your destination to be?",
-      "questionHelper": "1 being 'sparsely populated', 10 being 'densely populated'",
-      "questionType": "Multiple Choice",
+      "questionText": "What is your preferred temperature during your stay",
+      "questionHelper": "",
+      "questionType": "Range",
+      "answersType": "Integer",
       "answers": [
         {
-          "answerID": 160,
+          "answerID": 1400,
           "answerText": "1",
           "modifiers": [
             {
-              "modifier": "pop_density_user_score",
-              "value": 10
-            }
-          ]
-        },
-        {
-          "answerID": 161,
-          "answerText": "2",
-          "modifiers": [
-            {
-              "modifier": "pop_density_user_score",
-              "value": 20
-            }
-          ]
-        },
-        {
-          "answerID": 162,
-          "answerText": "3",
-          "modifiers": [
-            {
-              "modifier": "pop_density_user_score",
-              "value": 30
-            }
-          ]
-        },
-        {
-          "answerID": 163,
-          "answerText": "4",
-          "modifiers": [
-            {
-              "modifier": "pop_density_user_score",
-              "value": 40
-            }
-          ]
-        },
-        {
-          "answerID": 164,
-          "answerText": "5",
-          "modifiers": [
-            {
-              "modifier": "pop_density_user_score",
-              "value": 50
-            }
-          ]
-        },
-        {
-          "answerID": 165,
-          "answerText": "6",
-          "modifiers": [
-            {
-              "modifier": "pop_density_user_score",
-              "value": 60
-            }
-          ]
-        },
-        {
-          "answerID": 166,
-          "answerText": "7",
-          "modifiers": [
-            {
-              "modifier": "pop_density_user_score",
-              "value": 70
-            }
-          ]
-        },
-        {
-          "answerID": 167,
-          "answerText": "8",
-          "modifiers": [
-            {
-              "modifier": "pop_density_user_score",
-              "value": 80
-            }
-          ]
-        },
-        {
-          "answerID": 168,
-          "answerText": "9",
-          "modifiers": [
-            {
-              "modifier": "pop_density_user_score",
-              "value": 90
-            }
-          ]
-        },
-        {
-          "answerID": 169,
-          "answerText": "10",
-          "modifiers": [
-            {
-              "modifier": "pop_density_user_score",
-              "value": 100
+              "modifier": "pref_user_temp",
+              "value": 1
             }
           ]
         }
