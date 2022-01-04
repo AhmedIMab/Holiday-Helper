@@ -1049,8 +1049,8 @@
     {
       "questionID": 14,
       "mandatory": true,
-      "questionText": "How busy would you like the location you're travelling to be?",
-      "questionHelper": "1 being 'as low populated as possible', 10 being 'as populated as possible'",
+      "questionText": "How busy would you like your destination to be?",
+      "questionHelper": "1 being 'sparsely populated', 10 being 'densely populated'",
       "questionType": "Multiple Choice",
       "answers": [
         {
