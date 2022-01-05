@@ -206,8 +206,8 @@ def suggestions(travelID):
         user_travel_details.append(travelID)
         user_travel_details.append(num_travellers)
         user_travel_details.append(travelling_time)
-        print("THIS IS ALL COUNTRIES", AllCountries)
-        print("This is rankedCountriesUF", ranked_countries_UF)
+        #print("THIS IS ALL COUNTRIES", AllCountries)
+        #print("This is rankedCountriesUF", ranked_countries_UF)
         return render_template("suggestions.html",
                                user=current_user,
                                best_countries=ranked_countries_UF,
