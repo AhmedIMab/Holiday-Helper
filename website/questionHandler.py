@@ -120,13 +120,20 @@ def haveRequirementsBeenMet(travelID, questionID):
         for requirement in questionRequirements:
             requiredModifier = requirement.get("modifier")
             requiredValue = requirement.get("value")
-            x = getattr(current_travel, requiredModifier)
-            if x >= requiredValue:
-                print("requirement met")
-            else:
-                # If the user does not have a greater than or equal score for the required factor
-                requirementsMet = False
-                break
+            currentValue = getattr(current_travel, requiredModifier)
+            if isinstance(requiredValue, int):
+                if currentValue >= requiredValue:
+                    print("requirement met")
+                else:
+                    # If the user does not have a greater than or equal score for the required factor
+                    requirementsMet = False
+                    break
+            elif isinstance(requiredValue, str):
+                if currentValue == requiredValue:
+                    print("requirements met")
+                else:
+                    requirementsMet = False
+                    break
     except:
         # This will run when the question does not have any question requirements
         return False
@@ -457,7 +464,7 @@ def calculateCountryScores(travelID, countryCodes):
             user_temp = getattr(current_travel, "pref_user_temp")
             journey_start = getattr(current_travel, "journey_start")
             countryScore = MonthlyTemperatures.query.get(countryCode)
-            # This is needed as the fields in the monthly temps has teperatures as: 'february_temp', 'december_temp'
+            # This is needed as the fields in the monthly temps has temperatures as: 'february_temp', 'december_temp'
             # However in the User Country it is stored just as a month
             journey_start_country = f"{journey_start}_temp"
             # country_temp is referring to the temperature of the country for the given user month
@@ -471,8 +478,9 @@ def calculateCountryScores(travelID, countryCodes):
                 temps[countryCode] = country_temp
             else:
                 temps[countryCode] = country_temp
-                #print(f"This is the monthly temp for {countryCode}: {country_temp}")
                 pass
+
+            #print(f"Country: {countryCode}, user temp: {user_temp}, country temp: {country_temp}")
 
             temp_difference = user_temp - country_temp
             # Squares the difference
@@ -564,6 +572,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                                           prev_countries=None,
                                           travelling_time=0,
                                           journey_start="",
+                                          pref_user_activity="",
                                           pref_user_temp=0,
                                           num_travellers=0,
                                           water_sports_user_score=10,
@@ -623,7 +632,13 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                         setattr(current_travel, toModify, modificationBy)
 
         elif questionType == "Integer+":
-            pass
+            print("The is a special integer question")
+            pref_user_activity = getattr(current_travel, "pref_user_activity")
+            top_activity_score = pref_user_activity + "_user_score"
+            x = getattr(current_travel, top_activity_score)
+            setattr(current_travel, top_activity_score, x + int(answerValue))
+
+
 
         # Adds the question to the user's questions answered
         current_travel.questions_answered = current_travel.questions_answered + (str(questionID) + ",")
