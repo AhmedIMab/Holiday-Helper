@@ -108,6 +108,13 @@ const nextQuestion = function (travelID) {
 
 const rangeQuestion = function (question, answers, travelID) {
     const element = document.getElementById("answer-container")
+    const min_value = question.minValue
+    console.log("Min Value", min_value)
+    const max_value = question.maxValue
+    console.log("Max Value", max_value)
+    const increment = question.increment
+    let middle_value = (min_value + max_value) / 2
+    console.log("Middle value", middle_value)
 
     const slider =
         createElementX(
@@ -134,7 +141,7 @@ const rangeQuestion = function (question, answers, travelID) {
                                     "id": "slideV"
                                 },
                                 [
-                                   document.createTextNode(7.5)
+                                   document.createTextNode(middle_value)
                                 ]
                             )
                         ]
@@ -151,7 +158,7 @@ const rangeQuestion = function (question, answers, travelID) {
                                     "class": "value left"
                                 },
                                 [
-                                    document.createTextNode(-15)
+                                    document.createTextNode(min_value)
                                 ]
                             ),
                             createElementX(
@@ -159,10 +166,10 @@ const rangeQuestion = function (question, answers, travelID) {
                                 {
                                     "id": "slideI",
                                     "type": "range",
-                                    "min": -15,
-                                    "max": 30,
-                                    "value": 7.5,
-                                    "steps": 1
+                                    "min": min_value,
+                                    "max": max_value,
+                                    "value": middle_value,
+                                    "steps": increment
                                 }
                             ),
                             createElementX(
@@ -171,7 +178,7 @@ const rangeQuestion = function (question, answers, travelID) {
                                     "class": "value right"
                                 },
                                 [
-                                    document.createTextNode(30)
+                                    document.createTextNode(max_value)
                                 ]
                             )
                         ]
@@ -196,6 +203,7 @@ const rangeQuestion = function (question, answers, travelID) {
 
     const slideValue = document.getElementById("slideV")
     const inputSlider = document.getElementById("slideI")
+    let total_value = Math.abs(min_value) + Math.abs(max_value)
 
     // When the slider is moved...
     inputSlider.oninput = (() => {
@@ -203,7 +211,10 @@ const rangeQuestion = function (question, answers, travelID) {
         let value = inputSlider.value;
         slideValue.textContent = value;
         // Moves the value pointer as the slider is moved
-        slideValue.style.left = (((value+15)/45) + 33) + "%";
+        // Using the square root of total value added as we are calculating the hypotenuse of a square
+        // Divide by 2 to get the halfway point
+        slideValue.style.marginLeft = (Math.sqrt((45^2) + (45^2)))/2 + "px"
+        slideValue.style.left = ((value+Math.abs(min_value))/total_value) + "%"
     })
 
 

@@ -708,7 +708,11 @@
       ],
       "questionText": "How much time do you plan to allocate to water sport activities?",
       "questionHelper": "1 being 'barely any of my holiday', 10 being 'all water activities' ",
-      "questionType": "Multiple Choice",
+      "questionType": "Range",
+      "minValue": 25,
+      "maxValue": 100,
+      "increment": 5,
+      "answersType": "Integer",
       "answers": [
         {
           "answerID": 1000,
@@ -717,96 +721,6 @@
             {
               "modifier": "water_sports_user_score",
               "value": 10
-            }
-          ]
-        },
-        {
-          "answerID": 1001,
-          "answerText": "2",
-          "modifiers": [
-            {
-              "modifier": "water_sports_user_score",
-              "value": 20
-            }
-          ]
-        },
-        {
-          "answerID": 1002,
-          "answerText": "3",
-          "modifiers": [
-            {
-              "modifier": "water_sports_user_score",
-              "value": 30
-            }
-          ]
-        },
-        {
-          "answerID": 1003,
-          "answerText": "4",
-          "modifiers": [
-            {
-              "modifier": "water_sports_user_score",
-              "value": 40
-            }
-          ]
-        },
-        {
-          "answerID": 1004,
-          "answerText": "5",
-          "modifiers": [
-            {
-              "modifier": "water_sports_user_score",
-              "value": 50
-            }
-          ]
-        },
-        {
-          "answerID": 1005,
-          "answerText": "6",
-          "modifiers": [
-            {
-              "modifier": "water_sports_user_score",
-              "value": 60
-            }
-          ]
-        },
-        {
-          "answerID": 1006,
-          "answerText": "7",
-          "modifiers": [
-            {
-              "modifier": "water_sports_user_score",
-              "value": 70
-            }
-          ]
-        },
-        {
-          "answerID": 1007,
-          "answerText": "8",
-          "modifiers": [
-            {
-              "modifier": "water_sports_user_score",
-              "value": 80
-            }
-          ]
-        },
-        {
-          "answerID": 1008,
-          "answerText": "9",
-          "modifiers": [
-            {
-              "modifier": "water_sports_user_score",
-              "value": 90
-            }
-          ]
-        },
-        {
-          "answerID": 1009,
-          "answerText": "10",
-          "modifiers": [
-            {
-              "modifier": "water_sports_user_score",
-              "value": 100
             }
           ]
         }
@@ -1163,6 +1077,9 @@
       "questionText": "What is your preferred temperature during your stay",
       "questionHelper": "",
       "questionType": "Range",
+      "minValue": -25,
+      "maxValue": 40,
+      "increment": 1,
       "answersType": "Integer",
       "answers": [
         {

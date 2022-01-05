@@ -529,21 +529,15 @@ def userCountryScore(travelID, countryCodes):
     try:
         # Tries to calculate country scores
         calculateCountryScores(travelID, countryCodes)
-    except:
-        # If there is a problem...
-        countryScoresX = select(UserCountryScore) \
-            .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)
-        # Executes the command
-        result = db.session.connection().execute(countryScoresX)
-        result = result.fetchall()
-
+    except ValueError:
+        # If the countries have already been added...
+        # Just go straight to sorting the countries as they are already in the database
+        pass
 
     # Runs the sortCountries function to get a list of the countries in an ordered format
     sortedCountries = sortCountries(travelID)
 
     return sortedCountries
-
-
 
 
 def userQuestionAnswer(questionID, answerValue, travelID):
@@ -572,10 +566,10 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                                           journey_start="",
                                           pref_user_temp=0,
                                           num_travellers=0,
-                                          water_sports_user_score=0,
-                                          winter_sports_user_score=0,
-                                          culture_user_score=0,
-                                          nature_user_score=0,
+                                          water_sports_user_score=10,
+                                          winter_sports_user_score=10,
+                                          culture_user_score=10,
+                                          nature_user_score=10,
                                           safety_user_score=0,
                                           budget_user_score=0,
                                           pop_density_user_score=0)
@@ -627,6 +621,9 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                         # If the type of the value we are changing is not an int
                         # Sets the attribute to the modification value as opposed to adding
                         setattr(current_travel, toModify, modificationBy)
+
+        elif questionType == "Integer+":
+            pass
 
         # Adds the question to the user's questions answered
         current_travel.questions_answered = current_travel.questions_answered + (str(questionID) + ",")
