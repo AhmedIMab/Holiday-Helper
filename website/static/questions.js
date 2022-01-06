@@ -169,7 +169,7 @@ const rangeQuestion = function (question, answers, travelID) {
                                     "min": min_value,
                                     "max": max_value,
                                     "value": middle_value,
-                                    "steps": increment
+                                    "step": increment
                                 }
                             ),
                             createElementX(
