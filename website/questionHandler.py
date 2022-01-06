@@ -321,7 +321,7 @@ def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared)
         temp_inverse = (-1 * temp_normalised) + 50
         normalised_temps[country] = temp_inverse
 
-    print(f"These are inverse normalised temps:", normalised_temps)
+    # print(f"These are inverse normalised temps:", normalised_temps)
 
     for country_code in countryCodes:
         country_temp = normalised_temps[country_code]
@@ -467,8 +467,12 @@ def calculateCountryScores(travelID, countryCodes):
             # This is needed as the fields in the monthly temps has temperatures as: 'february_temp', 'december_temp'
             # However in the User Country it is stored just as a month
             journey_start_country = f"{journey_start}_temp"
-            # country_temp is referring to the temperature of the country for the given user month
-            country_temp = getattr(countryScore, journey_start_country)
+            try:
+                # country_temp is referring to the temperature of the country for the given user month
+                country_temp = getattr(countryScore, journey_start_country)
+            except AttributeError:
+                countryScore = YearlyTemperatures.query.get(countryCode)
+                country_temp = getattr(countryScore, "yearly_temp")
             if country_temp is None:
                 # If theres no data for that month for the country
                 # Use the yearly temperature data
@@ -631,8 +635,8 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                         # Sets the attribute to the modification value as opposed to adding
                         setattr(current_travel, toModify, modificationBy)
 
-        elif questionType == "Integer+":
-            print("The is a special integer question")
+        elif answersType == "Integer+":
+            # print("The is a special integer question")
             pref_user_activity = getattr(current_travel, "pref_user_activity")
             top_activity_score = pref_user_activity + "_user_score"
             x = getattr(current_travel, top_activity_score)
