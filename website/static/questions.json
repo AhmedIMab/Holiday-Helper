@@ -7,6 +7,7 @@
       "questionText": "How many people are travelling?",
       "questionHelper": "",
       "questionType": "Integer",
+      "minimumValue": 1,
       "answerPlaceholder": "Enter the number of people...",
       "answers": [
         {
@@ -27,6 +28,7 @@
       "questionText": "How long would you like to travel for?",
       "questionHelper": "",
       "questionType": "Integer",
+      "minimumValue": 1,
       "answerPlaceholder": "Enter the number of days...",
       "answers": [
         {

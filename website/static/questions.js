@@ -6,7 +6,7 @@ const questionTextP = $(".question-text")
 const questionAnswerP = $("#answer-container")
 const showBestCountries = $(".showSuggestions")
 const waitMessage = document.querySelector("#pleaseWait");
-
+const invalidInteger = document.querySelector("#invalidInteger");
 
 const removeAllChildNodes = function (parent) {
     // When the parent has a child
@@ -72,6 +72,8 @@ const nextQuestion = function (travelID) {
                 integerQuestion(question, answers, travelID)
             } else if (questionType == "Range") {
                 rangeQuestion(question, answers, travelID)
+            } else {
+                console.log("Unknown question")
             }
         }).catch((error) => {
             console.log("This is the error", error)
@@ -256,6 +258,7 @@ const integerQuestion = function (question, answers, travelID) {
                     "id": "entryInput",
                     "class": "form-control",
                     "type": "number",
+                    "min": question.minimumValue
                 }),
             createElementX(
                 "button",
@@ -277,10 +280,14 @@ const integerQuestion = function (question, answers, travelID) {
         console.log("submit button clicked!")
         const answerValue = $("#entryInput").val();
         const questionID = question.questionID
-        Api.sendUserResponse(questionID, answerValue, travelID).then(() => {
-            nextQuestion(travelID)
-        });
-
+        if (answerValue < question.minimumValue) {
+            $(invalidInteger).show();
+        } else {
+            $(invalidInteger).hide();
+            Api.sendUserResponse(questionID, answerValue, travelID).then(() => {
+                nextQuestion(travelID)
+            });
+        }
     })
 }
 
