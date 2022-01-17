@@ -515,7 +515,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": -50
+              "value": -25
             }
           ]
         },
@@ -525,7 +525,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": -40
+              "value": -20
             }
           ]
         },
@@ -535,7 +535,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": -30
+              "value": -15
             }
           ]
         },
@@ -545,7 +545,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": -20
+              "value": -10
             }
           ]
         },
@@ -555,7 +555,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": -10
+              "value": -5
             }
           ]
         },
@@ -575,7 +575,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": 10
+              "value": 5
             }
           ]
         },
@@ -585,7 +585,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": 20
+              "value": 10
             }
           ]
         },
@@ -595,7 +595,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": 30
+              "value": 15
             }
           ]
         },
@@ -605,7 +605,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": 40
+              "value": 20
             }
           ]
         },
@@ -615,7 +615,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": 50
+              "value": 25
             }
           ]
         }
@@ -660,7 +660,7 @@
           "value": "water_sports"
         }
       ],
-      "questionText": "How much time do you plan to allocate to water sport activities?",
+      "questionText": "How much time do you plan to allocate to water sport activities as a percentage?",
       "questionHelper": "1 being 'barely any of my holiday', 10 being 'all water activities' ",
       "questionType": "Range",
       "minValue": 25,
@@ -689,7 +689,7 @@
           "value": "winter_sports"
         }
       ],
-      "questionText": "How much time do you plan to allocate to winter sport activities?",
+      "questionText": "How much time do you plan to allocate to winter sport activities as a percentage?",
       "questionHelper": "1 being 'barely any of my holiday', 10 being 'all winter activities' ",
       "questionType": "Range",
       "minValue": 25,
@@ -718,7 +718,7 @@
           "value": "culture"
         }
       ],
-      "questionText": "How much time do you plan to allocate to tourist activities",
+      "questionText": "How much time do you plan to allocate to tourist activities as a percentage?",
       "questionHelper": "1 being 'barely any of my holiday', 10 being 'all tourism activities'",
       "questionType": "Range",
       "minValue": 25,
@@ -747,7 +747,7 @@
           "value": "nature"
         }
       ],
-      "questionText": "How much time do you plan to allocate to nature activities",
+      "questionText": "How much time do you plan to allocate to nature activities as a percentage?",
       "questionHelper": "1 being 'barely any of my holiday', 10 being 'all nature'",
       "questionType": "Range",
       "minValue": 25,
