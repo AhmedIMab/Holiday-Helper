@@ -387,7 +387,7 @@
       "questionID": 7,
       "mandatory": true,
       "questionText": "How expensive would you like your destination to be?",
-      "questionHelper": "-5 being low budget, 5 being high budget",
+      "questionHelper": "-5 being low budget, 0 being 'I don't mind', 5 being high budget",
       "questionType": "Multiple Choice",
       "answers": [
         {
@@ -506,7 +506,7 @@
       "questionID": 8,
       "mandatory": true,
       "questionText": "How busy would you like your destination to be?",
-      "questionHelper": "-5 being 'sparsely populated', 5 being 'densely populated'",
+      "questionHelper": "-5 being 'sparsely populated', 0 being 'I don't mind',  5 being 'densely populated'",
       "questionType": "Multiple Choice",
       "answers": [
         {
