@@ -1,7 +1,6 @@
 # '.' imports from the current package (website __init__.py right now)
 from . import db
 from flask_login import UserMixin
-from sqlalchemy.sql import func
 
 
 class User(db.Model, UserMixin):
