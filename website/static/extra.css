@@ -1,4 +1,4 @@
-/*/ ALL RANGE SLIDER STUFF /*/
+/*/ Range Slider Styling /*/
 
 .rangeContainer {
   margin-top: 75px;
@@ -81,29 +81,7 @@
 }
 
 
-
-.holiday-img-size {
-    max-width: 60%;
-    height: auto;
-    background-size: contain;
-}
-
-.card2 {
-    background-color: cadetblue;
-}
-
-.card1 {
-    background-color: #976cd7;
-}
-
-.cardTravel {
-  /*background-color: #3e4125;  */
-  /*background-color: #2f435e;*/
-  /*background-color: #2e5486;*/
-  background-color: #004d8c;
-
-}
-
+/*/ Dropdown Menu for Visited Countries /*/
 
 .select-box {
   display: flex;
@@ -189,10 +167,32 @@
   display: none;
 }
 
+/*/ Extra Styling /*/
+
 .centerAButtons {
   text-align: center;
 }
 
+.holiday-img-size {
+    max-width: 60%;
+    height: auto;
+    background-size: contain;
+}
+
+.card2 {
+    background-color: cadetblue;
+}
+
+.card1 {
+    background-color: #976cd7;
+}
+
+.cardTravel {
+  /*background-color: #3e4125;  */
+  /*background-color: #2f435e;*/
+  /*background-color: #2e5486;*/
+  background-color: #004d8c;
+}
 
 .answerButtons {
   margin-left: 15px;

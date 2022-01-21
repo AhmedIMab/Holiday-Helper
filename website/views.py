@@ -39,57 +39,6 @@ def home():
     return render_template("home.html", user=current_user)
 
 
-# @views.route("/test", methods=["GET"])
-# @login_required
-# def test():
-#     countries = Country.query.all()
-#     countriess = []
-#     for country in countries:
-#         countriess.append({country.country_code: country.country_name})
-#
-#     return render_template("travelID.html", user=current_user, countries=countriess)
-
-# @views.route("/api/answerquestion/", methods=["POST"])
-# @login_required
-# def questions():
-#     if request.method == "POST":
-#         #print(app.static_folder)
-#         filename = os.path.join(app.static_folder, "questions.json")
-#         f = open(filename, 'r')
-#         data = json.load(f)
-#
-#         userAnswer = json.loads(request.data)
-#         answerID = userAnswer.get("answerID")
-#         questionID = userAnswer.get("questionID")
-#
-#
-#     return
-
-
-# @views.route("/api/questions/<questionID>", methods=["GET"])
-# @login_required
-# def questions(questionID):
-#     question = getQuestion(questionID)
-#     if question == None:
-#         return f"A question with questionID: {questionID} was not found", status.HTTP_404_NOT_FOUND
-#
-#     else:
-#         return question, status.HTTP_200_OK
-
-# @views.route("/api/questions/nextQuestionAnswers", methods=["GET"])
-# @login_required
-# def answers():
-#     questionID = nextQuestionID()
-#     answers = getAnswers(questionID)
-#     print(answers)
-#
-#     if answers == None:
-#         return f"A question with questionID: {questionID} was not found", status.HTTP_404_NOT_FOUND
-#
-#     else:
-#         return jsonify(answers), status.HTTP_200_OK
-
-
 
 @views.route("/travelID", methods=["GET"])
 @login_required
@@ -164,13 +113,8 @@ def journey():
                 print("Incomplete - possible server error")
                 travel_sessions.append((travelID, dateString, {'Status': 'Incomplete'}))
 
-
     return render_template("journeys.html", user=current_user, journeys=travel_sessions)
 
-
-# This else will run if not all country scores have been added (<197),
-# as if there aren't any scores, the first if will run
-# As the code that adds countries only ever adds all countries, there might have been a database error
 
 @views.route("/noTravel", methods=["GET"])
 @login_required
@@ -207,7 +151,7 @@ def suggestions(travelID):
         user_travel_details.append(num_travellers)
         user_travel_details.append(travelling_time)
         #print("THIS IS ALL COUNTRIES", AllCountries)
-        #print("This is rankedCountriesUF", ranked_countries_UF)
+        print("This is rankedCountriesUF", ranked_countries_UF)
         return render_template("suggestions.html",
                                user=current_user,
                                best_countries=ranked_countries_UF,
@@ -219,50 +163,6 @@ def suggestions(travelID):
         user_travel_details.append(1)
         return redirect(url_for('views.noTravel'))
 
-
-# @views.route("/countrySuggestions", methods=["GET", "POST"])
-# @login_required
-# def suggestCountries():
-#     if request.method == "POST":
-#         travel_response = json.loads(request.data)
-#         print(travel_response)
-#         travelID = travel_response["travelID"]
-#         print(travelID)
-#         ranked_countries = sortCountries(travelID)
-#         print("Hiii")
-#         print(ranked_countries)
-#         return render_template("suggestions.html", user=current_user, best_countries=ranked_countries)
-#         # return render_template("suggestions.html", user=current_user)
-#
-#     print("we're here")
-#     return render_template("travelID.html", user=current_user)
-
-
-
-
-# @views.route("/testCountryUser", methods=['GET', 'POST'])
-# @login_required
-# def testCountry():
-#     testResponse = json.loads(request.data)
-#     #print(testResponse)
-#     travelID = testResponse.get("travelID")
-#     #countryCode = testResponse.get("countryCode")
-#
-#
-#     #print("XXX")
-#     #print(AllCountries)
-#
-#     countries = Country.query.all()
-#
-#     AllCountries = []
-#     for country in countries:
-#         #print(type(country))
-#         AllCountries.append(country.country_code)
-#
-#     userSuggestions = userCountryScore(travelID, AllCountries)
-#
-#     return render_template("suggestions.html", user=current_user, best_countries=userSuggestions)
-#
 
 
 @views.route("/userQuestionAnswer", methods=["POST"])

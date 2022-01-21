@@ -13,6 +13,7 @@
     <thead>
         <tr>
             <th scope="col">#</th>
+            <th scope="col">Flag</th>
             <th scope="col">Country</th>
             <th scope="col">Approximate Journey Cost</th>
         </tr>
@@ -26,6 +27,7 @@
         {% for roughCostText, roughCost in countryDict.items() %}
             <tr>
                 <th scope="row">{{ country[1] }}</th>
+                <td><img src="/static/flags/{{ countryName }}.png" class="rounded img-fluid" style="max-width: 60%;"></td>
                 <td>{{ countryName }}</td>
                 <td>{{ roughCostText }}: <span class="cost-number">£{{ roughCost}}</span></td>
             </tr>
