@@ -238,6 +238,7 @@ const rangeQuestion = function (question, answers, travelID) {
 
 const integerQuestion = function (question, answers, travelID) {
     const placeholder = question.answerPlaceholder
+    const minimumValue = question.minimumValue
 
     const element = document.getElementById("answer-container")
 
@@ -280,8 +281,13 @@ const integerQuestion = function (question, answers, travelID) {
         console.log("submit button clicked!")
         const answerValue = $("#entryInput").val();
         const questionID = question.questionID
-        if (answerValue < question.minimumValue) {
+        const invalidInteger = $("#invalidInteger")
+        if (answerValue < minimumValue) {
+            console.log("This is min", minimumValue)
             $(invalidInteger).show();
+            let str_minimum_value = toString(minimumValue)
+            invalidInteger.text("Please input an integer greater than or equal to " + minimumValue);
+            console.log("dfgsefs")
         } else {
             $(invalidInteger).hide();
             Api.sendUserResponse(questionID, answerValue, travelID).then(() => {

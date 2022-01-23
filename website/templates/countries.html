@@ -27,7 +27,7 @@
 
 </div>
 
-<div class="container pt-4" align="center">
+<div class="container pt-4 pb-1" align="center">
     <button type="submit" class="bte btn-primary addCountryButton">Add Country</button>
     <p id="noCountrySelected" style="display:none; color:red" class="pt-3">
         Please select a country
@@ -35,31 +35,36 @@
 </div>
 
 
-<div class="container py-4">
-      <ul class="list-group list-group-flush pt-3" id="notes">
-          <!-- Loops through the Country's list -->
-          {% for generalCountry in countries %}
-          <!-- Loops through the user's countries -->
-          {% for country in user.countries %}
-          <!-- Creates a variable for the country code of the country (in the users' countries) -->
-          {% set countryCode = country.country_code %}
+
+<div class="container pt-5">
+        <!-- Loops through the Country's list -->
+        {% for generalCountry in countries %}
+        <!-- Loops through the user's countries -->
+        {% for country in user.countries %}
+        <!-- Creates a variable for the country code of the country (in the users' countries) -->
+        {% set countryCode = country.country_code %}
             <!-- Matches the dictionary in the Python list to the jinga country codes with the matching country names -->
             {% for generalCountryCode, generalCountryName in generalCountry.items() %}
             <!-- If the countryCode matches the countryCode in the Country table -->
-            {% if countryCode == generalCountryCode %}
+                {% if countryCode == generalCountryCode %}
                 <!-- Creates a variable for the country name which has the matching country code in the country table -->
                 {% set countryName = generalCountryName %}
-                <li class="list-group-item list-group-item-info">{{ countryName }}
-                    <button type="button" country-code={{ countryCode }} class="close deleteCountryButton">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </li>
-            {% endif %}
+                <figure class="figure mr-2">
+                  <img src="/static/flags/{{ countryName }}.png" class="figure-img img-fluid rounded" style="max-width: 75%;" alt="">
+                  <figcaption class="figure-caption text-center" style="max-width: 75%;">{{ countryName }}</figcaption>
+                  <button type="button" country-code={{ countryCode }} class="close deleteCountryButton">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                </figure>
+                {% endif %}
             {% endfor %}
           {% endfor %}
           {% endfor %}
-      </ul>
 </div>
+
+
+
+
 
 
 <script
