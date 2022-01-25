@@ -316,9 +316,9 @@ def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared)
         # weighting on the score for the country
         # Also did not normalise into negative values as I would like the temperature to refine to a more suited country
         # as opposed to dispersing the countries which do not meet the temperature
-        temp_normalised = ((temp-min(temps_d_squared_list))/(max(temps_d_squared_list)-min(temps_d_squared_list)))*50
+        temp_normalised = ((temp-min(temps_d_squared_list))/((max(temps_d_squared_list)-min(temps_d_squared_list))))*100
         # Inverse as it is currently a giving a larger number the further away it is from the users score...
-        temp_inverse = (-1 * temp_normalised) + 50
+        temp_inverse = (-1 * temp_normalised) + 100
         normalised_temps[country] = temp_inverse
 
     # print(f"These are inverse normalised temps:", normalised_temps)
