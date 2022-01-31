@@ -1,9 +1,5 @@
 {% extends "base.html" %} {% block title %}Your Countries{% endblock %}
 {% block countriespage %}
-<!--<div class="container pt-5" align="center">-->
-<!--    <h1 align="center">Your <b class="text-primary">Countries</b></h1>-->
-<!--    <button type="button" class="btn btn-outline-primary mt-4">Would you like to be suggested countries you have been to?</button>-->
-<!--</div>-->
 
 <div class="container select-box pt-5">
     <div class="options-container active">
@@ -34,8 +30,6 @@
     </p>
 </div>
 
-
-
 <div class="container pt-5">
         <!-- Loops through the Country's list -->
         {% for generalCountry in countries %}
@@ -61,11 +55,6 @@
           {% endfor %}
           {% endfor %}
 </div>
-
-
-
-
-
 
 <script
     type="module"

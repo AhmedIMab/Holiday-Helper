@@ -119,7 +119,7 @@ def journey():
 @views.route("/noTravel", methods=["GET"])
 @login_required
 def noTravel():
-    return render_template("NoTravel.html", user=current_user)
+    return render_template("no_travel.html", user=current_user)
 
 
 @views.route("/questions/<travelID>", methods=["GET"])
