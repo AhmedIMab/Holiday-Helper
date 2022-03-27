@@ -770,7 +770,7 @@
     {
       "questionID": 14,
       "mandatory": true,
-      "questionText": "What is your preferred temperature during your stay",
+      "questionText": "What is your preferred temperature during your stay?",
       "questionHelper": "",
       "questionType": "Range",
       "minValue": -25,

@@ -652,13 +652,16 @@ def userQuestionAnswer(questionID, answerValue, travelID):
             for factor in allFactorNames:
                 if factor == top_activity_score:
                     print("This is the top factor")
-                    x = getattr(current_travel, top_activity_score)
-                    setattr(current_travel, top_activity_score, x+int(answerValue))
+                    initialValue = getattr(current_travel, top_activity_score)
+                    x = int(answerValue)
+                    value = x/10 * initialValue
+                    setattr(current_travel, top_activity_score, value+10)
                 else:
                     # When it's not the highest factor...
-                    valueToAdd = ((10-(int(answerValue)/10))/3) * 10
-                    x = getattr(current_travel, factor)
-                    setattr(current_travel, factor, x + valueToAdd)
+                    initialValue = getattr(current_travel, factor)
+                    x = int(answerValue)
+                    value = ((10-(x/10))/3) * 10
+                    setattr(current_travel, factor, value+10)
 
         # Adds the question to the user's questions answered
         current_travel.questions_answered = current_travel.questions_answered + (str(questionID) + ",")
