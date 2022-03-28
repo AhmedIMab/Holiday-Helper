@@ -66,18 +66,6 @@
                             </li>
                             {% endif %}
                         </ul>
-                        <!-- the href is linking to the route in ANY blueprint (views.py or auth.py) -->
-                        <!-- the id does not have any current relationship with the other files (ignore for now) -->
-                        <!-- TEST
-                        {% if user.is_authenticated %}
-                        <a class="nav-item nav-link" id="home" href="/">Home</a>
-                        <a class="nav-item nav-link" id="notes" href="/notes">Notes</a>
-                        <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
-                        {% else %}
-                        <a class="nav-item nav-link" id="login" href="/login">Login</a>
-                        <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
-                        {% endif %}
-                        -->
                     </div>
                 </div>
             </nav>
@@ -105,10 +93,10 @@
         {% endif %}
         {% endwith %}
 
-        {% if request.url == "http://127.0.0.1:5000/" %}
+        {% if request.path == "/" %}
             {% block homepage %}
             {% endblock %}
-        {% elif request.url == "http://127.0.0.1:5000/countries" %}
+        {% elif request.path == "/countries" %}
             {% block countriespage %}
             {% endblock %}
         {% else %}
@@ -117,7 +105,6 @@
             {% endblock %}
             </div>
         {% endif %}
-
 
         <script
             src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
