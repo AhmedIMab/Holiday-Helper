@@ -170,7 +170,7 @@ const rangeQuestion = function (question, answers, travelID) {
                                     "type": "range",
                                     "min": min_value,
                                     "max": max_value,
-                                    "value": middle_value,
+                                    "value": min_value,
                                     "step": increment
                                 }
                             ),
@@ -206,18 +206,18 @@ const rangeQuestion = function (question, answers, travelID) {
     const slideValue = document.getElementById("slideV")
     const inputSlider = document.getElementById("slideI")
     let total_value = Math.abs(min_value) + Math.abs(max_value)
-
-    // When the slider is moved...
-    inputSlider.oninput = (() => {
+    var inputSliderOnInput = (() => {
         // Use of let as it's a constantly changing value, const more appropriate for a set value
         let value = inputSlider.value;
         slideValue.textContent = value;
         // Moves the value pointer as the slider is moved
-        // Using the square root of total value added as we are calculating the hypotenuse of a square
-        // Divide by 2 to get the halfway point
-        slideValue.style.marginLeft = (Math.sqrt((45^2) + (45^2)))/2 + "px"
-        slideValue.style.left = ((value+Math.abs(min_value))/total_value) + "%"
+        slideValue.style.left = ((value - min_value)/(max_value - min_value)) * 100 + "%"
     })
+
+
+    // When the slider is moved...
+    inputSlider.oninput = inputSliderOnInput
+    inputSliderOnInput()
 
 
     const submitButtonX = $(".submitButton");

@@ -139,6 +139,7 @@ def suggestions(travelID):
     user_travel_details = []
     try:
         ranked_countries = userCountryScore(travelID, AllCountries)
+        # map function is used to replace country codes with country names for user convenience
         # x[0] is the country code
         # the first part of the tuple (x[0]) will be replaced with the the country name
         # By the country with country code index of x[0]
