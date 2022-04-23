@@ -7,8 +7,6 @@ from .models import UserCountryScore, CountryDailyCost, CovidRestrictions, Safet
 from .models import YearlyTemperatures
 from flask_login import login_required, current_user
 from sqlalchemy.sql import *
-from sqlalchemy import desc
-from sqlalchemy.sql import func
 from . import db
 from enum import Enum
 from datetime import datetime
@@ -229,34 +227,6 @@ def filterPrevCountries(codes, travelID):
         suggestionsStream = list(suggestionsStream)
         return suggestionsStream
 
-# def sortCountries(travelID):
-#     print("sort countries is running")
-#     # stores a sql command which will SELECT the countries where the user.id is equal to the current user
-#     # and where the travel id is the same as travelID
-#     # Orders the countries by highest to lowest
-#     x = select(UserCountryScore)\
-#         .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
-#         .order_by(UserCountryScore.total_score.desc())
-#
-#     # Executes the command
-#     result = db.session.connection().execute(x)
-#     result = result.fetchall()
-#     userSuggestions = []
-#
-#     country_number = 1
-#     for score in result:
-#         travel_cost = score.final_travel_cost
-#         # Creates a dictionary to later be manipulated by the Jinja templating to display journey cost
-#         valuesToDisplay = {}
-#         # Sets the key with text "your journey will cost approximately" to the travel cost in the table
-#         valuesToDisplay["Your journey will cost approximately"] = travel_cost
-#         # Adds country as a tuple to the list of userSuggestions
-#         userSuggestions.append((score.country_code, int(country_number), valuesToDisplay))
-#         country_number += 1
-#
-#     return userSuggestions
-
-
 def sortCountries(travelID):
     #print("sort countries is running")
     # Executes the command
@@ -285,7 +255,6 @@ def sortCountries(travelID):
     country_number = 1
     for country in filteredCountries:
         result = UserCountryScore.query.get((current_user.id, travelID, country))
-        #print(result)
         travelCost = result.final_travel_cost
         # Creates a dictionary to later be manipulated by the Jinja templating to display journey cost
         valuesToDisplay = {}
@@ -297,19 +266,13 @@ def sortCountries(travelID):
 
     return userSuggestions
 
-
 def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared):
-    # print(f"Temps: {temps}")
-    # print(f"Temp Differences Squared: {temp_differences_squared}")
     valuesX = temp_differences_squared.values()
-    # print("These are values", valuesX)
-    # print(type(valuesX))
     temps_d_squared_list = list(valuesX)
     minimum_temp_d_squared = min(temps_d_squared_list)
     maximum_temp_d_sqaured = max(temps_d_squared_list)
     normalised_temps = {}
     for country, temp in temp_differences_squared.items():
-        # print(f"{country}, {temp}")
         temp = float(temp)
         # To normalise the value between 0 to 50
         # Only normalised 0 to 50 as opposed to 0 to 100 as I would prefer to for the temperature to not have a large
@@ -483,8 +446,6 @@ def calculateCountryScores(travelID, countryCodes):
             else:
                 temps[countryCode] = country_temp
                 pass
-
-            #print(f"Country: {countryCode}, user temp: {user_temp}, country temp: {country_temp}")
 
             temp_difference = user_temp - country_temp
             # Squares the difference
