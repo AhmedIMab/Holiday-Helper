@@ -533,7 +533,6 @@ def userQuestionAnswer(questionID, answerValue, travelID):
         # sets the current_travel to a query of user's newly created record
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
 
-
     y = getattr(current_travel, 'questions_answered')
     # splits the string at each comma to get a list containing the question ID of the questions answered
     questionsAnsweredArray = y.split(',')
