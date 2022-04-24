@@ -16,7 +16,6 @@ class User(db.Model, UserMixin):
 class Country(db.Model):
     country_code = db.Column(db.String(3), primary_key=True)
     country_name = db.Column(db.String(150), unique=True)
-    #sport = db.relationship('Country')
 
 
 class UserCountry(db.Model):
@@ -28,7 +27,6 @@ class UserCountry(db.Model):
 
 class Sport(db.Model):
     country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    # Add min/max?
     water_sports_score = db.Column(db.Float)
     winter_sports_score = db.Column(db.Float)
 

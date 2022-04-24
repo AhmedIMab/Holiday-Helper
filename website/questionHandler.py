@@ -12,27 +12,6 @@ from enum import Enum
 from datetime import datetime
 
 
-def getNewTravelID():
-    x = select(UserTravelScore)\
-            .where(UserTravelScore.user_id == current_user.id)
-    result = db.session.connection().execute(x)
-    result = result.fetchall()
-    print("THIS IS RESULT", result)
-
-    travelIDs = []
-    try:
-        for travel in result:
-            travelID = travel[1]
-            travelIDs.append(travelID)
-
-        newTravelID = max(travelIDs) + 1
-        return newTravelID
-    except ValueError:
-        # When the user hasn't travelled yet
-        travelID = 1
-        return travelID
-
-
 def getQuestions():
     # Access's the questions in the json file
     filename = (os.getcwd() + os.path.join('\\website\\static\\questions.json'))
@@ -233,6 +212,7 @@ def sortCountries(travelID):
     # stores a sql command which will SELECT the countries where the user.id is equal to the current user
     # and where the travel id is the same as travelID
     # Orders the countries by highest to lowest
+
     x = select(UserCountryScore)\
         .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
         .order_by(UserCountryScore.total_score.desc())
@@ -266,6 +246,7 @@ def sortCountries(travelID):
 
     return userSuggestions
 
+
 def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared):
     valuesX = temp_differences_squared.values()
     temps_d_squared_list = list(valuesX)
@@ -291,7 +272,6 @@ def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared)
         current_country = UserCountryScore.query.get((current_user.id, travelID, country_code))
         x = getattr(current_country, "temp_score")
         setattr(current_country, "temp_score", x+country_temp)
-
 
 
 def calculateCountryScores(travelID, countryCodes):

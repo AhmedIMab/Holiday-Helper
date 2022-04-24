@@ -43,9 +43,24 @@ def home():
 @views.route("/travelID", methods=["GET"])
 @login_required
 def newTravel():
-    newTravelID = getNewTravelID()
-    return jsonify(newTravelID)
+    x = select(UserTravelScore) \
+        .where(UserTravelScore.user_id == current_user.id)
+    result = db.session.connection().execute(x)
+    result = result.fetchall()
+    print("THIS IS RESULT", result)
 
+    travelIDs = []
+    try:
+        for travel in result:
+            travelID = travel[1]
+            travelIDs.append(travelID)
+
+        newTravelID = max(travelIDs) + 1
+    except ValueError:
+        # When the user hasn't travelled yet
+        newTravelID = 1
+
+    return jsonify(newTravelID)
 
 
 @views.route("/journeys", methods=["GET"])
