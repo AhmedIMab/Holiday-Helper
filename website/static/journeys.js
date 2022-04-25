@@ -4,7 +4,6 @@ const newJourneyButton = $(".newJourney")
 const journeyButton = $(".travel")
 const waitMessage = $("#pleaseWait");
 
-
 newJourneyButton.click(function () {
     console.log("Hello")
     Api.newTravel()
