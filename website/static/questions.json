@@ -277,7 +277,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "value": -50
+              "value": -30
             }
           ]
         },
@@ -287,7 +287,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "value": -40
+              "value": -24
             }
           ]
         },
@@ -297,7 +297,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "value": -30
+              "value": -18
             }
           ]
         },
@@ -307,7 +307,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "value": -20
+              "value": -12
             }
           ]
         },
@@ -317,7 +317,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "value": -10
+              "value": -6
             }
           ]
         },
@@ -337,7 +337,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "value": 10
+              "value": 6
             }
           ]
         },
@@ -347,7 +347,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "value": 20
+              "value": 12
             }
           ]
         },
@@ -357,7 +357,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "value": 30
+              "value": 18
             }
           ]
         },
@@ -367,7 +367,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "value": 40
+              "value": 24
             }
           ]
         },
@@ -377,7 +377,7 @@
           "modifiers": [
             {
               "modifier": "safety_user_score",
-              "value": 50
+              "value": 30
             }
           ]
         }
@@ -515,7 +515,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": -25
+              "value": -20
             }
           ]
         },
@@ -525,7 +525,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": -20
+              "value": -16
             }
           ]
         },
@@ -535,7 +535,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": -15
+              "value": -12
             }
           ]
         },
@@ -545,7 +545,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": -10
+              "value": -8
             }
           ]
         },
@@ -555,7 +555,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": -5
+              "value": -4
             }
           ]
         },
@@ -575,7 +575,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": 5
+              "value": 4
             }
           ]
         },
@@ -585,7 +585,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": 10
+              "value": 8
             }
           ]
         },
@@ -595,7 +595,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": 15
+              "value": 12
             }
           ]
         },
@@ -605,7 +605,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": 20
+              "value": 16
             }
           ]
         },
@@ -615,7 +615,7 @@
           "modifiers": [
             {
               "modifier": "pop_density_user_score",
-              "value": 25
+              "value": 20
             }
           ]
         }
