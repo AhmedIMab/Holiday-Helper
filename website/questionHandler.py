@@ -14,7 +14,7 @@ from datetime import datetime
 
 def getQuestions():
     # Access's the questions in the json file
-    filename = (os.getcwd() + os.path.join('\\website\\static\\questions.json'))
+    filename = (os.getcwd() + os.path.join('/website/static/questions.json'))
 
     f = open(filename, 'r')
     # uses the json module to load it as a JSON object in python
