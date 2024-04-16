@@ -14,7 +14,8 @@ from datetime import datetime
 
 def getQuestions():
     # Access's the questions in the json file
-    filename = (os.getcwd() + os.path.join('/website/static/questions.json'))
+
+    filename = os.path.join(os.getcwd(), 'website', 'static', 'questions.json')
 
     f = open(filename, 'r')
     # uses the json module to load it as a JSON object in python
@@ -613,42 +614,3 @@ def userQuestionAnswer(questionID, answerValue, travelID):
 
     else:
         print("This question has been answered")
-
-
-
-
-
-
-
-
-
-
-
-# old non enum way:
-# winter_sports_user_score = getattr(current_travel, "winter_sports_user_score")
-# culture_user_score = getattr(current_travel, "water_sports_user_score")
-# safety_user_score = getattr(current_travel, "culture_user_score")
-# budget_user_score = getattr(current_travel, "budget_user_score")
-# print("This is the water sports user score", water_sports_user_score)
-# print("This is the winter sports user score", winter_sports_user_score)
-# print("This is the culture user score", culture_user_score)
-# print("This is the safety user score", safety_user_score)
-# print("This is the budgets user score", budget_user_score)
-# user_score = []
-# user_score.append(water_sports_user_score)
-# user_score.append(winter_sports_user_score)
-# user_score.append(culture_user_score)
-# user_score.append(safety_user_score)
-# user_score.append(budget_user_score)
-# print(user_score)
-# most_important_user_score = max(user_score_values)
-
-
-
-
-
-
-
-
-
-

@@ -266,7 +266,7 @@
     },
     {
       "questionID": 6,
-      "mandatory": true,
+      "mandatory": false,
       "questionText": "How safe do you want your destination to be?",
       "questionHelper": "-5 being 'very unsafe', 0 being 'I don't mind', 5 being 'very safe'",
       "questionType": "Multiple Choice",
@@ -791,4 +791,4 @@
       ]
     }
   ]
-}  
+}
