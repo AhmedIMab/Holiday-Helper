@@ -1,11 +1,9 @@
 import sqlite3
 import sqlalchemy.exc
 from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect
-from flask_api import status
-import flask_sqlalchemy
 from flask_login import login_required, current_user
 from .models import User, Country, UserCountry
-from . import db
+from . import db_session
 import json
 from datetime import datetime
 import os
@@ -21,21 +19,18 @@ views = Blueprint('views', __name__)
 def delete_country():
     country = json.loads(request.data)
     countryCode = country.get('countryCode')
-    print(countryCode)
     country = UserCountry.query.get((current_user.id, countryCode))
-    print(country)
     if country:
         if country.user_id == current_user.id:
-            db.session.delete(country)
-            db.session.commit()
-            print("Hello")
+            db = db_session()
+            db.delete(country)
+            db.commit()
 
     return jsonify({})
 
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    print(os.getcwd())
     return render_template("home.html", user=current_user)
 
 
@@ -45,9 +40,10 @@ def home():
 def newTravel():
     x = select(UserTravelScore) \
         .where(UserTravelScore.user_id == current_user.id)
-    result = db.session.connection().execute(x)
+    db = db_session()
+    result = db.connection().execute(x)
     result = result.fetchall()
-    print("THIS IS RESULT", result)
+    # print("THIS IS RESULT", result)
 
     travelIDs = []
     try:
@@ -73,7 +69,8 @@ def journey():
 
     x = select(UserTravelScore)\
             .where(UserTravelScore.user_id == current_user.id)
-    result = db.session.connection().execute(x)
+    db = db_session()
+    result = db.connection().execute(x)
     result = result.fetchall()
     travel_sessions = []
     for travel in result:
@@ -86,7 +83,7 @@ def journey():
         # Cannot use questions answered as number of questions each user gets may be different
         countries_X = select(UserCountryScore)\
             .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)
-        result_countries = db.session.connection().execute(countries_X)
+        result_countries = db.connection().execute(countries_X)
         result_travels = result_countries.fetchall()
         if result_travels == []:
             # This will run when the user has not completed the questionnaire
@@ -102,7 +99,7 @@ def journey():
                 country_scores_x = select(UserCountryScore)\
                     .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
                     .order_by(UserCountryScore.total_score.desc())
-                result_best_countries = db.session.connection().execute(country_scores_x)
+                result_best_countries = db.connection().execute(country_scores_x)
                 result_all_countries = result_best_countries.fetchall()
                 # As result_all_countries returns a list of tuples
                 # And each tuple is in the same structure as the database table UserCountryScore
@@ -191,7 +188,7 @@ def userAnswer():
 
     userQuestionAnswer(questionID, answerID, travelID)
 
-    return jsonify({}), status.HTTP_200_OK
+    return jsonify({}), 200
 
 
 
@@ -211,9 +208,9 @@ def nextQuestion(travelID):
     question = getQuestion(questionID)
 
     if question == None:
-        return f"A question with questionID: {questionID} was not found", status.HTTP_406_NOT_ACCEPTABLE
+        return f"A question with questionID: {questionID} was not found", 406
     else:
-        return question, status.HTTP_200_OK
+        return question, 200
 
 
 
@@ -222,10 +219,10 @@ def nextQuestion(travelID):
 def questions(questionID):
     question = getQuestion(questionID)
     if question == None:
-        return f"A question with questionID: {questionID} was not found", status.HTTP_404_NOT_FOUND
+        return f"A question with questionID: {questionID} was not found", 404
 
     else:
-        return question, status.HTTP_200_OK
+        return question, 200
 
 
 @views.route('/countries', methods=['GET', 'POST'])
@@ -235,9 +232,6 @@ def countries():
     countriess = []
     for country in countries:
         countriess.append({country.country_code: country.country_name})
-
-
-    print(countriess)
 
     return render_template("countries.html", user=current_user, countries=countriess)
 
@@ -254,15 +248,15 @@ def addCountry():
                                            country_code=country_code,
                                            date_added=datetime.date(now),
                                            rating=0)
-            db.session.add(new_user_country)
+            db = db_session()
+            db.add(new_user_country)
             # the commit will confirm that the changes are added together
             # ensuring consistency
-            db.session.commit()
-            print(country_code)
+            db.commit()
         except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-            print("Country already Added")
+            # print("Country already Added")
             # return f"This user has already added this country {country_code}", 500
-            return f"This user has already added this country {country_code}", status.HTTP_400_BAD_REQUEST
+            return f"This user has already added this country {country_code}", 400
 
     return render_template("countries.html", user=current_user)
 

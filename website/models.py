@@ -1,145 +1,154 @@
-# '.' imports from the current package (website __init__.py right now)
-from . import db
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, Date, Boolean
+from sqlalchemy.orm import relationship
 from flask_login import UserMixin
+from . import Base
+
+class User(Base, UserMixin):
+    __tablename__ = 'user'
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String(150), unique=True)
+    password = Column(String(150))
+    first_name = Column(String(150))
+    # notes = relationship('Note')
+    countries = relationship('UserCountry', backref='user')
+    travel_score = relationship('UserTravelScore', backref='user')
 
 
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(150), unique=True)
-    password = db.Column(db.String(150))
-    first_name = db.Column(db.String(150))
-    # notes = db.relationship('Note')
-    countries = db.relationship('UserCountry')
-    travel_score = db.relationship('UserTravelScore')
+class Country(Base):
+    __tablename__ = 'country'
+
+    country_code = Column(String(3), primary_key=True)
+    country_name = Column(String(150), unique=True)
 
 
-class Country(db.Model):
-    country_code = db.Column(db.String(3), primary_key=True)
-    country_name = db.Column(db.String(150), unique=True)
+class UserCountry(Base):
+    __tablename__ = 'user_country'
+
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    date_added = Column(Date)
+    rating = Column(Integer)
 
 
-class UserCountry(db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    date_added = db.Column(db.Date)
-    rating = db.Column(db.Integer)
+class Sport(Base):
+    __tablename__ = 'sport'
+
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    water_sports_score = Column(Float)
+    winter_sports_score = Column(Float)
 
 
-class Sport(db.Model):
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    water_sports_score = db.Column(db.Float)
-    winter_sports_score = db.Column(db.Float)
+class Safety(Base):
+    __tablename__ = 'safety'
+
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    safety_score = Column(Float)
 
 
-class Safety(db.Model):
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    safety_score = db.Column(db.Float)
+class Cost(Base):
+    __tablename__ = 'cost'
+
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    cost_score = Column(Float)
 
 
-class Cost(db.Model):
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    cost_score = db.Column(db.Float)
+class CulturalValue(Base):
+    __tablename__ = 'cultural_value'
+
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    heritage_score = Column(Float)
 
 
-class CulturalValue(db.Model):
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    heritage_score = db.Column(db.Float)
+class CountryDailyCost(Base):
+    __tablename__ = 'country_daily_cost'
+
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    daily_cost = Column(Float)
 
 
-class CountryDailyCost(db.Model):
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    daily_cost = db.Column(db.Float)
+class YearlyTemperatures(Base):
+    __tablename__ = 'yearly_temperatures'
+
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    yearly_temp = Column(Float)
 
 
-class YearlyTemperatures(db.Model):
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    yearly_temp = db.Column(db.Float)
+class MonthlyTemperatures(Base):
+    __tablename__ = 'monthly_temperatures'
+
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    january_temp = Column(Float)
+    february_temp = Column(Float)
+    march_temp = Column(Float)
+    april_temp = Column(Float)
+    may_temp = Column(Float)
+    june_temp = Column(Float)
+    july_temp = Column(Float)
+    august_temp = Column(Float)
+    september_temp = Column(Float)
+    october_temp = Column(Float)
+    november_temp = Column(Float)
+    december_temp = Column(Float)
 
 
-class MonthlyTemperatures(db.Model):
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    january_temp = db.Column(db.Float)
-    february_temp = db.Column(db.Float)
-    march_temp = db.Column(db.Float)
-    april_temp = db.Column(db.Float)
-    may_temp = db.Column(db.Float)
-    june_temp = db.Column(db.Float)
-    july_temp = db.Column(db.Float)
-    august_temp = db.Column(db.Float)
-    september_temp = db.Column(db.Float)
-    october_temp = db.Column(db.Float)
-    november_temp = db.Column(db.Float)
-    december_temp = db.Column(db.Float)
+class Nature(Base):
+    __tablename__ = 'nature'
+
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    nature_score = Column(Float)
 
 
-class Nature(db.Model):
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    nature_score = db.Column(db.Float)
+class PopulationDensity(Base):
+    __tablename__ = 'population_density'
+
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    pop_density_score = Column(Float)
 
 
-class PopulationDensity(db.Model):
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    pop_density_score = db.Column(db.Float)
+class CovidRestrictions(Base):
+    __tablename__ = 'covid_restrictions'
+
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    covid_colour = Column(String(5))
 
 
-class CovidRestrictions(db.Model):
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    covid_colour = db.Column(db.String(5))
+class UserTravelScore(Base):
+    __tablename__ = 'user_travel_score'
+
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    travel_id = Column(Integer, primary_key=True)
+    date_added = Column(Date)
+    questions_answered = Column(String)
+    prev_countries = Column(Boolean)
+    travelling_time = Column(Integer)
+    journey_start = Column(String(15))
+    covid_feature = Column(Boolean)
+    num_travellers = Column(Integer)
+    pref_user_activity = Column(String(25))
+    pref_user_temp = Column(Integer)
+    water_sports_user_score = Column(Integer)
+    winter_sports_user_score = Column(Integer)
+    culture_user_score = Column(Integer)
+    nature_user_score = Column(Integer)
+    safety_user_score = Column(Integer)
+    budget_user_score = Column(Integer)
+    pop_density_user_score = Column(Integer)
 
 
-class UserTravelScore(db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    travel_id = db.Column(db.Integer, primary_key=True)
-    date_added = db.Column(db.Date)
-    questions_answered = db.Column(db.String)
-    prev_countries = db.Column(db.Boolean)
-    travelling_time = db.Column(db.Integer)
-    journey_start = db.Column(db.String(15))
-    covid_feature = db.Column(db.Boolean)
-    num_travellers = db.Column(db.Integer)
-    pref_user_activity = db.Column(db.String(25))
-    pref_user_temp = db.Column(db.Integer)
-    water_sports_user_score = db.Column(db.Integer)
-    winter_sports_user_score = db.Column(db.Integer)
-    culture_user_score = db.Column(db.Integer)
-    nature_user_score = db.Column(db.Integer)
-    safety_user_score = db.Column(db.Integer)
-    budget_user_score = db.Column(db.Integer)
-    pop_density_user_score = db.Column(db.Integer)
+class UserCountryScore(Base):
+    __tablename__ = 'user_country_score'
 
-
-
-class UserCountryScore(db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    travel_id = db.Column(db.Integer, primary_key=True)
-    country_code = db.Column(db.String(3), db.ForeignKey('country.country_code'), primary_key=True)
-    # The score for the user * the countries water sports score
-    water_sports_score = db.Column(db.Float)
-    winter_sports_score = db.Column(db.Float)
-    culture_score = db.Column(db.Float)
-    nature_score = db.Column(db.Float)
-    temp_score = db.Column(db.Float)
-    safety_score = db.Column(db.Float)
-    budget_score = db.Column(db.Float)
-    pop_density_score = db.Column(db.Float)
-    total_score = db.Column(db.Float)
-    final_travel_cost = db.Column(db.Float)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    travel_id = Column(Integer, primary_key=True)
+    country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
+    water_sports_score = Column(Float)
+    winter_sports_score = Column(Float)
+    culture_score = Column(Float)
+    nature_score = Column(Float)
+    temp_score = Column(Float)
+    safety_score = Column(Float)
+    budget_score = Column(Float)
+    pop_density_score = Column(Float)
+    total_score = Column(Float)
+    final_travel_cost = Column(Float)

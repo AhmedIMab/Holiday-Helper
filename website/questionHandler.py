@@ -7,7 +7,7 @@ from .models import UserCountryScore, CountryDailyCost, CovidRestrictions, Safet
 from .models import YearlyTemperatures
 from flask_login import login_required, current_user
 from sqlalchemy.sql import *
-from . import db
+from . import db_session
 from enum import Enum
 from datetime import datetime
 
@@ -101,14 +101,16 @@ def haveRequirementsBeenMet(travelID, questionID):
             currentValue = getattr(current_travel, requiredModifier)
             if isinstance(requiredValue, int):
                 if currentValue >= requiredValue:
-                    print("requirement met")
+                    # print("requirement met")
+                    pass
                 else:
                     # If the user does not have a greater than or equal score for the required factor
                     requirementsMet = False
                     break
             elif isinstance(requiredValue, str):
                 if currentValue == requiredValue:
-                    print("requirements met")
+                    # print("requirements met")
+                    pass
                 else:
                     requirementsMet = False
                     break
@@ -219,7 +221,8 @@ def sortCountries(travelID):
         .order_by(UserCountryScore.total_score.desc())
 
     # Executes the command
-    result = db.session.connection().execute(x)
+    db = db_session()
+    result = db.connection().execute(x)
     result = result.fetchall()
 
     uCountryCodes = []
@@ -317,6 +320,8 @@ def calculateCountryScores(travelID, countryCodes):
     missing_monthly_temps = 0
     temps = {}
     temp_differences_squared = {}
+    db = db_session()
+
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
         # Does the same for the current country
@@ -337,8 +342,8 @@ def calculateCountryScores(travelID, countryCodes):
                                                 pop_density_score=0,
                                                 total_score=0,
                                                 final_travel_cost=1)
-            db.session.add(new_user_country)
-            db.session.commit()
+            db.add(new_user_country)
+            db.commit()
             # sets the current_country to a query of country's newly created record
             current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
             user_score = {}
@@ -467,7 +472,7 @@ def calculateCountryScores(travelID, countryCodes):
         total_score_for_country = sum(allScores)
         setattr(current_country, "total_score", total_score_for_country)
 
-    db.session.commit()
+    db.commit()
 
 
 def userCountryScore(travelID, countryCodes):
@@ -501,6 +506,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
     answersType = question.get("answersType")
     questionAnswered = False
     now = datetime.now()
+    db = db_session()
 
     try:
         # Tries to get a users possible travel record
@@ -528,8 +534,9 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                                           safety_user_score=0,
                                           budget_user_score=0,
                                           pop_density_user_score=0)
-        db.session.add(new_user_travel)
-        db.session.commit()
+
+        db.add(new_user_travel)
+        db.commit()
 
         # sets the current_travel to a query of user's newly created record
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
@@ -548,7 +555,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
     # If the question hasn't been answered
     if questionAnswered == False:
         if questionType == "Integer" or answersType == "Integer":
-            print("This is an integer question")
+            # print("This is an integer question")
             answers = getAnswers(questionID)
             modifiersX = answers[0]
             modifiers = modifiersX.get("modifiers")
@@ -557,7 +564,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
             setattr(current_travel, toModify, x + int(answerValue))
 
         elif questionType == "Multiple Choice":
-            print("This is a Multiple Choice Question")
+            # print("This is a Multiple Choice Question")
             # Modifies the values of the user's score
             for modifier in answer.get("modifiers"):
                 # For every modifier in the modifiers of this answer
@@ -607,7 +614,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
         # Adds the question to the user's questions answered
         current_travel.questions_answered = current_travel.questions_answered + (str(questionID) + ",")
 
-        db.session.commit()
+        db.commit()
 
         # Sets the question to answered
         questionAnswered = True
