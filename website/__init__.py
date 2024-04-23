@@ -20,7 +20,7 @@ Base.query = db_session.query_property()
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'XXX'
+    app.config['SECRET_KEY'] = 'bv\xd2\x8a\x04`\xaf\x7f\xe8\x08j\xa98M8N\xd9\xc3\xae!\x19\x7f\x05\x16'
 
     from .views import views
     from .auth import auth
