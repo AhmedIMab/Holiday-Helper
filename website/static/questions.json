@@ -623,7 +623,7 @@
     },
     {
       "questionID": 9,
-      "mandatory": true,
+      "mandatory": false,
       "questionText": "Would you like to factor in current covid restrictions?",
       "questionHelper": "",
       "questionType": "Multiple Choice",

@@ -3,7 +3,7 @@ import sqlalchemy.exc
 from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect
 from flask_login import login_required, current_user
 from .models import User, Country, UserCountry
-from . import db_session
+from . import db_session, NUM_COUNTRIES
 import json
 from datetime import datetime
 import os
@@ -93,7 +93,7 @@ def journey():
                 num_country_scores += 1
             # If there are 197 records / 197 country scores as there are 197 countries in the database
             # consider this a complete travel
-            if num_country_scores == 197:
+            if num_country_scores == NUM_COUNTRIES:
                 # Selects all countries with the user id and travel id matching
                 # and orders by descending so the first one is the optimal country
                 country_scores_x = select(UserCountryScore)\
@@ -153,7 +153,7 @@ def suggestions(travelID):
         ranked_countries = userCountryScore(travelID, AllCountries)
         # map function is used to replace country codes with country names for user convenience
         # x[0] is the country code
-        # the first part of the tuple (x[0]) will be replaced with the the country name
+        # the first part of the tuple (x[0]) will be replaced with the country name
         # By the country with country code index of x[0]
         # x[1] is the original second part of the tuple and x[2] is the 3rd part
         ranked_countries_UF = list(map(lambda x: (AllCountries[x[0]], x[1], x[2]), ranked_countries))

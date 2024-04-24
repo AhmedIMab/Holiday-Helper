@@ -8,13 +8,13 @@ from flask_login import LoginManager
 DB_NAME = "database.db"
 
 engine = create_engine(f'sqlite:///website/{DB_NAME}')
+
 # This is the base db session
-db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
+db_session = scoped_session(sessionmaker(bind=engine, expire_on_commit=False))
 Base = declarative_base()
 Base.query = db_session.query_property()
 
+NUM_COUNTRIES = 197
 
 def create_app():
     app = Flask(__name__)
@@ -37,6 +37,8 @@ def create_app():
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
+
+    NUM_COUNTRIES = len(Country.query.all())
 
     return app
 

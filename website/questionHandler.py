@@ -1,13 +1,14 @@
 import json
 import os
 import sqlite3
+import traceback
 import sqlalchemy.exc
 from .models import User, Country, UserCountry, UserTravelScore, Sport, Cost, CulturalValue, MonthlyTemperatures
-from .models import UserCountryScore, CountryDailyCost, CovidRestrictions, Safety, Nature, PopulationDensity
+from .models import UserCountryScore, CountryDailyCost, Safety, Nature, PopulationDensity
 from .models import YearlyTemperatures
 from flask_login import login_required, current_user
 from sqlalchemy.sql import *
-from . import db_session
+from . import db_session, NUM_COUNTRIES
 from enum import Enum
 from datetime import datetime
 
@@ -252,10 +253,15 @@ def sortCountries(travelID):
 
 
 def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared):
+    db = db_session()
     valuesX = temp_differences_squared.values()
+    print("valuesX:", valuesX)
     temps_d_squared_list = list(valuesX)
+    print("This is temps d squared:", temps_d_squared_list)
     minimum_temp_d_squared = min(temps_d_squared_list)
+    print("This is min temps d squared:", minimum_temp_d_squared)
     maximum_temp_d_sqaured = max(temps_d_squared_list)
+    print("This is max temps d squared:", maximum_temp_d_sqaured)
     normalised_temps = {}
     for country, temp in temp_differences_squared.items():
         temp = float(temp)
@@ -272,10 +278,22 @@ def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared)
     # print(f"These are inverse normalised temps:", normalised_temps)
 
     for country_code in countryCodes:
+        # Here will find the countrys temp
         country_temp = normalised_temps[country_code]
         current_country = UserCountryScore.query.get((current_user.id, travelID, country_code))
-        x = getattr(current_country, "temp_score")
-        setattr(current_country, "temp_score", x+country_temp)
+        current_country_score = float(getattr(current_country, "temp_score"))
+        print("\nthis is current country score and type:", current_country_score, type(current_country_score))
+        #print("For country code:", country_code, "temp is:", country_temp)
+        setattr(current_country, "temp_score", current_country_score+country_temp)
+        print("this is country temp and type of country_temp:", country_temp, type(country_temp), "\n")
+
+    print("Here we are?????? before comitting")
+    try:
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print("Traceback error:", traceback.format_exc())
+    print("We've passed the commit here")
 
 
 def calculateCountryScores(travelID, countryCodes):
@@ -300,7 +318,6 @@ def calculateCountryScores(travelID, countryCodes):
         BUDGET_SCORE = "cost_score"
         DENSITY_SCORE = "pop_density_score"
 
-
     class UserScoreEnum(Enum):
         WATER_SPORTS = "water_sports_user_score"
         WINTER_SPORTS = "winter_sports_user_score"
@@ -310,17 +327,20 @@ def calculateCountryScores(travelID, countryCodes):
         BUDGET_SCORE = "budget_user_score"
         DENSITY_SCORE = "pop_density_user_score"
 
+    db = db_session()
+
     try:
         # Sets the current travel to the UserTravelScore of the user with primary key values
         # user_id as the current user id and travel id key as the travel id passed into the function
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print(e)
+        print("This is the error we have before well well well:", e)
 
     missing_monthly_temps = 0
     temps = {}
     temp_differences_squared = {}
-    db = db_session()
+
+    print("Well well well: ", current_travel, "name is", current_travel.questions_answered, current_travel.num_travellers)
 
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
@@ -349,9 +369,13 @@ def calculateCountryScores(travelID, countryCodes):
             user_score = {}
             user_score_values = []
 
+            # For every factor
             for n in UserScoreEnum:
+                # Gets the travel score
                 factor_user_score = getattr(current_travel, n.value)
-                user_score[n.name] = (factor_user_score)
+                # Adds it to the dictionary
+                user_score[n.name] = factor_user_score
+
                 user_score_values.append(factor_user_score)
 
             most_important_user_score = max(user_score_values)
@@ -384,7 +408,6 @@ def calculateCountryScores(travelID, countryCodes):
             country_scores[CountryScoreEnum.DENSITY_SCORE.name] = getattr(countryScore,
                                                                           CountryScoreEnum.DENSITY_SCORE.value)
 
-
             user_relative_scores = {}
             for x in UserScoreEnum:
                 factor_relative_score = user_score[x.name] / most_important_user_score
@@ -408,7 +431,6 @@ def calculateCountryScores(travelID, countryCodes):
                 userCountryScores.append(userCountryScoreT)
                 userCountryScoresD[y.name] = userCountryScoreT
 
-
             ## For Temperature
             user_temp = getattr(current_travel, "pref_user_temp")
             journey_start = getattr(current_travel, "journey_start")
@@ -420,10 +442,11 @@ def calculateCountryScores(travelID, countryCodes):
                 # country_temp is referring to the temperature of the country for the given user month
                 country_temp = getattr(countryScore, journey_start_country)
             except AttributeError:
+                # If it cant find it, will look at yearly temps
                 countryScore = YearlyTemperatures.query.get(countryCode)
                 country_temp = getattr(countryScore, "yearly_temp")
             if country_temp is None:
-                # If theres no data for that month for the country
+                # If there's no data for that month for the country
                 # Use the yearly temperature data
                 missing_monthly_temps += 1
                 countryScore = YearlyTemperatures.query.get(countryCode)
@@ -437,6 +460,7 @@ def calculateCountryScores(travelID, countryCodes):
             # Squares the difference
             temp_difference = temp_difference * temp_difference
             temp_differences_squared[countryCode] = temp_difference
+
 
             country_daily_cost = CountryDailyCost.query.get((countryCode))
             if country_daily_cost.daily_cost is not None:
@@ -456,6 +480,10 @@ def calculateCountryScores(travelID, countryCodes):
                 # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
                 setattr(current_country, t.value, userCountryScoresD[t.name])
 
+    db.commit()
+    db.close()
+
+    print(("*"*20), "\nThese are the temp_differences squared in calculateCountryScores:", temp_differences_squared)
     calculateTempScores(travelID, countryCodes, temps, temp_differences_squared)
 
     # sets the total score
@@ -466,13 +494,18 @@ def calculateCountryScores(travelID, countryCodes):
             x = getattr(current_country, factor.value)
             allScores.append(x)
 
-        temp_score = getattr(current_country, "temp_score")
-        allScores.append(temp_score)
+            temp_score = getattr(current_country, "temp_score")
+            allScores.append(temp_score)
 
-        total_score_for_country = sum(allScores)
-        setattr(current_country, "total_score", total_score_for_country)
+            total_score_for_country = sum(allScores)
+            setattr(current_country, "total_score", total_score_for_country)
 
-    db.commit()
+    try:
+        db.commit()
+    except:
+        db.rollback()
+    finally:
+        db.close()  # optional, depends on use case
 
 
 def userCountryScore(travelID, countryCodes):
@@ -481,17 +514,26 @@ def userCountryScore(travelID, countryCodes):
         # user_id as the current user id and travel id key as the travel id passed into the function
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print(e)
+        print("At this e, usercountryscore:", e)
 
     prev_countries = getattr(current_travel, "prev_countries")
 
-    try:
-        # Tries to calculate country scores
-        calculateCountryScores(travelID, countryCodes)
-    except ValueError:
-        # If the countries have already been added...
-        # Just go straight to sorting the countries as they are already in the database
-        pass
+    country_scores = UserCountryScore.query.filter_by(user_id=current_user.id, travel_id=travelID)
+    num_country_scores = len(country_scores.all())
+    print(num_country_scores)
+    print("-" * 20)
+
+    if num_country_scores != 197:
+        print("Need to calculate them!")
+        try:
+            # Tries to calculate country scores
+            calculateCountryScores(travelID, countryCodes)
+        except ValueError as ve:
+            print("\nWe've got a value error here:\n", ve)
+            print("This is the traceback:\n", traceback.format_exc())
+            # If the countries have already been added...
+            # Just go straight to sorting the countries as they are already in the database
+            pass
 
     # Runs the sortCountries function to get a list of the countries in an ordered format
     sortedCountries = sortCountries(travelID)
