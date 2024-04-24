@@ -231,11 +231,9 @@ def sortCountries(travelID):
         countryCode = country[2]
         uCountryCodes.append(countryCode)
 
-
     userSuggestions = []
 
     filteredCountries = filterPrevCountries(uCountryCodes, travelID)
-    #print("filteredCountries in sort countries", filteredCountries)
 
     country_number = 1
     for country in filteredCountries:
@@ -255,17 +253,13 @@ def sortCountries(travelID):
 def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared):
     db = db_session()
     valuesX = temp_differences_squared.values()
-    print("valuesX:", valuesX)
     temps_d_squared_list = list(valuesX)
-    print("This is temps d squared:", temps_d_squared_list)
     minimum_temp_d_squared = min(temps_d_squared_list)
-    print("This is min temps d squared:", minimum_temp_d_squared)
     maximum_temp_d_sqaured = max(temps_d_squared_list)
-    print("This is max temps d squared:", maximum_temp_d_sqaured)
     normalised_temps = {}
     for country, temp in temp_differences_squared.items():
         temp = float(temp)
-        # To normalise the value between 0 to 50
+        # To normalise the value between 0 and 50
         # Only normalised 0 to 50 as opposed to 0 to 100 as I would prefer to for the temperature to not have a large
         # weighting on the score for the country
         # Also did not normalise into negative values as I would like the temperature to refine to a more suited country
@@ -275,26 +269,20 @@ def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared)
         temp_inverse = (-1 * temp_normalised) + 100
         normalised_temps[country] = temp_inverse
 
-    # print(f"These are inverse normalised temps:", normalised_temps)
 
     for country_code in countryCodes:
         # Here will find the countrys temp
         country_temp = normalised_temps[country_code]
         current_country = UserCountryScore.query.get((current_user.id, travelID, country_code))
         current_country_score = float(getattr(current_country, "temp_score"))
-        print("\nthis is current country score and type:", current_country_score, type(current_country_score))
         #print("For country code:", country_code, "temp is:", country_temp)
         setattr(current_country, "temp_score", current_country_score+country_temp)
-        print("this is country temp and type of country_temp:", country_temp, type(country_temp), "\n")
 
-    print("Here we are?????? before comitting")
     try:
         db.commit()
     except Exception as e:
         db.rollback()
         print("Traceback error:", traceback.format_exc())
-    print("We've passed the commit here")
-
 
 def calculateCountryScores(travelID, countryCodes):
     # multiple enum's as inconsistent naming in databases
@@ -339,8 +327,6 @@ def calculateCountryScores(travelID, countryCodes):
     missing_monthly_temps = 0
     temps = {}
     temp_differences_squared = {}
-
-    print("Well well well: ", current_travel, "name is", current_travel.questions_answered, current_travel.num_travellers)
 
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
@@ -483,7 +469,6 @@ def calculateCountryScores(travelID, countryCodes):
     db.commit()
     db.close()
 
-    print(("*"*20), "\nThese are the temp_differences squared in calculateCountryScores:", temp_differences_squared)
     calculateTempScores(travelID, countryCodes, temps, temp_differences_squared)
 
     # sets the total score
@@ -520,11 +505,9 @@ def userCountryScore(travelID, countryCodes):
 
     country_scores = UserCountryScore.query.filter_by(user_id=current_user.id, travel_id=travelID)
     num_country_scores = len(country_scores.all())
-    print(num_country_scores)
-    print("-" * 20)
 
     if num_country_scores != 197:
-        print("Need to calculate them!")
+        # Need to calculate them
         try:
             # Tries to calculate country scores
             calculateCountryScores(travelID, countryCodes)
@@ -617,7 +600,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                     # Gets the attribute name in the database of the modifier
                     x = getattr(current_travel, toModify)
                     if type(x) == int:
-                        print("This is an integer answer")
+                        # print("This is an integer answer")
                         # Changes the fields value by the modification
                         setattr(current_travel, toModify, x + modificationBy)
                     else:
@@ -641,7 +624,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
 
             for factor in allFactorNames:
                 if factor == top_activity_score:
-                    print("This is the top factor")
+                    #print("This is the top factor")
                     initialValue = getattr(current_travel, top_activity_score)
                     x = int(answerValue)
                     value = x/10 * initialValue
@@ -657,9 +640,10 @@ def userQuestionAnswer(questionID, answerValue, travelID):
         current_travel.questions_answered = current_travel.questions_answered + (str(questionID) + ",")
 
         db.commit()
+        db.close()
 
         # Sets the question to answered
         questionAnswered = True
-
     else:
-        print("This question has been answered")
+        pass
+        # print("This question has been answered")
