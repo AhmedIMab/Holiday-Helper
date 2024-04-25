@@ -249,7 +249,9 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    padding-right: 0.4em;
+    gap: 0;
   }
 
   .previous_countries_icon_container p {
@@ -260,5 +262,8 @@
     width: 20%;
     height: 20%;
   }
+}
 
+.journey_button {
+  font-size: 18px;
 }

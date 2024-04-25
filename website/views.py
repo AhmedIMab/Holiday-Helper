@@ -64,6 +64,8 @@ def journey():
     def find_journeys():
         print("We;ve entered the find_journeys!")
         prev_countries = UserCountry.query.filter_by(user_id=current_user.id).all()
+        prev_countries_country_codes = [Country.query.filter_by(country_code=cc.country_code).first().country_code for cc in prev_countries]
+        print("These are the previous countries codes:", prev_countries_country_codes)
         all_travel_sessions = UserTravelScore.query.filter_by(user_id=current_user.id).all()
 
         travel_sessions = []
@@ -81,8 +83,10 @@ def journey():
                 travel_sessions.append((travelID, dateString, travel.prev_countries,  {'Status': 'Incomplete'}))
             else:
                 if len(result_travel_countries) == NUM_COUNTRIES:
-                    if travel.prev_countries == 1:
-                        print("They wanted to filter the countries in this travel session")
+                    # 0 means does not want to include previous countries
+                    # 1 means want to include previous countries
+                    if travel.prev_countries == 0:
+                        # print("They wanted to filter the countries in this travel session", travelID)
 
                         # Selects countries with the user id and travel id matching
                         # and orders by descending so the first one is the optimal country
@@ -94,12 +98,14 @@ def journey():
                             .limit(len(prev_countries) + 1) \
                             .all()
 
+
                         # As a default option
                         top_country = result_all_countries[0]
 
-                        for country in result_all_countries:
-                            if country not in prev_countries:
-                                top_country = country
+                        for country_y in result_all_countries:
+                            if country_y.country_code not in prev_countries_country_codes:
+                                top_country = country_y
+                                break
 
                     else:
                         top_country = UserCountryScore.query \

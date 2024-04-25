@@ -30,10 +30,10 @@
                             <img class="prev_countries_icon" src="{{ url_for('static', filename='imgs/removeX.png') }}" alt="tick icon">
                             {% endif %}
                         </div>
-                        {% if journeyStatus == "Incomplete" %}
-                        <button class="btn btn-danger travel" id="{{ travel[0] }}">Incomplete</button>
+                        {% if journeyStatusOrCountry == "Incomplete" %}
+                        <button class="journey_button btn btn-danger travel" id="{{ travel[0] }}">Incomplete</button>
                         {% else %}
-                        <button class="btn btn-success travel" id="{{ travel[0] }}">{{ journeyStatusOrCountry }}</button>
+                        <button class="journey_button btn btn-success travel" id="{{ travel[0] }}">{{ journeyStatusOrCountry }}</button>
                         {% endif %}
                     </div>
                 </div>
