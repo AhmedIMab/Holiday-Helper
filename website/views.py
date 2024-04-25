@@ -234,9 +234,7 @@ def countries():
 @views.route('/usercountries', methods=['GET', 'POST'])
 @login_required
 def addCountry():
-    print("Running this hehehe")
     if request.method == "POST":
-        print("POST request made hehhehe")
         db = db_session()
         try:
             now = datetime.now()
@@ -250,8 +248,8 @@ def addCountry():
             # the commit will confirm that the changes are added together
             # ensuring consistency
             db.commit()
-        except Exception as e:
-            print("This is the exception when adding a country that was already there:", e)
+        except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+            # print("This is the exception when adding a country that was already there:", e)
             db.rollback()
             # return f"This user has already added this country {country_code}", 500
             return jsonify({"error": "Country already added"}), 400

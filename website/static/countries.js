@@ -49,14 +49,14 @@ addCountryButton.click(function (event) {
         Api.addCountry(selectedCountry.countryCode)
             .then((_res) => {
                 if (_res.status === 400) {
-                    return _res.json()
+                    return _res.json().then((data) => {
+                        let error = data.error;
+                        throw Error(error);
+                    })
                 }
                 else {
                     window.location.href = "/countries";
                 }
-            }).then((data) => {
-                let error = data.error
-                throw Error(error)
             }).catch((error) => {
                 $(countryPrevAdded).html(error.value);
                 $(countryPrevAdded).show();
