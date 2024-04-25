@@ -166,22 +166,16 @@ def nextQuestionID(travelID):
         return questionsStream.get("questionID")
 
 
-def doesUserWantThisCountry(countryCode):
+def doesUserWantThisCountry(country_code_to_check):
     # Retrieves all countries in the user country table
-    countries = UserCountry.query.all()
-    users_countries = []
-
-    # loops through every record in the list of objects (records in the table)
-    for country in countries:
-        # if the user id is the same as the current user
-        if country.user_id == current_user.id:
-            # add the country code to the list of users visited countries
-            users_countries.append(country.country_code)
+    user_countries = UserCountry.query.filter_by(user_id=current_user.id)
+    print("\nThese are the user_countries", user_countries.all())
 
     # loops through each country in the users countries
-    for country in users_countries:
+    for country in user_countries:
+        country_code = country.country_code
         # if the inputted country code is located in the users countries
-        if countryCode in users_countries:
+        if country_code_to_check == country_code:
             return True
         else:
             return False
@@ -210,13 +204,12 @@ def filterPrevCountries(codes, travelID):
         suggestionsStream = list(suggestionsStream)
         return suggestionsStream
 
+
 def sortCountries(travelID):
-    #print("sort countries is running")
     # Executes the command
     # stores a sql command which will SELECT the countries where the user.id is equal to the current user
     # and where the travel id is the same as travelID
     # Orders the countries by highest to lowest
-
     x = select(UserCountryScore)\
         .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
         .order_by(UserCountryScore.total_score.desc())
@@ -232,7 +225,6 @@ def sortCountries(travelID):
         uCountryCodes.append(countryCode)
 
     userSuggestions = []
-
     filteredCountries = filterPrevCountries(uCountryCodes, travelID)
 
     country_number = 1
@@ -250,7 +242,7 @@ def sortCountries(travelID):
     return userSuggestions
 
 
-def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared):
+def calculateTempScores(travelID, countryCodes, temp_differences_squared):
     db = db_session()
     valuesX = temp_differences_squared.values()
     temps_d_squared_list = list(valuesX)
@@ -269,13 +261,11 @@ def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared)
         temp_inverse = (-1 * temp_normalised) + 100
         normalised_temps[country] = temp_inverse
 
-
     for country_code in countryCodes:
         # Here will find the countrys temp
         country_temp = normalised_temps[country_code]
         current_country = UserCountryScore.query.get((current_user.id, travelID, country_code))
         current_country_score = float(getattr(current_country, "temp_score"))
-        #print("For country code:", country_code, "temp is:", country_temp)
         setattr(current_country, "temp_score", current_country_score+country_temp)
 
     try:
@@ -283,6 +273,7 @@ def calculateTempScores(travelID, countryCodes, temps, temp_differences_squared)
     except Exception as e:
         db.rollback()
         print("Traceback error:", traceback.format_exc())
+
 
 def calculateCountryScores(travelID, countryCodes):
     # multiple enum's as inconsistent naming in databases
@@ -298,13 +289,13 @@ def calculateCountryScores(travelID, countryCodes):
         DENSITY_SCORE = "pop_density_score"
 
     class CountryScoreEnum(Enum):
-        WATER_SPORTS = "water_sports_score"
-        WINTER_SPORTS = "winter_sports_score"
-        CULTURE_SCORE = "heritage_score"
-        NATURE_SCORE = "nature_score"
-        SAFETY_SCORE = "safety_score"
-        BUDGET_SCORE = "cost_score"
-        DENSITY_SCORE = "pop_density_score"
+        WATER_SPORTS = ("water_sports_score", Sport)
+        WINTER_SPORTS = ("winter_sports_score", Sport)
+        CULTURE_SCORE = ("heritage_score", CulturalValue)
+        NATURE_SCORE = ("nature_score", Nature)
+        SAFETY_SCORE = ("safety_score", Safety)
+        BUDGET_SCORE = ("cost_score", Cost)
+        DENSITY_SCORE = ("pop_density_score", PopulationDensity)
 
     class UserScoreEnum(Enum):
         WATER_SPORTS = "water_sports_user_score"
@@ -361,55 +352,27 @@ def calculateCountryScores(travelID, countryCodes):
                 factor_user_score = getattr(current_travel, n.value)
                 # Adds it to the dictionary
                 user_score[n.name] = factor_user_score
-
                 user_score_values.append(factor_user_score)
 
             most_important_user_score = max(user_score_values)
 
-            country_scores = {}
-            countryScore = Sport.query.get(countryCode)
-            # Adds a dictionary key of the Water Sports to the attribute of enum value for water sports
-            country_scores[CountryScoreEnum.WATER_SPORTS.name] = getattr(countryScore,
-                                                                         CountryScoreEnum.WATER_SPORTS.value)
-            country_scores[CountryScoreEnum.WINTER_SPORTS.name] = getattr(countryScore,
-                                                                          CountryScoreEnum.WINTER_SPORTS.value)
-
-            countryScore = CulturalValue.query.get((countryCode))
-            country_scores[CountryScoreEnum.CULTURE_SCORE.name] = getattr(countryScore,
-                                                                          CountryScoreEnum.CULTURE_SCORE.value)
-
-            countryScore = Safety.query.get((countryCode))
-            country_scores[CountryScoreEnum.SAFETY_SCORE.name] = getattr(countryScore,
-                                                                         CountryScoreEnum.SAFETY_SCORE.value)
-
-            countryScore = Cost.query.get((countryCode))
-            country_scores[CountryScoreEnum.BUDGET_SCORE.name] = getattr(countryScore,
-                                                                         CountryScoreEnum.BUDGET_SCORE.value)
-
-            countryScore = Nature.query.get((countryCode))
-            country_scores[CountryScoreEnum.NATURE_SCORE.name] = getattr(countryScore,
-                                                                         CountryScoreEnum.NATURE_SCORE.value)
-
-            countryScore = PopulationDensity.query.get((countryCode))
-            country_scores[CountryScoreEnum.DENSITY_SCORE.name] = getattr(countryScore,
-                                                                          CountryScoreEnum.DENSITY_SCORE.value)
+            all_country_scores = {}
+            for country_score in CountryScoreEnum:
+                table_value = country_score.value[1]
+                # Will get the value of the field in the appropriate table
+                all_country_scores[country_score] = getattr(table_value, country_score.value[0])
 
             user_relative_scores = {}
             for x in UserScoreEnum:
                 factor_relative_score = user_score[x.name] / most_important_user_score
                 user_relative_scores[x.name] = factor_relative_score
 
-            # print("This is country_scores", country_scores)
-            # print("This is relative scores", user_relative_scores)
-
             userCountryScores = []
             userCountryScoresD = {}
             for y in UserScoreEnum:
                 # To deal with no data for that countries factor score
-                if country_scores[y.name] is not None:
-                    userCountryScoreT = user_relative_scores[y.name] * country_scores[y.name]
-                    #print("country", countryCode)
-                    #print("This is userCountryScoreT", userCountryScoreT)
+                if all_country_scores[y.name] is not None:
+                    userCountryScoreT = user_relative_scores[y.name] * all_country_scores[y.name]
                 else:
                     # When the value is NULL, sets the value to 0
                     userCountryScoreT = 0
@@ -440,15 +403,13 @@ def calculateCountryScores(travelID, countryCodes):
                 temps[countryCode] = country_temp
             else:
                 temps[countryCode] = country_temp
-                pass
 
             temp_difference = user_temp - country_temp
             # Squares the difference
             temp_difference = temp_difference * temp_difference
             temp_differences_squared[countryCode] = temp_difference
 
-
-            country_daily_cost = CountryDailyCost.query.get((countryCode))
+            country_daily_cost = CountryDailyCost.query.get(countryCode)
             if country_daily_cost.daily_cost is not None:
                 # To get the daily cost for the country, it will multiply the number of travellers by the
                 # travelling time and the daily cost of the country using the CountryDailyCost table
@@ -471,6 +432,8 @@ def calculateCountryScores(travelID, countryCodes):
 
     calculateTempScores(travelID, countryCodes, temps, temp_differences_squared)
 
+    db = db_session()
+
     # sets the total score
     for countryCode in countryCodes:
         current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
@@ -490,7 +453,7 @@ def calculateCountryScores(travelID, countryCodes):
     except:
         db.rollback()
     finally:
-        db.close()  # optional, depends on use case
+        db.close()
 
 
 def userCountryScore(travelID, countryCodes):
@@ -501,12 +464,10 @@ def userCountryScore(travelID, countryCodes):
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         print("At this e, usercountryscore:", e)
 
-    prev_countries = getattr(current_travel, "prev_countries")
-
     country_scores = UserCountryScore.query.filter_by(user_id=current_user.id, travel_id=travelID)
     num_country_scores = len(country_scores.all())
 
-    if num_country_scores != 197:
+    if num_country_scores != NUM_COUNTRIES:
         # Need to calculate them
         try:
             # Tries to calculate country scores
@@ -514,10 +475,9 @@ def userCountryScore(travelID, countryCodes):
         except ValueError as ve:
             print("\nWe've got a value error here:\n", ve)
             print("This is the traceback:\n", traceback.format_exc())
-            # If the countries have already been added...
-            # Just go straight to sorting the countries as they are already in the database
-            pass
 
+    # If the countries have already been added...
+    # Just go straight to sorting the countries as they are already in the database
     # Runs the sortCountries function to get a list of the countries in an ordered format
     sortedCountries = sortCountries(travelID)
 
@@ -539,7 +499,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         print("This is E", e)
 
-    if current_travel == None:
+    if current_travel is None:
         # if the user has not travelled yet
         # Creates a new record for them
         new_user_travel = UserTravelScore(user_id=current_user.id,
@@ -569,18 +529,14 @@ def userQuestionAnswer(questionID, answerValue, travelID):
     y = getattr(current_travel, 'questions_answered')
     # splits the string at each comma to get a list containing the question ID of the questions answered
     questionsAnsweredArray = y.split(',')
-    for questionA in questionsAnsweredArray:
-        if questionA == "":
-            pass
-        else:
-            if int(questionID) == int(questionA):
-                questionAnswered = True
-                break
+    if str(questionID) in questionsAnsweredArray:
+        questionAnswered = True
+        db.close()
+        return
 
     # If the question hasn't been answered
-    if questionAnswered == False:
+    if not questionAnswered:
         if questionType == "Integer" or answersType == "Integer":
-            # print("This is an integer question")
             answers = getAnswers(questionID)
             modifiersX = answers[0]
             modifiers = modifiersX.get("modifiers")
@@ -593,30 +549,22 @@ def userQuestionAnswer(questionID, answerValue, travelID):
             # Modifies the values of the user's score
             for modifier in answer.get("modifiers"):
                 # For every modifier in the modifiers of this answer
-                if questionAnswered == False:
-                    # checks again if the question is answered
-                    toModify = modifier.get("modifier")
-                    modificationBy = modifier.get("value")
-                    # Gets the attribute name in the database of the modifier
-                    x = getattr(current_travel, toModify)
-                    if type(x) == int:
-                        # print("This is an integer answer")
-                        # Changes the fields value by the modification
-                        setattr(current_travel, toModify, x + modificationBy)
-                    else:
-                        # If the type of the value we are changing is not an int
-                        # Sets the attribute to the modification value as opposed to adding
-                        setattr(current_travel, toModify, modificationBy)
+                toModify = modifier.get("modifier")
+                modificationBy = modifier.get("value")
+                # Gets the attribute name in the database of the modifier
+                x = getattr(current_travel, toModify)
+                if type(x) == int:
+                    # print("This is an integer answer")
+                    # Changes the fields value by the modification
+                    setattr(current_travel, toModify, x + modificationBy)
+                else:
+                    # If the type of the value we are changing is not an int
+                    # Sets the attribute to the modification value as opposed to adding
+                    setattr(current_travel, toModify, modificationBy)
 
         elif answersType == "Integer+":
-            # print("The is a special integer question")
             pref_user_activity = getattr(current_travel, "pref_user_activity")
             top_activity_score = pref_user_activity + "_user_score"
-            x = getattr(current_travel, top_activity_score)
-            factor1 = getattr(current_travel, "water_sports_user_score")
-            factor2 = getattr(current_travel, "winter_sports_user_score")
-            factor3 = getattr(current_travel, "culture_user_score")
-            factor4 = getattr(current_travel, "nature_user_score")
             allFactorNames = ["water_sports_user_score",
                               "winter_sports_user_score",
                               "culture_user_score",
@@ -624,26 +572,22 @@ def userQuestionAnswer(questionID, answerValue, travelID):
 
             for factor in allFactorNames:
                 if factor == top_activity_score:
-                    #print("This is the top factor")
                     initialValue = getattr(current_travel, top_activity_score)
                     x = int(answerValue)
                     value = x/10 * initialValue
                     setattr(current_travel, top_activity_score, value+10)
                 else:
                     # When it's not the highest factor...
-                    initialValue = getattr(current_travel, factor)
                     x = int(answerValue)
                     value = ((10-(x/10))/3) * 10
                     setattr(current_travel, factor, value+10)
 
         # Adds the question to the user's questions answered
-        current_travel.questions_answered = current_travel.questions_answered + (str(questionID) + ",")
+        current_travel.questions_answered += str(questionID) + ","
 
         db.commit()
-        db.close()
 
-        # Sets the question to answered
-        questionAnswered = True
-    else:
-        pass
-        # print("This question has been answered")
+    db.close()
+
+
+

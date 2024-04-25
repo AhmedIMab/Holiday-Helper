@@ -4,6 +4,7 @@ const selectedCountry = document.querySelector("#selectedCountry");
 const optionsContainer = document.querySelector(".options-container");
 const optionsList = document.querySelectorAll(".option");
 const noCountry = document.querySelector("#noCountrySelected");
+const countryPrevAdded = document.querySelector("#countryAlreadyAdded")
 
 // When clicked...
 selectedCountry.addEventListener("click", () => {
@@ -47,8 +48,19 @@ addCountryButton.click(function (event) {
     if (selectedCountry.countryCode && selectedCountry.countryName) {
         Api.addCountry(selectedCountry.countryCode)
             .then((_res) => {
-                window.location.href = "/countries";
-            });
+                if (_res.status === 400) {
+                    return _res.json()
+                }
+                else {
+                    window.location.href = "/countries";
+                }
+            }).then((data) => {
+                let error = data.error
+                throw Error(error)
+            }).catch((error) => {
+                $(countryPrevAdded).html(error.value);
+                $(countryPrevAdded).show();
+        });
     } else {
         // If no country is selected / the default value of "Select Countries..." has not been changed
         // shows the noCountry element

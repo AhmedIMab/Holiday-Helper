@@ -9,7 +9,7 @@ from datetime import datetime
 import os
 from website.questionHandler import *
 import traceback
-
+import time
 
 views = Blueprint('views', __name__)
 
@@ -32,7 +32,6 @@ def delete_country():
 @login_required
 def home():
     return render_template("home.html", user=current_user)
-
 
 
 @views.route("/travelID", methods=["GET"])
@@ -62,6 +61,7 @@ def newTravel():
 @views.route("/journeys", methods=["GET"])
 @login_required
 def journey():
+    start = time.time()
     countries = Country.query.all()
     AllCountries = {}
     for country in countries:
@@ -96,16 +96,16 @@ def journey():
             if num_country_scores == NUM_COUNTRIES:
                 # Selects all countries with the user id and travel id matching
                 # and orders by descending so the first one is the optimal country
-                country_scores_x = select(UserCountryScore)\
+                country_scores_query = select(UserCountryScore)\
                     .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
                     .order_by(UserCountryScore.total_score.desc())
-                result_best_countries = db.connection().execute(country_scores_x)
-                result_all_countries = result_best_countries.fetchall()
+                result_all_countries = db.connection().execute(country_scores_query).fetchall()
                 # As result_all_countries returns a list of tuples
                 # And each tuple is in the same structure as the database table UserCountryScore
                 # The third column (index 2) is the country code
                 # So result_top_country will be the first tuple's country code
-                result_top_country = result_all_countries[0][2]
+                top_country = result_all_countries[0][2]
+
 
                 country_codes_to_filter = []
                 for result in result_all_countries:
@@ -125,6 +125,7 @@ def journey():
                 print("Incomplete - possible server error")
                 travel_sessions.append((travelID, dateString, {'Status': 'Incomplete'}))
 
+    print("This is how long it currently takes to load journeys:", time.time()-start)
     return render_template("journeys.html", user=current_user, journeys=travel_sessions)
 
 
@@ -163,19 +164,16 @@ def suggestions(travelID):
         user_travel_details.append(travelID)
         user_travel_details.append(num_travellers)
         user_travel_details.append(travelling_time)
-        #print("THIS IS ALL COUNTRIES", AllCountries)
-        #print("This is rankedCountriesUF", ranked_countries_UF)
         return render_template("suggestions.html",
                                user=current_user,
                                best_countries=ranked_countries_UF,
                                user_travel=user_travel_details)
 
-    except (AttributeError):
+    except AttributeError:
         print("ERROR", traceback.format_exc())
         user_travel_details.append(0)
         user_travel_details.append(1)
         return redirect(url_for('views.noTravel'))
-
 
 
 @views.route("/userQuestionAnswer", methods=["POST"])
@@ -191,7 +189,6 @@ def userAnswer():
     return jsonify({}), 200
 
 
-
 @views.route("/api/questions/", methods=["GET"])
 @login_required
 def AllQuestions():
@@ -200,25 +197,23 @@ def AllQuestions():
     return jsonify(data)
 
 
-
 @views.route("/api/questions/nextQuestion/<travelID>", methods=["GET"])
 @login_required
 def nextQuestion(travelID):
     questionID = nextQuestionID(travelID)
     question = getQuestion(questionID)
 
-    if question == None:
+    if question is None:
         return f"A question with questionID: {questionID} was not found", 406
     else:
         return question, 200
-
 
 
 @views.route("/api/questions/<questionID>", methods=["GET"])
 @login_required
 def questions(questionID):
     question = getQuestion(questionID)
-    if question == None:
+    if question is None:
         return f"A question with questionID: {questionID} was not found", 404
 
     else:
@@ -229,17 +224,20 @@ def questions(questionID):
 @login_required
 def countries():
     countries = Country.query.all()
-    countriess = []
+    countries_list = []
     for country in countries:
-        countriess.append({country.country_code: country.country_name})
+        countries_list.append({country.country_code: country.country_name})
 
-    return render_template("countries.html", user=current_user, countries=countriess)
+    return render_template("countries.html", user=current_user, countries=countries_list)
 
 
 @views.route('/usercountries', methods=['GET', 'POST'])
 @login_required
 def addCountry():
+    print("Running this hehehe")
     if request.method == "POST":
+        print("POST request made hehhehe")
+        db = db_session()
         try:
             now = datetime.now()
             country = json.loads(request.data)
@@ -248,15 +246,15 @@ def addCountry():
                                            country_code=country_code,
                                            date_added=datetime.date(now),
                                            rating=0)
-            db = db_session()
             db.add(new_user_country)
             # the commit will confirm that the changes are added together
             # ensuring consistency
             db.commit()
-        except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-            # print("Country already Added")
+        except Exception as e:
+            print("This is the exception when adding a country that was already there:", e)
+            db.rollback()
             # return f"This user has already added this country {country_code}", 500
-            return f"This user has already added this country {country_code}", 400
+            return jsonify({"error": "Country already added"}), 400
 
     return render_template("countries.html", user=current_user)
 

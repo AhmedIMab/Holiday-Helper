@@ -67,7 +67,6 @@ const nextQuestion = function (travelID) {
             const answers = question.answers
             if (questionType == "Multiple Choice") {
                 multipleChoiceQuestion(question, answers, travelID)
-
             } else if (questionType == "Integer") {
                 integerQuestion(question, answers, travelID)
             } else if (questionType == "Range") {
