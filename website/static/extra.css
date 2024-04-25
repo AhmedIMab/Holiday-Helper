@@ -224,3 +224,41 @@
 .signup-warning {
   color: #f8bb21;
 }
+
+/* Journeys html */
+.previous_countries_icon_container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.previous_countries_icon_container p {
+  margin-bottom: 0;
+}
+
+.prev_countries_icon {
+  width: 10%;
+  height: 10%;
+}
+
+@media screen and (max-width: 991px) {
+  .previous_countries_icon_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .previous_countries_icon_container p {
+    margin-bottom: 0;
+  }
+
+  .prev_countries_icon {
+    width: 20%;
+    height: 20%;
+  }
+
+}

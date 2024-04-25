@@ -61,72 +61,68 @@ def newTravel():
 @views.route("/journeys", methods=["GET"])
 @login_required
 def journey():
-    start = time.time()
-    countries = Country.query.all()
-    AllCountries = {}
-    for country in countries:
-        AllCountries[country.country_code] = country.country_name
+    def find_journeys():
+        print("We;ve entered the find_journeys!")
+        prev_countries = UserCountry.query.filter_by(user_id=current_user.id).all()
+        all_travel_sessions = UserTravelScore.query.filter_by(user_id=current_user.id).all()
 
-    x = select(UserTravelScore)\
-            .where(UserTravelScore.user_id == current_user.id)
-    db = db_session()
-    result = db.connection().execute(x)
-    result = result.fetchall()
-    travel_sessions = []
-    for travel in result:
-        num_country_scores = 0
-        travelID = travel[1]
-        dateAdded = travel[2]
-        dateString = dateAdded.strftime("%d/%m/%Y")
-        # To find if the current journey is complete, check...
-        # if all 197 countries have been added as that is the only guaranteed common factor for all completed travels
-        # Cannot use questions answered as number of questions each user gets may be different
-        countries_X = select(UserCountryScore)\
-            .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)
-        result_countries = db.connection().execute(countries_X)
-        result_travels = result_countries.fetchall()
-        if result_travels == []:
-            # This will run when the user has not completed the questionnaire
-            travel_sessions.append((travelID, dateString, {'Status': 'Incomplete'}))
-        else:
-            for country_score in result_travels:
-                num_country_scores += 1
-            # If there are 197 records / 197 country scores as there are 197 countries in the database
-            # consider this a complete travel
-            if num_country_scores == NUM_COUNTRIES:
-                # Selects all countries with the user id and travel id matching
-                # and orders by descending so the first one is the optimal country
-                country_scores_query = select(UserCountryScore)\
-                    .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
-                    .order_by(UserCountryScore.total_score.desc())
-                result_all_countries = db.connection().execute(country_scores_query).fetchall()
-                # As result_all_countries returns a list of tuples
-                # And each tuple is in the same structure as the database table UserCountryScore
-                # The third column (index 2) is the country code
-                # So result_top_country will be the first tuple's country code
-                top_country = result_all_countries[0][2]
-
-
-                country_codes_to_filter = []
-                for result in result_all_countries:
-                    country_codes_to_filter.append(result[2])
-
-                # Uses the function 'filterPrevCountries' to avoid showing the top country which is one they visited
-                filtered_country_codes = filterPrevCountries(country_codes_to_filter, travelID)
-                top_filtered_country_code = filtered_country_codes[0]
-                top_country_name = AllCountries[top_filtered_country_code]
-
-                # print(travelID, top_country_name)
-
-                travel_sessions.append((travelID, dateString, {'Top Country': top_country_name}))
+        travel_sessions = []
+        for travel in all_travel_sessions:
+            travelID = travel.travel_id
+            dateAdded = travel.date_added
+            dateString = dateAdded.strftime("%d/%m/%Y")
+            # To find if the current journey is complete, check...
+            # if all 197 countries have been added as that is the only guaranteed common factor for all completed travels
+            # Cannot use questions answered as number of questions each user gets may be different
+            result_travel_countries = UserCountryScore.query.filter_by(user_id=current_user.id,
+                                                                       travel_id=travelID).all()
+            if len(result_travel_countries) == 0:
+                # This will run when the user has not completed the questionnaire
+                travel_sessions.append((travelID, dateString, travel.prev_countries,  {'Status': 'Incomplete'}))
             else:
-                # This else will only run if there is at least one country score, otherwise the first if will catch it
-                # As the code that adds countries only ever adds all countries, there has likely been a database error
-                print("Incomplete - possible server error")
-                travel_sessions.append((travelID, dateString, {'Status': 'Incomplete'}))
+                if len(result_travel_countries) == NUM_COUNTRIES:
+                    if travel.prev_countries == 1:
+                        print("They wanted to filter the countries in this travel session")
+
+                        # Selects countries with the user id and travel id matching
+                        # and orders by descending so the first one is the optimal country
+                        # Will only get as many rows as the number of previous countries plus one so that it will be more efficient
+                        # Whilst also displaying the top country which isn't previously visited if they want the filtering
+                        result_all_countries = UserCountryScore.query \
+                            .filter_by(user_id=current_user.id, travel_id=travelID) \
+                            .order_by(UserCountryScore.total_score.desc()) \
+                            .limit(len(prev_countries) + 1) \
+                            .all()
+
+                        # As a default option
+                        top_country = result_all_countries[0]
+
+                        for country in result_all_countries:
+                            if country not in prev_countries:
+                                top_country = country
+
+                    else:
+                        top_country = UserCountryScore.query \
+                            .filter_by(user_id=current_user.id, travel_id=travelID) \
+                            .order_by(UserCountryScore.total_score.desc()) \
+                            .first()
+
+                    top_country_name = Country.query.filter_by(country_code=top_country.country_code).first().country_name
+
+                    travel_sessions.append((travelID, dateString, travel.prev_countries, {'Top Country': top_country_name}))
+                else:
+                    # This else will only run if there is at least one country score, otherwise the first if will catch it
+                    # As the code that adds countries only ever adds all countries, there has likely been a database error
+                    print("Incomplete - possible server error")
+                    travel_sessions.append((travelID, dateString, travel.prev_countries, {'Status': 'Incomplete'}))
+        return travel_sessions
+
+    start = time.time()
+
+    travel_sessions_list = find_journeys()
 
     print("This is how long it currently takes to load journeys:", time.time()-start)
-    return render_template("journeys.html", user=current_user, journeys=travel_sessions)
+    return render_template("journeys.html", user=current_user, journeys=travel_sessions_list)
 
 
 @views.route("/noTravel", methods=["GET"])
@@ -164,6 +160,7 @@ def suggestions(travelID):
         user_travel_details.append(travelID)
         user_travel_details.append(num_travellers)
         user_travel_details.append(travelling_time)
+        user_travel_details.append(current_travel.prev_countries)
         return render_template("suggestions.html",
                                user=current_user,
                                best_countries=ranked_countries_UF,

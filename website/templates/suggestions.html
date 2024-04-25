@@ -5,7 +5,12 @@
     <p class="pt-4 pb-2 text-primary" id="user-countries-header">
         By taking into account that {{ user_travel[1] }} people are travelling for {{ user_travel[2] }} days....<br>
         We have comprised a list for you <span class="text-danger">{{ current_user.first_name }}</span>,
-        of all the countries and an estimate of the cost of travelling there!
+        of all the countries and an estimate of the cost of travelling there!<br>
+        {% if user_travel[3] == 0 %}
+            We've also removed the countries you visited previously just as you requested!
+        {% else %}
+            We've also included the countries you previously visited just as you requested!
+        {% endif %}
     </p>
 </div>
 

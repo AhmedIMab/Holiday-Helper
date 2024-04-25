@@ -12,7 +12,7 @@
     <div class="container">
         <div class="row text-center g-3">
             {% for travel in journeys %}
-            {% for journeyS, journeyT in travel[2].items() %}
+            {% for journeyS, journeyStatusOrCountry in travel[3].items() %}
             <div class="col-4">
                 <div class="card cardTravel text-light">
                     <div class="card-body text-center">
@@ -22,10 +22,18 @@
                         <p class="card-text">
                             Session Date: <span style="color:#ffbb11">{{ travel[1] }}</span>
                         </p>
-                        {% if journeyT == "Incomplete" %}
+                        <div class="previous_countries_icon_container">
+                            <p>Visited Countries Included?</p>
+                            {% if travel[2] == 1 %}
+                            <img class="prev_countries_icon" src="{{ url_for('static', filename='imgs/acceptT.png') }}" alt="tick icon">
+                            {% else %}
+                            <img class="prev_countries_icon" src="{{ url_for('static', filename='imgs/removeX.png') }}" alt="tick icon">
+                            {% endif %}
+                        </div>
+                        {% if journeyStatus == "Incomplete" %}
                         <button class="btn btn-danger travel" id="{{ travel[0] }}">Incomplete</button>
                         {% else %}
-                        <button class="btn btn-success travel" id="{{ travel[0] }}">{{ journeyT }}</button>
+                        <button class="btn btn-success travel" id="{{ travel[0] }}">{{ journeyStatusOrCountry }}</button>
                         {% endif %}
                     </div>
                 </div>
