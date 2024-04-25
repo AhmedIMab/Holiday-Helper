@@ -167,18 +167,17 @@ def nextQuestionID(travelID):
 
 
 def doesUserWantThisCountry(country_code_to_check):
-    # Retrieves all countries in the user country table
-    user_countries = UserCountry.query.filter_by(user_id=current_user.id)
-    print("\nThese are the user_countries", user_countries.all())
+    user_countries = UserCountry.query.filter_by(user_id=current_user.id).all()
 
     # loops through each country in the users countries
     for country in user_countries:
         country_code = country.country_code
+
         # if the inputted country code is located in the users countries
         if country_code_to_check == country_code:
             return True
-        else:
-            return False
+
+    return False
 
 
 def filterPrevCountries(codes, travelID):
@@ -358,9 +357,9 @@ def calculateCountryScores(travelID, countryCodes):
 
             all_country_scores = {}
             for country_score in CountryScoreEnum:
-                table_value = country_score.value[1]
+                table_value = country_score.value[1].query.get(countryCode)
                 # Will get the value of the field in the appropriate table
-                all_country_scores[country_score] = getattr(table_value, country_score.value[0])
+                all_country_scores[country_score.name] = getattr(table_value, country_score.value[0])
 
             user_relative_scores = {}
             for x in UserScoreEnum:
@@ -430,7 +429,7 @@ def calculateCountryScores(travelID, countryCodes):
     db.commit()
     db.close()
 
-    calculateTempScores(travelID, countryCodes, temps, temp_differences_squared)
+    calculateTempScores(travelID, countryCodes, temp_differences_squared)
 
     db = db_session()
 
