@@ -76,6 +76,7 @@ def sigh_up():
             login_user(new_user, remember=True)
             flash('Account created successfully!', category='success')
             # Sends the user to the homepage as they have passed all the error checks
+            db.close()
             return redirect(url_for('views.home'))
 
     # Runs when its a get request and displays the page for signing up
@@ -104,6 +105,7 @@ def reset_password():
             db.commit()
             login_user(user, remember=True)
             flash('Account password changed successfully!', category='success')
+            db.close()
             return redirect(url_for('views.home'))
 
     return render_template("reset_password.html", user=current_user)

@@ -3,6 +3,13 @@ from sqlalchemy.orm import relationship
 from flask_login import UserMixin
 from . import Base
 
+ACCESS_LEVELS = {
+    "GUEST": 0,
+    "USER": 1,
+    "ADMIN": 2
+}
+
+
 class User(Base, UserMixin):
     __tablename__ = 'user'
 
@@ -10,7 +17,7 @@ class User(Base, UserMixin):
     email = Column(String(150), unique=True)
     password = Column(String(150))
     first_name = Column(String(150))
-    # notes = relationship('Note')
+    user_type = Column(Integer)
     countries = relationship('UserCountry', backref='user')
     travel_score = relationship('UserTravelScore', backref='user')
 
