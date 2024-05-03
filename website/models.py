@@ -17,7 +17,7 @@ class User(Base, UserMixin):
     email = Column(String(150), unique=True)
     password = Column(String(150))
     first_name = Column(String(150))
-    user_type = Column(Integer)
+    # user_type = Column(Integer)
     countries = relationship('UserCountry', backref='user')
     travel_score = relationship('UserTravelScore', backref='user')
 

@@ -4,8 +4,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from flask_login import LoginManager
+from dotenv import load_dotenv
+import os
 
-DB_NAME = "database.db"
+DB_NAME = os.getenv('DB_NAME')
 
 engine = create_engine(f'sqlite:///website/{DB_NAME}')
 
@@ -16,9 +18,10 @@ Base.query = db_session.query_property()
 
 NUM_COUNTRIES = 197
 
+
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'bv\xd2\x8a\x04`\xaf\x7f\xe8\x08j\xa98M8N\xd9\xc3\xae!\x19\x7f\x05\x16'
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
     from .views import views
     from .auth import auth
@@ -41,6 +44,7 @@ def create_app():
     NUM_COUNTRIES = len(Country.query.all())
 
     return app
+
 
 def create_database():
     if not os.path.exists(os.path.join(os.getcwd(), 'website', DB_NAME)):

@@ -37,17 +37,12 @@ def home():
 @views.route("/travelID", methods=["GET"])
 @login_required
 def newTravel():
-    x = select(UserTravelScore) \
-        .where(UserTravelScore.user_id == current_user.id)
-    db = db_session()
-    result = db.connection().execute(x)
-    result = result.fetchall()
-    # print("THIS IS RESULT", result)
+    result = UserTravelScore.query.filter_by(user_id=current_user.id)
 
     travelIDs = []
     try:
         for travel in result:
-            travelID = travel[1]
+            travelID = travel.travel_id
             travelIDs.append(travelID)
 
         newTravelID = max(travelIDs) + 1

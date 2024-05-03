@@ -206,21 +206,16 @@ def filterPrevCountries(codes, travelID):
 
 def sortCountries(travelID):
     # Executes the command
-    # stores a sql command which will SELECT the countries where the user.id is equal to the current user
-    # and where the travel id is the same as travelID
+    # Selects all the user country score records for the current user and current travel
     # Orders the countries by highest to lowest
-    x = select(UserCountryScore)\
-        .where(UserCountryScore.user_id == current_user.id, UserCountryScore.travel_id == travelID)\
-        .order_by(UserCountryScore.total_score.desc())
-
-    # Executes the command
-    db = db_session()
-    result = db.connection().execute(x)
-    result = result.fetchall()
+    result = UserCountryScore.query\
+        .filter_by(user_id=current_user.id, travel_id=travelID)\
+        .order_by(UserCountryScore.total_score.desc())\
+        .all()
 
     uCountryCodes = []
     for country in result:
-        countryCode = country[2]
+        countryCode = country.country_code
         uCountryCodes.append(countryCode)
 
     userSuggestions = []
