@@ -3,6 +3,7 @@ from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db_session
 from flask_login import login_user, login_required, logout_user, current_user
+from .forms import LoginForm, SignupForm
 
 auth = Blueprint('auth', __name__)
 # Update this if werkzeug changes its hash
@@ -11,9 +12,10 @@ new_hash_method = 'scrypt'
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        email = request.form.get('email')
-        password = request.form.get('password')
+    form = LoginForm()
+    if request.method == "POST" and form.validate():
+        email = form.email.data
+        password = form.password.data
         # queries the database to get the first name where the email is the same as the email of the request
         user = User.query.filter_by(email=email).first()
         if user:
@@ -36,7 +38,7 @@ def login():
             # Displays an email does not exist message
             flash('Email does not exist', category='error')
 
-    return render_template("login.html", user=current_user)
+    return render_template("login.html", user=current_user, form=form)
 
 
 @auth.route('/logout')
@@ -50,37 +52,31 @@ def logout():
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sigh_up():
+    form = SignupForm()
     if request.method == 'POST':
-        email = request.form.get('email')
-        first_name = request.form.get('firstName')
-        password1 = request.form.get('password1')
-        password2 = request.form.get('password2')
+        email = form.email.data
+        first_name = form.firstName.data
+        password = form.password.data
 
-        user = User.query.filter_by(email=email).first()
-        if user:
-            flash('Email already exists', category='error')
-        elif len(first_name) < 2:
-            # You can 'flash' a message to the user if their are any messages to send
-            # via the built-in flask flash method
-            flash('First name must be greater than 1 character', category='error')
-        elif password1 != password2:
-            # The backslash escapes the issue of clashing speech marks and apostrophes
-            flash('Passwords don\'t match. Please try again', category='error')
-        elif len(password1) < 7:
-            flash('Password is too short. Please make it longer', category='error')
-        else:
-            new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method=new_hash_method))
-            db = db_session()
-            db.add(new_user)
-            db.commit()
-            login_user(new_user, remember=True)
-            flash('Account created successfully!', category='success')
-            # Sends the user to the homepage as they have passed all the error checks
-            db.close()
-            return redirect(url_for('views.home'))
+        if form.validate():
+            user = User.query.filter_by(email=email).first()
+            if user:
+                # You can 'flash' a message to the user if there are any messages to send
+                # via the built-in flask flash method
+                flash('Email already exists', category='error')
+            else:
+                new_user = User(email=email, first_name=first_name, password=generate_password_hash(password, method=new_hash_method))
+                db = db_session()
+                db.add(new_user)
+                db.commit()
+                login_user(new_user, remember=True)
+                flash('Account created successfully!', category='success')
+                # Sends the user to the homepage as they have passed all the error checks
+                db.close()
+                return redirect(url_for('views.home'))
 
-    # Runs when its a get request and displays the page for signing up
-    return render_template("sign_up.html", user=current_user)
+    # Runs when it's a get request and displays the page for signing up
+    return render_template("sign_up.html", user=current_user, form=form)
 
 
 # THIS IS TEMPORARY TO MIGRATE PASSWORDS!

@@ -5,6 +5,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from flask_login import LoginManager
 from dotenv import load_dotenv
+from flask_wtf.csrf import CSRFProtect
 import os
 
 DB_NAME = os.getenv('DB_NAME')
@@ -36,6 +37,9 @@ def create_app():
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
+
+    csrf = CSRFProtect()
+    csrf.init_app(app)
 
     @login_manager.user_loader
     def load_user(id):

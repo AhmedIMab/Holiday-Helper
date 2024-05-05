@@ -1,51 +1,44 @@
 {% extends "base.html" %} {% block title %}Sign Up{% endblock %}
-{% block content %}
-<form method = "POST">
-    <h3 align="center" class="pt-3">Sign Up</h3>
-    <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email"
-               class="form-control"
-               id="email"
-               name="email"
-               placeholder="Enter email address"/>
-    </div>
-    <div class="form-group">
-        <label for="firstName">First Name <span class="signup-warning"></span></label>
-        <input type="text"
-               class="form-control"
-               id="firstName"
-               name="firstName"
-               minlength="2"
-               title="Must be more than 5 characters"
-               placeholder="Enter first name"/>
-    </div>
-    <div class="form-group">
-        <label for="password1">Password <span class="signup-warning"></span></label>
-        <input type="password"
-               class="form-control"
-               id="password1"
-               name="password1"
-               minlength="7"
-                 title="Must contain at least one  number and one uppercase and lowercase letter, and at least 8 or more characters"
-               placeholder="Enter password"/>
-    </div>
-    <div class="form-group">
-        <label for="password2">Confirm Password</label>
-        <input type="password"
-               class="form-control"
-               id="password2"
-               name="password2"
-               minlength="7"
-               placeholder="Confirm password"/>
-    </div>
-    <br />
-    <div class="pb-4">
-        <!-- the submit button will automatically use the href linked function in the navbar to know where to look for the function -->
-        <!-- e.g. this submit button is linked to this html and this html came from the sign up navbar -->
-        <!-- So since href="sign-up" in the navbar, this submit button will automatically look in the blueprints for the route with the same as the href -->
-        <!-- i.e. the @views.route('/sign-up') will be used -->
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
-</form>
+{% block signupcontent %}
+{% if form.errors %}
+    {% for field, errors in form.errors.items() %}
+        {% for error in errors %}
+            <div class="alert alert-danger alter-dismissable fade show alert-message" role="alert">
+                {{ error }}
+                <button type="button" class="close" data-dismiss="alert">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+<div class="signup-form-container">
+    <form method="POST" class="signup-form d-flex flex-column align-items-center">
+        <h3 align="center" class="signup-h">Sign Up</h3>
+        {{ form.csrf_token }}
+        <div class="form-group signup-width">
+            {{ form.email.label }}
+            {{ form.email(class="form-control", placeholder="Enter email address") }}
+        </div>
+        <div class="form-group signup-width">
+            {{ form.firstName.label }}
+            {{ form.firstName(class="form-control", placeholder="Enter first name") }}
+        </div>
+        <div class="form-group signup-width">
+            {{ form.password.label }}
+            {{ form.password(class="form-control", placeholder="Enter password") }}
+        </div>
+        <div class="form-group signup-width">
+            {{ form.confirm_pass.label }}
+            {{ form.confirm_pass(class="form-control", placeholder="Confirm password") }}
+        </div>
+        <div class="pt-3 signup-button-container">
+            <!-- This submit button is linked to this html page -->
+            <!-- So when the submit button is clicked, it will find the endpoint based on the HTML page -->
+            <!-- And send the HTTP request to the endpoint as a post request (method=post in the form tag)-->
+            <!-- Therefore sent to the @views.route('/sign-up') endpoint -->
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
 {% endblock %}

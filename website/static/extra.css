@@ -1,5 +1,105 @@
-/*/ Range Slider Styling /*/
+/* Base HTML page */
+.alert-message {
+  margin-bottom: 0;
+}
 
+
+/* Login Form */
+.login-width {
+  width: 80%;
+}
+
+.login-h {
+  margin-bottom: 0.8rem;
+  margin-top: 2rem;
+}
+
+.login-form-container {
+  background-color: #2f3640;
+  color: #ffffff;
+  border-radius: 10px;
+  width: 500px;
+  margin: 4rem auto 0 auto;
+  font-size: 1.05rem;
+}
+
+.login-button-container {
+  padding-bottom: 2rem;
+}
+
+.login-button-container button {
+  font-size: 1.1rem;
+}
+
+
+@media screen and (min-width: 991px) {
+  .login-form-container {
+    width: 600px;
+  }
+}
+
+@media screen and (min-width: 1501px) {
+  .login-form-container {
+    width: 800px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .login-form-container {
+    width: 80%;
+    font-size: 1rem;
+  }
+}
+
+/* Signup page */
+.signup-width {
+  width: 80%;
+}
+
+.signup-h {
+  margin-bottom: 0.8rem;
+  margin-top: 2rem;
+}
+
+.signup-form-container {
+  background-color: #2f3640;
+  color: #ffffff;
+  border-radius: 10px;
+  width: 500px;
+  margin: 4rem auto 0 auto;
+  font-size: 1.05rem;
+}
+
+.signup-button-container {
+  padding-bottom: 2rem;
+}
+
+.signup-button-container button {
+  font-size: 1.1rem;
+}
+
+
+@media screen and (min-width: 991px) {
+  .signup-form-container {
+    width: 600px;
+  }
+}
+
+@media screen and (min-width: 1201px) {
+  .signup-form-container {
+    width: 800px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .signup-form-container {
+    width: 80%;
+    font-size: 1rem;
+  }
+}
+
+
+/*/ Range Slider Styling /*/
 .rangeContainer {
   margin-top: 75px;
   display: grid;

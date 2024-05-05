@@ -1,18 +1,20 @@
 {% extends "base.html" %} {% block title %}Login{% endblock %}
-{% block content %}
-<form method = "POST">
-    <h3 align="center" class="pt-2">Login</h3>
-    <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address"/>
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password"/>
-    </div>
-    <br />
-    <div class="pb-5">
-        <button type="submit" class="btn btn-primary">Login</button>
-    </div>
-</form>
+{% block logincontent %}
+<div class="login-form-container">
+    <form method="POST" class="login-form d-flex flex-column align-items-center">
+        <h3 align="center" class="login-h">Login</h3>
+        {{ form.csrf_token }}
+        <div class="form-group login-width">
+            {{ form.email.label }}
+            {{ form.email(class="form-control", placeholder="Enter email address") }}
+        </div>
+        <div class="form-group login-width">
+            {{ form.password.label }}
+            {{ form.password(class="form-control", placeholder="Enter password") }}
+        </div>
+        <div class="pt-3 login-button-container">
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </div>
+    </form>
+</div>
 {% endblock %}
