@@ -10,12 +10,14 @@ import os
 from website.questionHandler import *
 import traceback
 import time
+from . import csrf
 
 views = Blueprint('views', __name__)
 
 
 @views.route("/usercountries", methods=["DELETE"])
 @login_required
+@csrf.exempt
 def delete_country():
     country = json.loads(request.data)
     countryCode = country.get('countryCode')
@@ -139,6 +141,7 @@ def questionsPage(travelID):
 
 
 @views.route("/suggestions/<travelID>", methods=["GET"])
+@csrf.exempt
 @login_required
 def suggestions(travelID):
     countries = Country.query.all()
@@ -175,6 +178,7 @@ def suggestions(travelID):
 
 
 @views.route("/userQuestionAnswer", methods=["POST"])
+@csrf.exempt
 @login_required
 def userAnswer():
     userAnswerResponse = json.loads(request.data)
@@ -219,6 +223,7 @@ def questions(questionID):
 
 
 @views.route('/countries', methods=['GET', 'POST'])
+@csrf.exempt
 @login_required
 def countries():
     countries = Country.query.all()
@@ -230,6 +235,7 @@ def countries():
 
 
 @views.route('/usercountries', methods=['GET', 'POST'])
+@csrf.exempt
 @login_required
 def addCountry():
     if request.method == "POST":

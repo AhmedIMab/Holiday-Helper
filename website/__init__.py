@@ -19,6 +19,8 @@ Base.query = db_session.query_property()
 
 NUM_COUNTRIES = 197
 
+csrf = CSRFProtect()
+
 
 def create_app():
     app = Flask(__name__)
@@ -38,7 +40,6 @@ def create_app():
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
 
-    csrf = CSRFProtect()
     csrf.init_app(app)
 
     @login_manager.user_loader
