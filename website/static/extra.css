@@ -1,5 +1,29 @@
 /* Base HTML page */
+#main-page-container {
+  position: relative;
+  min-height: 100vh;
+}
+
 .alert-message {
+  margin-bottom: 0;
+}
+
+#footer {
+  background-color: #2f3640;
+  color: rgba(255,255,255,.55);
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+}
+
+.copyright-text {
+  padding-left: 0.4em;
+}
+
+.copyright-text h6 {
   margin-bottom: 0;
 }
 

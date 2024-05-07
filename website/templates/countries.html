@@ -33,23 +33,28 @@
     </p>
 </div>
 
+<!--
+Added here to avoid rendering each time
+First for loop, loops through the countries list
+Second for loop, loops through the user's countries
+Creates a variable for each country code
+Matches the dictionary in the Python list to the jinga country codes with the matching country names
+Checks if the countryCode matches the countryCode in the Country table
+Creates a variable for the country name which has the matching country code in the country table
+-->
+
+
 <div class="container pt-5">
-        <!-- Loops through the Country's list -->
         {% for generalCountry in countries %}
-        <!-- Loops through the user's countries -->
         {% for country in user.countries %}
-        <!-- Creates a variable for the country code of the country (in the users' countries) -->
         {% set countryCode = country.country_code %}
-            <!-- Matches the dictionary in the Python list to the jinga country codes with the matching country names -->
             {% for generalCountryCode, generalCountryName in generalCountry.items() %}
-            <!-- If the countryCode matches the countryCode in the Country table -->
                 {% if countryCode == generalCountryCode %}
-                <!-- Creates a variable for the country name which has the matching country code in the country table -->
                 {% set countryName = generalCountryName %}
                 <figure class="figure mr-2">
-                  <img src="/static/flags/{{ countryName }}.png" class="figure-img img-fluid rounded" style="max-width: 75%;" alt="">
+                  <img src="{{ url_for('static', filename='flags/' + countryName + '.png') }}" class="figure-img img-fluid rounded" style="max-width: 75%;" alt="">
                   <figcaption class="figure-caption text-center" style="max-width: 75%;">{{ countryName }}</figcaption>
-                  <button type="button" country-code={{ countryCode }} class="close deleteCountryButton">
+                  <button type="button" country-code="{{ countryCode }}" class="close deleteCountryButton">
                       <span aria-hidden="true">&times;</span>
                   </button>
                 </figure>
