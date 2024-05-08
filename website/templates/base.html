@@ -92,6 +92,9 @@
             {% if request.path == "/" %}
                 {% block homepage %}
                 {% endblock %}
+            {% elif request.path == "/about" %}
+                {% block aboutcontent %}
+                {% endblock %}
             {% elif request.path == "/countries" %}
                 {% block countriespage %}
                 {% endblock %}

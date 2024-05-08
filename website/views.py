@@ -15,25 +15,16 @@ from . import csrf
 views = Blueprint('views', __name__)
 
 
-@views.route("/usercountries", methods=["DELETE"])
-@login_required
-@csrf.exempt
-def delete_country():
-    country = json.loads(request.data)
-    countryCode = country.get('countryCode')
-    country = UserCountry.query.get((current_user.id, countryCode))
-    if country:
-        if country.user_id == current_user.id:
-            db = db_session()
-            db.delete(country)
-            db.commit()
-
-    return jsonify({})
-
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
     return render_template("home.html", user=current_user)
+
+
+@views.route('/about', methods=['GET'])
+@csrf.exempt
+def about():
+    return render_template("about.html", user=current_user)
 
 
 @views.route("/travelID", methods=["GET"])
@@ -261,6 +252,20 @@ def addCountry():
     return render_template("countries.html", user=current_user)
 
 
+@views.route("/usercountries", methods=["DELETE"])
+@login_required
+@csrf.exempt
+def delete_country():
+    country = json.loads(request.data)
+    countryCode = country.get('countryCode')
+    country = UserCountry.query.get((current_user.id, countryCode))
+    if country:
+        if country.user_id == current_user.id:
+            db = db_session()
+            db.delete(country)
+            db.commit()
+
+    return jsonify({})
 
 
 
