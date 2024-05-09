@@ -1,30 +1,23 @@
 {% extends "base.html" %} {% block title %}About{% endblock %}
 {% block aboutcontent %}
-    <h1 class="pt-4 pb-2">About Holiday Helper!</h1>
-
-    <div class="accreditation">
-        <p>Holidays Helper uses data from UNESCO World Heritage Center to aid in its function.
-            "World Heritage List - UNESCO." UNESCO World Heritage Centre. Accessed in 2021. Available at: https://whc.unesco.org/</p>
-    </div>
-    <div class="accreditation">
-        <p>Holidays Helper uses data from OpenTripMap, licensed under the Open Database License (ODbL).
-            OpenTripMap provides comprehensive information on travel destinations and attractions worldwide.
-            You can find more information about OpenTripMap and access their data at https://opentripmap.com/en/.
-            Data utilised from 2021</p>
-    </div>
-    <div class="accreditation">
-        <p>Holidays Helper uses data from Wikipedia. Including the GPI (Global Peace Index). Available at: https://en.wikipedia.org/wiki/Global_Peace_Index
-            Along with data from the "List of National Parks". Available at: https://en.wikipedia.org/wiki/List_of_national_parks
+    <div class="about_container">
+        <h1 class="pt-4 pb-2">About Holiday Helper!</h1>
+        <p>Holiday helper started off as a personal project with the aim of helping people decide on the best
+            place to travel based on the type of holiday they are looking for.
         </p>
+        <h3>When using the app, please remember the following:</h3>
+        <ul>
+            <li>Although Holiday Helpers uses real data from various sources, please note that the data isn't perfect
+            and whilst the goal is to help you as much as possible, we recommend checking locations thoroughly
+            before committing to the destination.
+            </li>
+            <li>Our goal is to give you the most accurate information, however the data at the current time is
+                up to date as of <span class="text-danger">2021</span>
+            </li>
+            <li>If interested in the legal and data information,
+                please go to the legal page in the footer of the site.
+            </li>
+        </ul>
     </div>
-
-
-
-
-
-
-
-
-
 
 {% endblock %}
