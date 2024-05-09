@@ -24,7 +24,7 @@ def login():
                 check_password_hash(user.password, password)
             except ValueError as ve:
                 flash('Using old hash method, please reset password', category='error')
-                return render_template("login.html", user=current_user)
+                return render_template("login.html", user=current_user, form=form)
                 # return redirect(url_for('auth.reset_password'))
             if check_password_hash(user.password, password):
                 flash('Login Successful', category='success')

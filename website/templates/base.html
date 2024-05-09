@@ -35,34 +35,41 @@
     <body>
         <div id="main-page-container">
             <section>
-                <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 ">
+                <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3">
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
                         <span class="navbar-toggler-icon"></span>
                     </button>
 
-                    <div class="collapse navbar-collapse" id="navbar">
-                        <div class="navbar-nav pl-2 h5 mr-auto">
-                            <ul class="navbar-nav ml-auto">
-                                {% if user.is_authenticated %}
-                                <li class="nav-item">
-                                    <a class="nav-link" id="home" href="/">Home</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="prev-countries" href="/countries">Visited Countries</a>
-                                </li>
-                                <li class="nav-item" id="logout-li">
-                                    <a class="nav-link" id="logout" href="/logout">Logout</a>
-                                </li>
-                                {% else %}
-                                <li class="nav-item">
-                                    <a class="nav-link" id="login" href="/login">Login</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="signUp" href="/sign-up">Sign Up</a>
-                                </li>
-                                {% endif %}
-                            </ul>
-                        </div>
+                    <div class="collapse navbar-collapse h5" id="navbar">
+                        <ul class="navbar-nav">
+                            {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" id="home" href="/">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="prev-countries" href="/countries">Visited Countries</a>
+                            </li>
+                            {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" id="login" href="/login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="signUp" href="/sign-up">Sign Up</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" id="about" href="/about">About</a>
+                            </li>
+                            {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" id="logout" href="/logout">Logout</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+
                     </div>
                 </nav>
             </section>
@@ -117,6 +124,9 @@
             <footer id="footer">
                 <div class="copyright-text">
                     <h6>© 2024 Holidays Helper. All rights reserved</h6>
+                </div>
+                <div class="legal">
+                    <a href="/legal"></a>
                 </div>
             </footer>
         </div>
