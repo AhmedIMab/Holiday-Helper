@@ -96,7 +96,7 @@
             {% endif %}
             {% endwith %}
 
-            {% if request.path == "/" %}
+            {% if request.path == "/" or request.path == "/landing" %}
                 {% block homepage %}
                 {% endblock %}
             {% elif request.path == "/about" %}

@@ -15,10 +15,19 @@ from . import csrf
 views = Blueprint('views', __name__)
 
 
+@views.route('/landing', methods=['GET'])
+def landing():
+    return render_template("landing.html", user=current_user)
+
+
 @views.route('/', methods=['GET', 'POST'])
-@login_required
 def home():
-    return render_template("home.html", user=current_user)
+    if current_user.is_authenticated:
+        print("here111")
+        return render_template("home.html", user=current_user)
+    else:
+        rendered_temp = render_template("landing.html", user=current_user)
+        return rendered_temp
 
 
 @views.route('/about', methods=['GET'])

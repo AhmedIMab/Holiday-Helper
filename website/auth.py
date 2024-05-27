@@ -10,6 +10,7 @@ auth = Blueprint('auth', __name__)
 old_method = '$sha256'
 new_hash_method = 'scrypt'
 
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()

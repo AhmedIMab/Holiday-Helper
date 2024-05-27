@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %}
 {% block homepage %}
-<section class="bg-dark text-light p-5 pt-lg-0 text-center text-sm-start">
+{#<section class="bg-dark text-light p-5 pt-lg-0 text-center text-sm-start">
     <div class="container">
         <div class="d-sm-flex align-items-center justify-content-between">
             <div>
@@ -16,7 +16,24 @@
             <img class="img-fluid w-50 d-none d-sm-block" src="{{ url_for('static', filename='imgs/semiglobe.png') }}" alt="this is the image" />
         </div>
     </div>
-</section>
+</section>#}
+
+    <section class="hh-header-section bg-dark text-light pt-lg-0 text-center text-sm-start">
+        <div class="hh-header-container container d-flex align-items-center justify-content-between">
+            <div class="hh-main-text">
+                <h1><span class="text-warning">Holiday</span> Helper!</h1>
+                <!-- lead makes it a bit bigger -->
+                <p class="lead my-4">
+                We focus on getting you the best possible destination for you to enjoy
+                and make the most out of your holiday
+                </p>
+                <a href="/journeys" class="btn btn-primary mb-2">Start Adventuring Now!</a>
+            </div>
+            <img class="hh-globe-image img-fluid w-50 mb-3" src="{{ url_for('static', filename='imgs/semiglobe.png') }}" alt="this is the image" />
+            <!-- d means display so d-sm-block will block on smaller screens -->
+        </div>
+    </section>
+
 
 <!-- Cards -->
 
