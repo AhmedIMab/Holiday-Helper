@@ -11,14 +11,30 @@ from website.questionHandler import *
 import traceback
 import time
 from . import csrf
+import functools
 
 views = Blueprint('views', __name__)
 
 
+def requires_user_types(user_types):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper_requires_access_level(*args, **kwargs):
+            if current_user.user_type not in user_types:
+                flash("Guests cannot access this page", category='error')
+                return redirect(url_for('views.landing'))
+            else:
+                return func(*args, **kwargs)
+        return wrapper_requires_access_level
+    return decorator
+
+
 @views.route('/landing', methods=['GET'])
 def landing():
-    return render_template("landing.html", user=current_user)
-
+    if current_user.is_authenticated:
+        return render_template("landing.html", user=current_user)
+    else:
+        return render_template("landing.html", user=None)
 
 @views.route('/', methods=['GET', 'POST'])
 def home():
@@ -224,6 +240,7 @@ def questions(questionID):
 @views.route('/countries', methods=['GET', 'POST'])
 @csrf.exempt
 @login_required
+@requires_user_types([1,2])
 def countries():
     countries = Country.query.all()
     countries_list = []

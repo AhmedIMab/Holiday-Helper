@@ -4,6 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import db_session
 from flask_login import login_user, login_required, logout_user, current_user
 from .forms import LoginForm, SignupForm, GuestLoginForm
+import string
+import random
 
 auth = Blueprint('auth', __name__)
 # Update this if werkzeug changes its hash
@@ -80,23 +82,30 @@ def sigh_up():
     return render_template("sign_up.html", user=current_user, form=form)
 
 
-@auth.route('/guest-login')
+@auth.route('/guest-login', methods=['GET', 'POST'])
 def guest_login():
     form = GuestLoginForm()
     if request.method == 'POST':
         firstName = form.firstName.data
-        print("This is the firstName:", firstName)
         # Although currently guests can be created without much personal info (even none depending on their preference)
         # Validation is good practise for extensibility
         if form.validate():
-            if len(firstName == 0):
+            print("This is the firstName:", firstName)
+            print("This is type of firstName:", type(firstName))
+            if len(firstName) == 0:
                 firstName = None
-            guest_user = User(email="default@holidays-helper.com", firstName=firstName, password="default", user_type=0)
+            test_password = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=12))
+            guest_user = User(email="default@XYZ.com", first_name=firstName, password=generate_password_hash(test_password, method=new_hash_method), user_type=0)
             db = db_session()
             db.add(guest_user)
             db.commit()
+            # Here we update the email to include the ID
+            guest_user.email = "default" + str(guest_user.id) + "@XYZ.com"
+            db.commit()
+
             login_user(guest_user, force=True, remember=True)
             flash('Guest logged in successfully!', category='success')
+            print("Passed here!")
             db.close()
             return redirect(url_for('views.home'))
 

@@ -3,6 +3,7 @@
     {
       "questionID": 1,
       "mandatory": true,
+      "user_type": [0,1,2],
       "questionRequirements": null,
       "questionText": "How many people are travelling?",
       "questionHelper": "",
@@ -24,7 +25,8 @@
     },
     {
       "questionID": 2,
-      "mandatory": true,
+      "mandatory": true, 
+      "user_type": [0,1,2],
       "questionText": "How long would you like to travel for?",
       "questionHelper": "",
       "questionType": "Integer",
@@ -48,6 +50,7 @@
     {
       "questionID": 3,
       "mandatory": true,
+      "user_type": [0,1,2],
       "questionText": "Which month would you like to start your journey?",
       "questionHelper": "",
       "questionType": "Multiple Choice",
@@ -188,6 +191,7 @@
     {
       "questionID": 4,
       "mandatory": true,
+      "user_type": [1,2],
       "questionText": "Would you like to go to previous countries?",
       "questionHelper": "",
       "questionType": "Multiple Choice",
@@ -218,6 +222,7 @@
     {
       "questionID": 5,
       "mandatory": true,
+      "user_type": [0,1,2],
       "questionText": "What primary activity would you like to do on your holiday?",
       "questionHelper": "",
       "questionType": "Multiple Choice",
@@ -267,6 +272,7 @@
     {
       "questionID": 6,
       "mandatory": false,
+      "user_type": [0,1,2],
       "questionText": "How safe do you want your destination to be?",
       "questionHelper": "-5 being 'very unsafe', 0 being 'I don't mind', 5 being 'very safe'",
       "questionType": "Multiple Choice",
@@ -386,6 +392,7 @@
     {
       "questionID": 7,
       "mandatory": true,
+      "user_type": [0,1,2],
       "questionText": "How expensive would you like your destination to be?",
       "questionHelper": "-5 being low budget, 0 being 'I don't mind', 5 being high budget",
       "questionType": "Multiple Choice",
@@ -505,6 +512,7 @@
     {
       "questionID": 8,
       "mandatory": true,
+      "user_type": [0,1,2],
       "questionText": "How busy would you like your destination to be?",
       "questionHelper": "-5 being 'sparsely populated', 0 being 'I don't mind',  5 being 'densely populated'",
       "questionType": "Multiple Choice",
@@ -624,6 +632,7 @@
     {
       "questionID": 9,
       "mandatory": false,
+      "user_type": [0,1,2],
       "questionText": "Would you like to factor in current covid restrictions?",
       "questionHelper": "",
       "questionType": "Multiple Choice",
@@ -654,6 +663,7 @@
     {
       "questionID": 10,
       "mandatory": false,
+      "user_type": [0,1,2],
       "questionRequirements": [
         {
           "modifier": "pref_user_activity",
@@ -683,6 +693,7 @@
     {
       "questionID": 11,
       "mandatory": false,
+      "user_type": [0,1,2],
       "questionRequirements": [
         {
           "modifier": "pref_user_activity",
@@ -712,6 +723,7 @@
     {
       "questionID": 12,
       "mandatory": false,
+      "user_type": [0,1,2],
       "questionRequirements": [
         {
           "modifier": "pref_user_activity",
@@ -741,6 +753,7 @@
     {
       "questionID": 13,
       "mandatory": false,
+      "user_type": [0,1,2],
       "questionRequirements": [
         {
           "modifier": "pref_user_activity",
@@ -770,6 +783,7 @@
     {
       "questionID": 14,
       "mandatory": true,
+      "user_type": [0,1,2],
       "questionText": "What is your preferred temperature during your stay?",
       "questionHelper": "",
       "questionType": "Range",
