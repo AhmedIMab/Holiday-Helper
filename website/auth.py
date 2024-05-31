@@ -3,7 +3,7 @@ from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db_session
 from flask_login import login_user, login_required, logout_user, current_user
-from .forms import LoginForm, SignupForm
+from .forms import LoginForm, SignupForm, GuestLoginForm
 
 auth = Blueprint('auth', __name__)
 # Update this if werkzeug changes its hash
@@ -66,7 +66,7 @@ def sigh_up():
                 # via the built-in flask flash method
                 flash('Email already exists', category='error')
             else:
-                new_user = User(email=email, first_name=first_name, password=generate_password_hash(password, method=new_hash_method))
+                new_user = User(email=email, first_name=first_name, password=generate_password_hash(password, method=new_hash_method), user_type=1)
                 db = db_session()
                 db.add(new_user)
                 db.commit()
@@ -78,6 +78,30 @@ def sigh_up():
 
     # Runs when it's a get request and displays the page for signing up
     return render_template("sign_up.html", user=current_user, form=form)
+
+
+@auth.route('/guest-login')
+def guest_login():
+    form = GuestLoginForm()
+    if request.method == 'POST':
+        firstName = form.firstName.data
+        print("This is the firstName:", firstName)
+        # Although currently guests can be created without much personal info (even none depending on their preference)
+        # Validation is good practise for extensibility
+        if form.validate():
+            if len(firstName == 0):
+                firstName = None
+            guest_user = User(email="default@holidays-helper.com", firstName=firstName, password="default", user_type=0)
+            db = db_session()
+            db.add(guest_user)
+            db.commit()
+            login_user(guest_user, force=True, remember=True)
+            flash('Guest logged in successfully!', category='success')
+            db.close()
+            return redirect(url_for('views.home'))
+
+    return render_template("guest_login.html", user=current_user, form=form)
+
 
 
 # THIS IS TEMPORARY TO MIGRATE PASSWORDS!

@@ -104,7 +104,7 @@
 
 
 /* Landing page */
-.buttons-area {
+.cards-area {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -114,7 +114,7 @@
 /*  border: solid 3px red;*/
 }
 
-.buttons-area ul {
+.cards-area ul {
   margin-bottom: 0;
 }
 
@@ -128,10 +128,25 @@
   flex: 1;
   border-radius: 5px;
   color: #f8f9fa;
+  gap: 1em;
 }
 
 .login-box {
   background-color: #976cd7;
+}
+
+.login-box-buttons-container {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75em;
+  justify-content: center;
+  margin-top: 0.8rem;
+}
+
+@media screen and (max-width: 768px) {
+  .cards-area {
+    flex-direction: column;
+  }
 }
 
 .guest-box {
@@ -146,6 +161,10 @@
   background-color: #4a787a;
 }
 
+.guest-login-button {
+  margin-top: 0.3em;
+}
+
 .box-content {
   padding: 1em;
 }
@@ -153,7 +172,7 @@
 
 
 /* Login Form */
-.login-width {
+.login-form-field {
   width: 80%;
 }
 
@@ -172,7 +191,7 @@
 }
 
 .login-button-container {
-  padding-bottom: 2rem;
+  padding: 1rem 0 2rem 0;
 }
 
 .login-button-container button {
@@ -200,7 +219,7 @@
 }
 
 /* Signup page */
-.signup-width {
+.signup-form-field {
   width: 80%;
 }
 
@@ -218,11 +237,11 @@
   font-size: 1.05rem;
 }
 
-.signup-button-container {
-  padding-bottom: 2rem;
+.signup-form-button-container {
+  padding: 1rem 0 2rem 0;
 }
 
-.signup-button-container button {
+.signup-form-button-container button {
   font-size: 1.1rem;
 }
 
@@ -246,6 +265,54 @@
   }
 }
 
+/* Guest Login page */
+.guest-form-field {
+  width: 80%;
+  margin-top: 0.4em;
+}
+
+.guest-h {
+  margin-bottom: 0.8rem;
+  margin-top: 2rem;
+}
+
+.guest-form-container {
+  background-color: #2f3640;
+  color: #ffffff;
+  border-radius: 10px;
+  width: 500px;
+  margin: 4rem auto 0 auto;
+  font-size: 1.05rem;
+}
+
+.guest-form-button-container {
+  padding: 1rem 0 2rem 0;
+}
+
+.guest-form-button-container button {
+  font-size: 1.1rem;
+}
+
+
+@media screen and (min-width: 991px) {
+  .guest-form-container {
+    width: 600px;
+  }
+}
+
+@media screen and (min-width: 1201px) {
+  .guest-form-container {
+    width: 800px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .guest-form-container {
+    width: 80%;
+    font-size: 1rem;
+  }
+}
+
 /* About page */
 .about_main_container {
   width: 90%;
@@ -255,11 +322,6 @@
 .about_main_container p, .about_main_container li {
   font-size: 1.05rem;
 }
-
-.about-header {
-
-}
-
 
 .mini-text {
   font-size: 1.1rem;

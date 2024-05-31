@@ -1,0 +1,16 @@
+{% extends "base.html" %} {% block title %}Welcome{% endblock %}
+{% block guestcontent %}
+    <div class="guest-form-container">
+        <form method="post" class="guest-form d-flex flex-column align-items-center">
+            <h3 align="center" class="guest-h">Welcome guest</h3>
+            {{ form.csrf_token }}
+            <div class="form-group guest-form-field">
+                {{ form.firstName.label }}
+                {{ form.firstName(class="form-control", placeholder="Enter first name") }}
+            </div>
+            <div class="guest-form-button-container">
+                <button type="submit" class="btn btn-primary">Start Adventuring!</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

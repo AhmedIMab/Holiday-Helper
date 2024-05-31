@@ -23,7 +23,6 @@ def landing():
 @views.route('/', methods=['GET', 'POST'])
 def home():
     if current_user.is_authenticated:
-        print("here111")
         return render_template("home.html", user=current_user)
     else:
         rendered_temp = render_template("landing.html", user=current_user)

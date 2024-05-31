@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, BooleanField, PasswordField, EmailField
 from wtforms.validators import InputRequired, Length, EqualTo
 
+
 class LoginForm(FlaskForm):
     email = EmailField('Email Address', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
@@ -14,3 +15,5 @@ class SignupForm(FlaskForm):
     confirm_pass = PasswordField('Confirm Password', validators=[InputRequired(), Length(min=7)])
 
 
+class GuestLoginForm(FlaskForm):
+    firstName = StringField('First Name (Optional)')

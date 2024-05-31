@@ -111,6 +111,9 @@
             {% elif request.path == "/sign-up" %}
                 {% block signupcontent %}
                 {% endblock %}
+            {% elif request.path == "/guest-login" %}
+                {% block guestcontent %}
+                {% endblock %}
             {% else %}
                 <div class="container" id="main">
                 {% block content %}
