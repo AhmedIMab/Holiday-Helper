@@ -31,6 +31,20 @@
   margin-bottom: 0;
 }
 
+#home_logo {
+  width: 48px;
+  height: 48px;
+  transition: transform 0.2s ease-in-out;
+}
+
+#home_logo:hover {
+  transform: scale(1.3);
+}
+
+.nav-item {
+  margin: auto 0;
+}
+
 /* Home and Landing page */
 .centerAButtons {
   text-align: center;
@@ -155,10 +169,19 @@
 
 .box-heading-login {
   background-color: #714a98;
+  min-height: 125px;
 }
 
 .box-heading-guest {
   background-color: #4a787a;
+  min-height: 125px;
+}
+
+#box-heading-guest-p {
+  display: inline-block;
+  color: red;
+  font-size: 17px;
+  margin: 0 auto;
 }
 
 .guest-login-button {

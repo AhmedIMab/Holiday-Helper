@@ -42,10 +42,12 @@
 
                     <div class="collapse navbar-collapse h5" id="navbar">
                         <ul class="navbar-nav">
-                            {% if user.is_authenticated %}
-                            <li class="nav-item">
-                                <a class="nav-link" id="home" href="/">Home</a>
+                            <li>
+                                <a class="nav-link" id="home_nav_link" href="/">
+                                    <img id="home_logo" src="{{ url_for('static', filename='imgs/favicon.ico') }}" alt="">
+                                </a>
                             </li>
+                            {% if user.is_authenticated %}
                             <li class="nav-item">
                                 <a class="nav-link" id="prev-countries" href="/countries">Visited Countries</a>
                             </li>

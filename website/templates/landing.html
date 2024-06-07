@@ -47,7 +47,11 @@
                     <div class="landing-box guest-box">
                         <div class="box-heading box-heading-guest">
                             <h3>Not sure yet?</h3>
-                            <a href="/guest-login" class="guest-login-button btn btn-primary">Guest login</a>
+                            {% if not user %}
+                                <a href="/guest-login" class="guest-login-button btn btn-primary">Guest login</a>
+                            {% else %}
+                                <p id="box-heading-guest-p">Currently logged in as <strong>Guest</strong></p>
+                            {% endif %}
                         </div>
                         <div class="box-content">
                             <h5>Features of a guest session:</h5>
