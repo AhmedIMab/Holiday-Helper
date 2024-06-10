@@ -90,11 +90,13 @@ const nextQuestion = function (travelID) {
                         // Generates an error object which says the message "No travelID"
                         throw Error("No travelID");
                     }
+                    console.log("Here1")
                     return _res
                 })
                 .then((_res) => {
-                    console.log(_res.json)
-                    window.location.href = "/suggestions/" + travelID
+                    console.log("HERE2")
+                    console.log("Actually about to href to suggestions now!")
+                     window.location.href = "/suggestions/" + travelID
                 }).catch((error) => {
                     // If the error is the same as the error above (no travelID)
                     if (error == "Error: No travelID") {

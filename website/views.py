@@ -15,15 +15,16 @@ import functools
 
 views = Blueprint('views', __name__)
 
-
 def requires_user_types(user_types):
     def decorator(func):
+        # This wraps decorator is to ensure that the functions name and other attributes aren't changed by the decorator
         @functools.wraps(func)
         def wrapper_requires_access_level(*args, **kwargs):
             if current_user.user_type not in user_types:
                 flash("Guests cannot access this page", category='error')
                 return redirect(url_for('views.landing'))
             else:
+                # This is to ensure that the functions return values are lost
                 return func(*args, **kwargs)
         return wrapper_requires_access_level
     return decorator
@@ -32,17 +33,19 @@ def requires_user_types(user_types):
 @views.route('/landing', methods=['GET'])
 def landing():
     if current_user.is_authenticated:
+        print("Actually here")
         return render_template("landing.html", user=current_user)
     else:
+        print("Herereerer")
         return render_template("landing.html", user=None)
+
 
 @views.route('/', methods=['GET', 'POST'])
 def home():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and (current_user.user_type == 1 or current_user.user_type == 2):
         return render_template("home.html", user=current_user)
     else:
-        rendered_temp = render_template("landing.html", user=current_user)
-        return rendered_temp
+        return redirect(url_for('views.landing'))
 
 
 @views.route('/about', methods=['GET'])
@@ -166,6 +169,7 @@ def suggestions(travelID):
 
     user_travel_details = []
     try:
+        print("\nIn the suggestions and just about to call userCountryScore function\n")
         ranked_countries = userCountryScore(travelID, AllCountries)
         # map function is used to replace country codes with country names for user convenience
         # x[0] is the country code

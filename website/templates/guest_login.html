@@ -2,7 +2,7 @@
 {% block guestcontent %}
     <div class="guest-form-container">
         <form method="post" class="guest-form d-flex flex-column align-items-center">
-            <h3 align="center" class="guest-h">Welcome guest</h3>
+            <h3 align="center" class="guest-h">Welcome</h3>
             {{ form.csrf_token }}
             <div class="form-group guest-form-field">
                 {{ form.firstName.label }}
@@ -12,5 +12,12 @@
                 <button type="submit" class="btn btn-primary">Start Adventuring!</button>
             </div>
         </form>
+    </div>
+
+    <div class="container guest-login-desc">
+        <h2>What happens next?</h2>
+        <p>Once you click start adventuring, you will be asked a series of questions about your desired holiday.<br>
+            After answering all the questions, our algorithm will calculate the top countries based on your preferences.<br>
+        </p>
     </div>
 {% endblock %}

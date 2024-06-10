@@ -149,13 +149,6 @@
   background-color: #976cd7;
 }
 
-.login-box-buttons-container {
-  display: flex;
-  flex-direction: row;
-  gap: 0.75em;
-  justify-content: center;
-  margin-top: 0.8rem;
-}
 
 @media screen and (max-width: 768px) {
   .cards-area {
@@ -168,30 +161,51 @@
 }
 
 .box-heading-login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2em;
   background-color: #714a98;
   min-height: 125px;
 }
 
+.login-box-buttons-container {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75em;
+  justify-content: center;
+}
+
 .box-heading-guest {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2em;
+  align-items: center;
   background-color: #4a787a;
   min-height: 125px;
 }
 
 #box-heading-guest-p {
-  display: inline-block;
-  color: red;
-  font-size: 17px;
   margin: 0 auto;
+  font-size: 17px;
+  padding: 0.25em 0.9em;
+  border-radius: 5px;
+}
+
+#box-heading-guest-p strong {
+  color: red;
 }
 
 .guest-login-button {
-  margin-top: 0.3em;
+  flex-grow: 0;
+  width: auto;
+  margin-top: 0;
 }
 
 .box-content {
   padding: 1em;
 }
-
 
 
 /* Login Form */
@@ -334,6 +348,10 @@
     width: 80%;
     font-size: 1rem;
   }
+}
+
+.guest-login-desc {
+
 }
 
 /* About page */

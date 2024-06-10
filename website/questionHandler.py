@@ -11,11 +11,25 @@ from sqlalchemy.sql import *
 from . import db_session, NUM_COUNTRIES
 from enum import Enum
 from datetime import datetime
+import functools
+import time
 
 
+def time_taken(func):
+    @functools.wraps(func)
+    def wrapper_time_taken(*args, **kwargs):
+        print(f"Calling function: {func.__name__}")
+        start = time.time()
+        value = func(*args, **kwargs)
+        end = time.time()
+        print(f"Time taken for {func.__name__}: {end - start} secs")
+        return value
+    return wrapper_time_taken
+
+
+@time_taken
 def getQuestions():
     # Access's the questions in the json file
-
     filename = os.path.join(os.getcwd(), 'website', 'static', 'questions.json')
 
     f = open(filename, 'r')
@@ -57,7 +71,6 @@ def getAnswer(questionID, answerID):
     # if the answerID is not found, return None
     return None
 
-
 def isQuestionAnswered(travelID, questionID):
     questionAnswered = False
     try:
@@ -85,6 +98,7 @@ def isQuestionAnswered(travelID, questionID):
     return questionAnswered
 
 
+@time_taken
 def haveRequirementsBeenMet(travelID, questionID):
     question = getQuestion(questionID)
     requirementsMet = True
@@ -121,8 +135,9 @@ def haveRequirementsBeenMet(travelID, questionID):
 
     return requirementsMet
 
-
+@time_taken
 def nextQuestionID(travelID):
+    print("In next questionID function, questionID:")
     questions = getQuestions()
     questionsStream = questions
 
@@ -180,6 +195,7 @@ def doesUserWantThisCountry(country_code_to_check):
     return False
 
 
+@time_taken
 def filterPrevCountries(codes, travelID):
     try:
         # Sets the current travel to the UserTravelScore of the user with primary key values
@@ -204,6 +220,7 @@ def filterPrevCountries(codes, travelID):
         return suggestionsStream
 
 
+@time_taken
 def sortCountries(travelID):
     # Executes the command
     # Selects all the user country score records for the current user and current travel
@@ -235,13 +252,11 @@ def sortCountries(travelID):
 
     return userSuggestions
 
-
+@time_taken
 def calculateTempScores(travelID, countryCodes, temp_differences_squared):
     db = db_session()
     valuesX = temp_differences_squared.values()
     temps_d_squared_list = list(valuesX)
-    minimum_temp_d_squared = min(temps_d_squared_list)
-    maximum_temp_d_sqaured = max(temps_d_squared_list)
     normalised_temps = {}
     for country, temp in temp_differences_squared.items():
         temp = float(temp)
@@ -256,7 +271,7 @@ def calculateTempScores(travelID, countryCodes, temp_differences_squared):
         normalised_temps[country] = temp_inverse
 
     for country_code in countryCodes:
-        # Here will find the countrys temp
+        # Here, it will find the country's temp
         country_temp = normalised_temps[country_code]
         current_country = UserCountryScore.query.get((current_user.id, travelID, country_code))
         current_country_score = float(getattr(current_country, "temp_score"))
@@ -269,6 +284,7 @@ def calculateTempScores(travelID, countryCodes, temp_differences_squared):
         print("Traceback error:", traceback.format_exc())
 
 
+@time_taken
 def calculateCountryScores(travelID, countryCodes):
     # multiple enum's as inconsistent naming in databases
     # Every enum class has the have the same order for the names
@@ -301,6 +317,7 @@ def calculateCountryScores(travelID, countryCodes):
         DENSITY_SCORE = "pop_density_user_score"
 
     db = db_session()
+    current_travel = None
 
     try:
         # Sets the current travel to the UserTravelScore of the user with primary key values
@@ -317,7 +334,7 @@ def calculateCountryScores(travelID, countryCodes):
         # Loops through every country's code in the list of all countryCodes
         # Does the same for the current country
         current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-        if current_travel == None or current_country == None:
+        if current_travel is None or current_country is None:
             # When the country does not have a score
             # Adds a new default record
             new_user_country = UserCountryScore(user_id=current_user.id,
@@ -338,17 +355,20 @@ def calculateCountryScores(travelID, countryCodes):
             # sets the current_country to a query of country's newly created record
             current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
             user_score = {}
-            user_score_values = []
+            user_factor_values = [0] * len(UserScoreEnum)
 
+            count = 0
             # For every factor
             for n in UserScoreEnum:
                 # Gets the travel score
                 factor_user_score = getattr(current_travel, n.value)
                 # Adds it to the dictionary
                 user_score[n.name] = factor_user_score
-                user_score_values.append(factor_user_score)
+                # Adds the factor values to the list
+                user_factor_values[count] = (factor_user_score)
+                count += 1
 
-            most_important_user_score = max(user_score_values)
+            most_important_user_score = max(user_factor_values)
 
             all_country_scores = {}
             for country_score in CountryScoreEnum:
@@ -450,6 +470,9 @@ def calculateCountryScores(travelID, countryCodes):
         db.close()
 
 
+@time_taken
+# This function is used to calculate the country scores for a specific travel session
+# Runs after the user has answered all the questions
 def userCountryScore(travelID, countryCodes):
     try:
         # Sets the current travel to the UserTravelScore of the user with primary key values
@@ -478,12 +501,15 @@ def userCountryScore(travelID, countryCodes):
     return sortedCountries
 
 
+@time_taken
+# This function determines how to modify the user's score based on the answer to the question
 def userQuestionAnswer(questionID, answerValue, travelID):
     question = getQuestion(questionID)
     answer = getAnswer(questionID, answerValue)
     questionType = question.get("questionType")
     answersType = question.get("answersType")
     questionAnswered = False
+    current_travel = None
     now = datetime.now()
     db = db_session()
 
@@ -493,26 +519,48 @@ def userQuestionAnswer(questionID, answerValue, travelID):
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         print("This is E", e)
 
+    # For when the first question is answered
     if current_travel is None:
         # if the user has not travelled yet
         # Creates a new record for them
-        new_user_travel = UserTravelScore(user_id=current_user.id,
-                                          travel_id=travelID,
-                                          date_added=datetime.date(now),
-                                          questions_answered="",
-                                          prev_countries=None,
-                                          travelling_time=0,
-                                          journey_start="",
-                                          pref_user_activity="",
-                                          pref_user_temp=0,
-                                          num_travellers=0,
-                                          water_sports_user_score=10,
-                                          winter_sports_user_score=10,
-                                          culture_user_score=10,
-                                          nature_user_score=10,
-                                          safety_user_score=0,
-                                          budget_user_score=0,
-                                          pop_density_user_score=0)
+        if current_user.user_type == 0:
+            # Different travel record for a guest as the previous countries is set to 1 automatically (include prev countries)
+            print("Making a guest user record")
+            new_user_travel = UserTravelScore(user_id=current_user.id,
+                                              travelID=travelID,
+                                              date_added=datetime.date(now),
+                                              questions_answered="",
+                                              prev_countries=1,
+                                              travelling_time=0,
+                                              journey_start="",
+                                              pref_user_activity="",
+                                              pref_user_temp=0,
+                                              num_travellers=0,
+                                              water_sports_user_score=10,
+                                              winter_sports_user_score=10,
+                                              culture_user_score=10,
+                                              nature_user_score=10,
+                                              safety_user_score=0,
+                                              budget_user_score=0,
+                                              pop_density_user_score=0)
+        else:
+            new_user_travel = UserTravelScore(user_id=current_user.id,
+                                              travel_id=travelID,
+                                              date_added=datetime.date(now),
+                                              questions_answered="",
+                                              prev_countries=None,
+                                              travelling_time=0,
+                                              journey_start="",
+                                              pref_user_activity="",
+                                              pref_user_temp=0,
+                                              num_travellers=0,
+                                              water_sports_user_score=10,
+                                              winter_sports_user_score=10,
+                                              culture_user_score=10,
+                                              nature_user_score=10,
+                                              safety_user_score=0,
+                                              budget_user_score=0,
+                                              pop_density_user_score=0)
 
         db.add(new_user_travel)
         db.commit()
