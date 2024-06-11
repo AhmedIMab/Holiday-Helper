@@ -47,9 +47,13 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
+    db = db_session()
+    # When the account is a guest account
+    if current_user.user_type == 0:
+        db.delete(current_user)
+        db.commit()
+        db.close()
     logout_user()
-    # Redirects to the endpoint login in the file
-    # So the user can login again/into another user
     return redirect(url_for('views.home'))
 
 

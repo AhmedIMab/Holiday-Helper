@@ -15,6 +15,7 @@ import functools
 
 views = Blueprint('views', __name__)
 
+
 def requires_user_types(user_types):
     def decorator(func):
         # This wraps decorator is to ensure that the functions name and other attributes aren't changed by the decorator
@@ -33,10 +34,8 @@ def requires_user_types(user_types):
 @views.route('/landing', methods=['GET'])
 def landing():
     if current_user.is_authenticated:
-        print("Actually here")
         return render_template("landing.html", user=current_user)
     else:
-        print("Herereerer")
         return render_template("landing.html", user=None)
 
 
@@ -74,13 +73,12 @@ def newTravel():
 
 
 @views.route("/journeys", methods=["GET"])
+@time_taken
 @login_required
 def journey():
     def find_journeys():
-        print("We;ve entered the find_journeys!")
         prev_countries = UserCountry.query.filter_by(user_id=current_user.id).all()
         prev_countries_country_codes = [Country.query.filter_by(country_code=cc.country_code).first().country_code for cc in prev_countries]
-        print("These are the previous countries codes:", prev_countries_country_codes)
         all_travel_sessions = UserTravelScore.query.filter_by(user_id=current_user.id).all()
 
         travel_sessions = []
@@ -138,11 +136,8 @@ def journey():
                     travel_sessions.append((travelID, dateString, travel.prev_countries, {'Status': 'Incomplete'}))
         return travel_sessions
 
-    start = time.time()
-
     travel_sessions_list = find_journeys()
 
-    print("This is how long it currently takes to load journeys:", time.time()-start)
     return render_template("journeys.html", user=current_user, journeys=travel_sessions_list)
 
 
