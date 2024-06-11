@@ -52,6 +52,12 @@ class Api {
         })
     }
 
+    validateTravelID(travelID) {
+        return fetch("/validateTravelID/" + travelID, {
+            method: "GET"
+        })
+    }
+
 }
 
 export default new Api();

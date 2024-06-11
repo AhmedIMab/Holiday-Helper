@@ -50,7 +50,7 @@ def logout():
     logout_user()
     # Redirects to the endpoint login in the file
     # So the user can login again/into another user
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('views.home'))
 
 
 @auth.route('/sign-up', methods=['GET', 'POST'])

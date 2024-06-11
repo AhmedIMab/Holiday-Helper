@@ -158,6 +158,22 @@ def questionsPage(travelID):
     return render_template("questions.html", user=current_user, travelID=travelID)
 
 
+@views.route("/validateTravelID/<travelID>", methods=["GET"])
+@csrf.exempt
+@login_required
+def validateTravelID(travelID):
+    try:
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+        print("Travel Invalid")
+        current_travel = None
+
+    if current_travel is None:
+        return jsonify({'valid': False, 'message': "Invalid travel ID"}), 404
+    else:
+        return jsonify({'valid': True}), 200
+
+
 @views.route("/suggestions/<travelID>", methods=["GET"])
 @csrf.exempt
 @login_required

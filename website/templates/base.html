@@ -47,11 +47,11 @@
                                     <img id="home_logo" src="{{ url_for('static', filename='imgs/favicon.ico') }}" alt="">
                                 </a>
                             </li>
-                            {% if user.is_authenticated %}
+                            {% if user.is_authenticated and user.user_type != 0 %}
                             <li class="nav-item">
                                 <a class="nav-link" id="prev-countries" href="/countries">Visited Countries</a>
                             </li>
-                            {% else %}
+                            {% elif not(user.is_authenticated) %}
                             <li class="nav-item">
                                 <a class="nav-link" id="login" href="/login">Login</a>
                             </li>

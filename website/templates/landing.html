@@ -8,11 +8,14 @@
                     <!-- lead makes it a bit bigger -->
                     <p class="lead my-4">
                     We focus on getting you the best possible destination for you to enjoy
-                    and make the most out of your holiday
+                    and make the most out of your holiday!
                     </p>
                     {% if user %}
                         {% if user.user_type == 0 %}
                         <h4>You are logged in as a <strong style="color:red">Guest</strong></h4>
+                        <div class="gjb-container pt-3" align="center">
+                            <a href="/journeys" class="btn btn-primary mb-2">Start Adventuring Now!</a>
+                        </div>
                         {% elif user.user_type == 1 %}
                         <h4>You are logged in as a <strong style="color:red">User</strong></h4>
                         {% elif user.user_type == 2 %}
@@ -61,13 +64,18 @@
                             </ul>
                             <h5>Limitations:</h5>
                             <ul>
-                                <li>Maximum 1 travel session</li>
                                 <li>Number of questions is limited</li>
                                 <li>Final destinations shown not as personalised as account-based questionnaire</li>
+                                <li>Once logged out, all account data <strong style="color: red">deleted!</strong> (including journeys)</li>
                             </ul>
                         </div>
                     </div>
             </section>
         </div>
     </div>
+
+    <script
+        type="module"
+        src="{{ url_for('static', filename='landing.js') }}"
+    ></script>
 {% endblock %}

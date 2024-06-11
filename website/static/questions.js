@@ -79,31 +79,28 @@ const nextQuestion = function (travelID) {
             if (error == "Error: No more questions") {
                 // Wait message displayed while running the algorithm for ranking countries
                 // All options are removed so that further unnecessary requests cannot be made
-                removeAllChildNodes(document.getElementById("answer-container"))
-                questionTextP.text("")
+                removeAllChildNodes(document.getElementById("answer-container"));
+                questionTextP.text("");
                 $(waitMessage).show();
-                Api.userCountrySuggestions(travelID)
-                // Gets the response from the userCountrySuggestions API function
-                .then((_res) => {
-                    // If there is a not found error (code: 404)
-                    if(_res.status === 404) {
-                        // Generates an error object which says the message "No travelID"
-                        throw Error("No travelID");
-                    }
-                    console.log("Here1")
-                    return _res
-                })
-                .then((_res) => {
-                    console.log("HERE2")
-                    console.log("Actually about to href to suggestions now!")
-                     window.location.href = "/suggestions/" + travelID
-                }).catch((error) => {
-                    // If the error is the same as the error above (no travelID)
-                    if (error == "Error: No travelID") {
-                        console.log("Error")
-                        // Sends the user to the no travel ID page which explains the problem
+                Api.validateTravelID(travelID)
+                    .then((_res) => {
+                        if (_res.status === 404 || _res.status === 500) {
+                            throw Error("No travelID/Unexpected, code:" + _res.status);
+                        }
+                        return _res.json(); // Returns the response further
+                    })
+                    .then((response_data) => {
+                        // console.log("RESPONSE DATA: " + JSON.stringify(response_data));
+                        if (response_data.valid === true) {
+                            // When it's found a valid travel ID, redirects to the suggestions page
+                            window.location.href = "/suggestions/" + travelID
+                        } else {
+                            console.log("Being thrown here!");
+                            throw Error(response_data.message);
+                        }
+                    }).catch((error) => {
+                        console.log("Error: " + error.message);
                         window.location.href = "/noTravel"
-                    }
                 })
             }
         })

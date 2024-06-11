@@ -203,6 +203,11 @@
   margin-top: 0;
 }
 
+.gjb-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .box-content {
   padding: 1em;
 }

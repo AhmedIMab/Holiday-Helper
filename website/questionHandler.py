@@ -15,6 +15,7 @@ import functools
 import time
 
 
+# A decorator to time how long it takes for a
 def time_taken(func):
     @functools.wraps(func)
     def wrapper_time_taken(*args, **kwargs):
@@ -71,13 +72,14 @@ def getAnswer(questionID, answerID):
     # if the answerID is not found, return None
     return None
 
+
 def isQuestionAnswered(travelID, questionID):
     questionAnswered = False
     try:
         # tries to get the user's current travel
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print(e)
+        print(f"This is the error in {func.__name__}: {e}")
 
     try:
         y = getattr(current_travel, 'questions_answered')
@@ -106,7 +108,7 @@ def haveRequirementsBeenMet(travelID, questionID):
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
 
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print("THIS IS E2", e)
+        print(f"This is the error in {func.__name__}: {e}")
 
     try:
         questionRequirements = question.get("questionRequirements")
@@ -135,6 +137,24 @@ def haveRequirementsBeenMet(travelID, questionID):
 
     return requirementsMet
 
+
+def shouldUserBeAskedQuestion(travelID, questionID):
+    question = getQuestion(questionID)
+    current_travel = None
+    ask_question = False
+    try:
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+        print(f"This is the error in {func.__name__}: {e}")
+
+    question_allowed_user_types = question.get("user_type")
+    print(f"\nThese are the user types allowed to access question {questionID}: {question_allowed_user_types}")
+    if current_user.user_type in question_allowed_user_types:
+        ask_question = True
+
+    return ask_question
+
+
 @time_taken
 def nextQuestionID(travelID):
     print("In next questionID function, questionID:")
@@ -150,12 +170,14 @@ def nextQuestionID(travelID):
     questionsStream = filter(lambda x:not(isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
     # second filter will make sure only mandatory questions are asked
     questionsStream = filter(lambda x:x.get("mandatory") == True, questionsStream)
+    # Third filter checks if the user has the access type for the question
+    questionsStream = filter(lambda x:shouldUserBeAskedQuestion(travelID, x.get("questionID")), questionsStream)
     # Sort the questions by the smallest to biggest questionID (integer)
     questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
 
     if len(questionsStream) == 0:
-        # This will only run when there are no questions left or questions.json is empty/no questions to begin with
         # this series of functions is for checking questions with requirements
+        # As they are not in the initial set of questions
         questionsStream = questions
         # so only looks at questions which have requirements (non mandatory)
         questionsStream = filter(lambda x:x.get("mandatory") == False, questionsStream)
@@ -527,7 +549,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
             # Different travel record for a guest as the previous countries is set to 1 automatically (include prev countries)
             print("Making a guest user record")
             new_user_travel = UserTravelScore(user_id=current_user.id,
-                                              travelID=travelID,
+                                              travel_id=travelID,
                                               date_added=datetime.date(now),
                                               questions_answered="",
                                               prev_countries=1,
