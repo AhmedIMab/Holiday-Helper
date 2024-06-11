@@ -1,8 +1,8 @@
 {% extends "base.html" %} {% block title %}Welcome{% endblock %}
 {% block homepage %}
     <div class="landing_main_container">
-        <section class="hh-header-section bg-dark text-light pt-lg-0 text-center text-sm-start">
-            <div class="hh-header-container container d-flex align-items-center justify-content-between">
+        <section class="hh-header-section bg-dark text-light pt-lg-0 text-sm-start">
+            <div class="hh-header-container container">
                 <div class="hh-main-text">
                     <h1><span class="text-warning">Holiday</span> Helper!</h1>
                     <!-- lead makes it a bit bigger -->
@@ -50,10 +50,10 @@
                     <div class="landing-box guest-box">
                         <div class="box-heading box-heading-guest">
                             <h3>Not sure yet?</h3>
-                            {% if not user %}
-                                <a href="/guest-login" class="guest-login-button btn btn-primary">Guest login</a>
-                            {% else %}
+                            {% if user.user_type == 0 %}
                                 <p class="btn-primary" id="box-heading-guest-p">Currently logged in as <strong>Guest</strong></p>
+                            {% else %}
+                                <a href="/guest-login" class="guest-login-button btn btn-primary">Guest login</a>
                             {% endif %}
                         </div>
                         <div class="box-content">
@@ -73,9 +73,4 @@
             </section>
         </div>
     </div>
-
-    <script
-        type="module"
-        src="{{ url_for('static', filename='landing.js') }}"
-    ></script>
 {% endblock %}

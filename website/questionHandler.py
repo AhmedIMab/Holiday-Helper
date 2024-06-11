@@ -3,9 +3,8 @@ import os
 import sqlite3
 import traceback
 import sqlalchemy.exc
-from .models import User, Country, UserCountry, UserTravelScore, Sport, Cost, CulturalValue, MonthlyTemperatures
-from .models import UserCountryScore, CountryDailyCost, Safety, Nature, PopulationDensity
-from .models import YearlyTemperatures
+from .models import UserCountry, UserTravelScore, Sport, Cost, CulturalValue, MonthlyTemperatures
+from .models import UserCountryScore, CountryDailyCost, Safety, Nature, PopulationDensity, YearlyTemperatures
 from flask_login import login_required, current_user
 from sqlalchemy.sql import *
 from . import db_session, NUM_COUNTRIES

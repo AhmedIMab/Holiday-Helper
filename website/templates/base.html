@@ -62,9 +62,6 @@
                         </ul>
 
                         <ul class="navbar-nav ml-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" id="about" href="/about">About</a>
-                            </li>
                             {% if user.is_authenticated %}
                             <li class="nav-item">
                                 <a class="nav-link" id="logout" href="/logout">Logout</a>
@@ -130,8 +127,8 @@
                 <div class="copyright-text">
                     <h6>© 2024 Holidays Helper. All rights reserved</h6>
                 </div>
-                <div class="legal">
-                    <a href="/legal"></a>
+                <div class="about-container">
+                    <a href="/about" id="about">About</a>
                 </div>
             </footer>
         </div>

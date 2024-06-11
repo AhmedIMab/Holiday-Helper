@@ -1,6 +1,7 @@
 /* Base HTML page */
 #main-page-container {
-  position: relative;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
@@ -15,12 +16,14 @@
 #footer {
   background-color: #2f3640;
   color: rgba(255,255,255,.55);
-  position: absolute;
-  bottom: 0;
+  position: relative; /* Change position to relative */
   width: 100%;
   min-height: 3rem;
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  padding: 0.8rem 0; /* Add some padding instead of a fixed height */
+  margin-top: auto; /* Add this to make the footer sticky */
 }
 
 .copyright-text {
@@ -29,6 +32,15 @@
 
 .copyright-text h6 {
   margin-bottom: 0;
+}
+
+.about-container {
+  margin-right: 0.5em;
+}
+
+#about {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 #home_logo {
@@ -71,6 +83,9 @@
 
 .hh-header-container {
   gap: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .hh-globe-image {
@@ -149,10 +164,15 @@
   background-color: #976cd7;
 }
 
-
 @media screen and (max-width: 768px) {
   .cards-area {
     flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 575px) {
+  .gjb-container {
+    justify-content: center !important;
   }
 }
 
@@ -353,10 +373,6 @@
     width: 80%;
     font-size: 1rem;
   }
-}
-
-.guest-login-desc {
-
 }
 
 /* About page */

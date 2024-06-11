@@ -1,11 +1,13 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import User
+from .models import User, UserCountry, UserTravelScore, Sport, Cost, CulturalValue, MonthlyTemperatures
+from .models import UserCountryScore, CountryDailyCost, Safety, Nature, PopulationDensity, YearlyTemperatures
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db_session
 from flask_login import login_user, login_required, logout_user, current_user
 from .forms import LoginForm, SignupForm, GuestLoginForm
 import string
 import random
+from sqlalchemy import delete
 
 auth = Blueprint('auth', __name__)
 # Update this if werkzeug changes its hash
@@ -50,6 +52,12 @@ def logout():
     db = db_session()
     # When the account is a guest account
     if current_user.user_type == 0:
+        statement = delete(UserCountryScore).where(UserCountryScore.user_id == current_user.id)
+        db.execute(statement)
+        db.flush()
+        statement = delete(UserTravelScore).where(UserTravelScore.user_id == current_user.id)
+        db.execute(statement)
+        db.flush()
         db.delete(current_user)
         db.commit()
         db.close()
@@ -58,7 +66,7 @@ def logout():
 
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
-def sigh_up():
+def sign_up():
     form = SignupForm()
     if request.method == 'POST':
         email = form.email.data
@@ -97,7 +105,7 @@ def guest_login():
             print("This is the firstName:", firstName)
             print("This is type of firstName:", type(firstName))
             if len(firstName) == 0:
-                firstName = None
+                firstName = "guest"
             test_password = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=12))
             guest_user = User(email="default@XYZ.com", first_name=firstName, password=generate_password_hash(test_password, method=new_hash_method), user_type=0)
             db = db_session()
@@ -114,7 +122,6 @@ def guest_login():
             return redirect(url_for('views.home'))
 
     return render_template("guest_login.html", user=current_user, form=form)
-
 
 
 # THIS IS TEMPORARY TO MIGRATE PASSWORDS!
