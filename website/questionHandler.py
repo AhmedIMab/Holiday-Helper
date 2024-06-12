@@ -184,6 +184,8 @@ def nextQuestionID(travelID):
         # needed so that if a question with requirements is answered we need to make sure it's filtered out
         # and only ask non answered questions
         questionsStream = filter(lambda x: not(isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
+        # same as above to ensure questions for the user are only asked if the user is of a certain account type
+        questionsStream = filter(lambda x: shouldUserBeAskedQuestion(travelID, x.get("questionID")), questionsStream)
         # runs the function haveRequirementsBeenMet to get the questions which the user meets requirements for
         questionsStream = filter(lambda x:haveRequirementsBeenMet(travelID, x.get("questionID")), questionsStream)
         questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
