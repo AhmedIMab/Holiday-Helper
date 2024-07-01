@@ -41,6 +41,7 @@ def landing():
 
 @views.route('/', methods=['GET', 'POST'])
 def home():
+    print("Welcome! Entered site on:", datetime.now())
     if current_user.is_authenticated and (current_user.user_type == 1 or current_user.user_type == 2):
         return render_template("home.html", user=current_user)
     else:
