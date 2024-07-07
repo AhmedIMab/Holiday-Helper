@@ -147,7 +147,7 @@ def shouldUserBeAskedQuestion(travelID, questionID):
         print(f"This is the error in {func.__name__}: {e}")
 
     question_allowed_user_types = question.get("user_type")
-    print(f"\nThese are the user types allowed to access question {questionID}: {question_allowed_user_types}")
+    # print(f"\nThese are the user types allowed to access question {questionID}: {question_allowed_user_types}")
     if current_user.user_type in question_allowed_user_types:
         ask_question = True
 
