@@ -1,6 +1,6 @@
 import sqlite3
 import sqlalchemy.exc
-from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect
+from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect, send_from_directory
 from flask_login import login_required, current_user
 from .models import User, Country, UserCountry
 from . import db_session, NUM_COUNTRIES
@@ -30,6 +30,12 @@ def requires_user_types(user_types):
         return wrapper_requires_access_level
     return decorator
 
+
+@views.route('/robots.txt', methods=['GET'])
+def robots():
+    print("Here we are!")
+    print(os.getcwd() + 'website/')
+    return send_from_directory(os.getcwd() + '/website/', 'robots.txt')
 
 @views.route('/landing', methods=['GET'])
 def landing():
