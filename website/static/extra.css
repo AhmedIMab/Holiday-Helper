@@ -597,6 +597,25 @@
   font-size: 20px;
 }
 
+.suggestions-main-li {
+  font-size: 20px;
+}
+
+.suggestions-main-header {
+  /*
+  background-color: #e0ffe0;
+  */
+  background-color: #e9ffee;
+  border-radius: 10px;
+  padding: 0.4em 0.8em 0.4em 0.8em;
+  margin-bottom: 1.2rem;
+  font-weight: 500;
+}
+
+.suggestions-main-header ul {
+  margin-bottom: 0;
+}
+
 #no-travel-p {
   font-size: 18px;
 }
