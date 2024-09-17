@@ -37,6 +37,12 @@ def robots():
     print(os.getcwd() + 'website/')
     return send_from_directory(os.getcwd() + '/website/', 'robots.txt')
 
+@views.route('/sitemap.xml', methods=['GET'])
+def sitemap():
+    print("Here we are!")
+    print(os.getcwd() + 'website/')
+    return send_from_directory(os.getcwd() + '/website/', 'sitemap.xml')
+
 @views.route('/landing', methods=['GET'])
 def landing():
     if current_user.is_authenticated:
