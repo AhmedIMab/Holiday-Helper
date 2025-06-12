@@ -17,7 +17,7 @@ db_session = scoped_session(sessionmaker(bind=engine, expire_on_commit=False))
 Base = declarative_base()
 Base.query = db_session.query_property()
 
-NUM_COUNTRIES = 197
+NUM_COUNTRIES = 196
 
 csrf = CSRFProtect()
 
