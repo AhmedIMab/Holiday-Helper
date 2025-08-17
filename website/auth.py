@@ -11,9 +11,6 @@ from sqlalchemy import delete
 
 auth = Blueprint('auth', __name__)
 # Update this if werkzeug changes its hash
-old_method = '$sha256'
-new_hash_method = 'scrypt'
-
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -30,7 +27,6 @@ def login():
             except ValueError as ve:
                 flash('Using old hash method, please reset password', category='error')
                 return render_template("login.html", user=current_user, form=form)
-                # return redirect(url_for('auth.reset_password'))
             if check_password_hash(user.password, password):
                 flash('Login Successful', category='success')
                 login_user(user, remember=True)
@@ -54,10 +50,8 @@ def logout():
     if current_user.user_type == 0:
         statement = delete(UserCountryScore).where(UserCountryScore.user_id == current_user.id)
         db.execute(statement)
-        db.flush()
         statement = delete(UserTravelScore).where(UserTravelScore.user_id == current_user.id)
         db.execute(statement)
-        db.flush()
         db.delete(current_user)
         db.commit()
         db.close()
@@ -80,7 +74,7 @@ def sign_up():
                 # via the built-in flask flash method
                 flash('Email already exists', category='error')
             else:
-                new_user = User(email=email, first_name=first_name, password=generate_password_hash(password, method=new_hash_method), user_type=1)
+                new_user = User(email=email, first_name=first_name, password=generate_password_hash(password), user_type=1)
                 db = db_session()
                 db.add(new_user)
                 db.commit()
@@ -102,15 +96,14 @@ def guest_login():
         # Although currently guests can be created without much personal info (even none depending on their preference)
         # Validation is good practise for extensibility
         if form.validate():
-            print("This is the firstName:", firstName)
-            print("This is type of firstName:", type(firstName))
             if len(firstName) == 0:
                 firstName = "guest"
             test_password = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=12))
-            guest_user = User(email="default@XYZ.com", first_name=firstName, password=generate_password_hash(test_password, method=new_hash_method), user_type=0)
+            guest_user = User(email="default@XYZ.com", first_name=firstName, password=generate_password_hash(test_password), user_type=0)
             db = db_session()
             db.add(guest_user)
             db.commit()
+
             # Here we update the email to include the ID
             guest_user.email = "default" + str(guest_user.id) + "@XYZ.com"
             db.commit()
@@ -122,48 +115,4 @@ def guest_login():
             return redirect(url_for('views.home'))
 
     return render_template("guest_login.html", user=current_user, form=form)
-
-
-# THIS IS TEMPORARY TO MIGRATE PASSWORDS!
-# //@auth.route('/reset-password', methods=['GET', 'POST'])
-def reset_password():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        first_name = request.form.get('firstName')
-        password = request.form.get('password')
-
-        user = User.query.filter_by(email=email).first()
-        if user is None:
-            flash('No email registered', category='error')
-        elif user.first_name != first_name:
-            flash('Names do not match. Please try again', category='error')
-        elif len(password) < 7:
-            flash('Password is too short. Please make it longer')
-        else:
-            new_password = generate_password_hash(password, method=new_hash_method)
-            user.password = new_password
-            db = db_session()
-            db.commit()
-            login_user(user, remember=True)
-            flash('Account password changed successfully!', category='success')
-            db.close()
-            return redirect(url_for('views.home'))
-
-    return render_template("reset_password.html", user=current_user)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
