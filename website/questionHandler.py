@@ -30,7 +30,9 @@ def time_taken(func):
 @time_taken
 def getQuestions():
     # Access's the questions in the json file
-    filename = os.path.join(os.getcwd(), 'website', 'static', 'questions.json')
+    base_directory = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(base_directory, "static", "questions.json")
+    # filename = os.path.join(os.getcwd(), 'website', 'static', 'questions.json')
 
     f = open(filename, 'r')
     # uses the json module to load it as a JSON object in python
