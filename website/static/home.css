@@ -1,0 +1,404 @@
+.window-banner {
+  position: relative;
+  overflow: hidden;
+  height: 0;
+  padding-bottom: 60%; /* Default 16:9 aspect ratio, this is then overridden by the js */
+}
+
+.scenic-view, .window-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.scenic-view {
+  background: url('imgs/Hero image .png') center/cover no-repeat;
+  filter: brightness(1);
+  transition: all 0.8s ease-in-out;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.banner-content {
+  max-width: 90%;
+  padding: 5rem 2.5rem 2.5rem 2.5rem;
+  z-index: 3;
+  box-sizing: content-box; /* Explicitly set to default */
+}
+
+
+.banner-heading, .banner-desc {
+  color: var(--text-color);
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  margin: 0;
+}
+
+.banner-heading {
+  font-weight: 700;
+  font-size: clamp(1.5rem, 10vw, 4rem);
+  position: relative;
+  margin-top: -1.5rem;
+}
+
+.banner-desc {
+  font-weight: 500;
+  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+  color: var(--text-secondary);
+  margin-top: 1rem;
+}
+
+.start-button {
+  font: inherit;
+  margin-top: 2rem;
+  padding: 0.6em 2em;
+  font-weight: 600;
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
+  border-radius: 16px;
+  background: #fff;
+  color: var(--bg-dark);
+  border: none;
+  cursor: pointer;
+  transform: translateY(50px);
+  opacity: 0;
+}
+
+.start-button:hover {
+  background-color: #3a93bb;
+  color: #fefefe;
+}
+
+.window-frame {
+  background: url('imgs/Window.png') center/contain no-repeat;
+  z-index: 2;
+  transition: transform 1s ease-in-out, opacity 0.6s ease-in-out 0.3s;
+}
+
+
+/* animated state */
+.window-banner.animated .scenic-view {
+  background-size: 110%;
+  filter: brightness(1);
+}
+
+.window-banner.animated .window-frame {
+  transform: scale(4);
+  opacity: 0;
+}
+
+.window-banner.animated .banner-heading,
+.window-banner.animated .banner-desc {
+  opacity: 1;
+  transition-delay: 0.3s;
+}
+
+.window-banner.animated .start-button {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.8s ease-in-out 0.8s, /* Adds a delay of 0.8s */
+    transform 0.8s ease-out 0.8s,
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* HOW CARDS */
+
+.how-it-works {
+  text-align: center;
+  margin: 2.5em 0 2.5em 0;
+  color: #29436B;
+}
+
+.how-it-works h2 {
+  margin-bottom: 0;
+}
+
+.how-imgs {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 1em;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.number-header {
+font-size: 3.5em;
+font-weight: 600;
+color: #ceebf8;
+-webkit-text-stroke: 2px #32b1e8;
+line-height: 2.5;
+position: relative;
+z-index: 1;
+text-align: start;
+}
+
+.content-card {
+background-color: #e3f2fd;
+border-radius: 15px;
+padding: 1em;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+max-width: 400px;
+position: relative;
+z-index: 2;
+/* Places the number just above the box */
+margin-top: -50px;
+border: 1px solid #90caf9;
+text-align: start;
+}
+
+.card-title {
+font-size: 1em;
+font-weight: 600;
+/* color: #1a237e; /* Darker blue for the title */
+color: #355787;
+margin: 0.5em 0;
+}
+
+.card-text {
+font-size: 0.95em;
+font-weight: 400;
+color: #424242; /* Greyish color for the text */
+line-height: 1.5;
+margin-bottom: 0.5em;
+}
+
+.how-img-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+@media only screen and (max-width: 992px) {
+  .how-imgs {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .how-img {
+    max-width: 80%;
+  }
+}
+
+.how-img-wrapper {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: all 0.6s ease-out;
+}
+
+.how-img-wrapper.animate-in-view {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ACCOUNT TYPES */
+.account-types-img {
+  max-width: 40%;
+  flex-shrink: 1;
+  object-fit: contain;
+  max-height: 400px;
+}
+
+.features-container {
+  display: flex;
+  gap: 1.5em;
+  padding-top: 1.5em;
+  padding-bottom: 2.5em;
+}
+
+.account-features {
+  background-color: #EDF8FD;
+}
+
+.features-text-container ul {
+  list-style-image: url('imgs/list-plane.svg');
+}
+
+.features-text-container h2 {
+  color: #29436B;
+}
+
+.features-text-container p, .features-container li {
+  line-height: 1.5em;
+}
+
+.features-text-container p {
+  color: var(--text-ternary);
+}
+
+.features-text-container li {
+  color: var(--text-ternary-2);
+}
+
+/* FOOTER */
+.footer {
+  background-color: #1B1A1A;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+
+}
+
+.footer h3 {
+  color: #fefefe;
+}
+
+.footer p {
+  line-height: 1.5em;
+}
+
+.footer p, .footer li {
+  color: #DDDDDD;
+  font-size: 1em;
+}
+
+.footer-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 5em;
+  padding: 1em;
+}
+
+.footer-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  flex: 1;
+  padding: 1em 0 0.5em 2em;
+}
+
+.footer-desc-header {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  align-items: center;
+}
+
+.footer-desc p {
+  max-width: 80%;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  flex: 1;
+  padding: 1em;
+}
+
+.footer-links ul {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 1em;
+}
+
+.footer-links li:not(:first-child) {
+  margin-top: 1em;
+}
+
+.footer-cr {
+  border-top: solid rgb(91, 91, 91) 1px;
+}
+
+.account-button-container {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.cta-signup {
+  border: solid 1.5px #3A93BB;
+  border-radius: 16px;
+  padding: 0.5em 1.3em;
+}
+
+
+/*                */
+/* HOLIDAY BANNER */
+/*                */
+
+.holiday-types {
+  text-align: center;
+  margin: 2.5em 0 2.5em 0;
+  color: #29436B;
+}
+
+/* .holiday-banner {
+  background: url('water_sports_hero.png') center/cover no-repeat;
+  position: relative;
+  width: 90%;
+  aspect-ratio: 16 / 9;
+  max-height: 60%;
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem auto;
+  border-radius: 8px;
+  border: solid 3px gray;
+} */
+
+.holiday-banner {
+  position: relative;
+  width: 90%;
+  aspect-ratio: 16 / 9;
+  max-height: 60%;
+  margin: 1.5rem auto;
+  border-radius: 8px;
+  border: solid 3px gray;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.banner-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.banner-image.visible {
+  opacity: 1;
+  z-index: 1;
+}
+
+.holiday-banner-buttons {
+  position: relative;
+  display: flex;
+  width: 85%;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  z-index: 1;
+  color: var(--text-color);
+}
+
+.holiday-banner-button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.holiday-logo {
+  height: 40px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.holiday-logo-visible {
+  opacity: 1;
+  visibility: visible;
+}

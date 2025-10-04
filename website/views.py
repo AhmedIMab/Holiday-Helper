@@ -37,18 +37,11 @@ def robots():
     print(os.getcwd() + 'website/')
     return send_from_directory(os.getcwd() + '/website/', 'robots.txt')
 
+
 @views.route('/sitemap.xml', methods=['GET'])
 def sitemap():
-    print("Here we are!")
     print(os.getcwd() + 'website/')
     return send_from_directory(os.getcwd() + '/website/', 'sitemap.xml')
-
-@views.route('/landing', methods=['GET'])
-def landing():
-    if current_user.is_authenticated:
-        return render_template("landing.html", user=current_user)
-    else:
-        return render_template("landing.html", user=None)
 
 
 @views.route('/', methods=['GET', 'POST'])
@@ -57,7 +50,7 @@ def home():
     if current_user.is_authenticated and (current_user.user_type == 1 or current_user.user_type == 2):
         return render_template("home.html", user=current_user)
     else:
-        return redirect(url_for('views.landing'))
+        return render_template("home.html", user=None)
 
 
 @views.route('/about', methods=['GET'])

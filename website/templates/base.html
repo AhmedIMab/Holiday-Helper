@@ -29,7 +29,8 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 
-        <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='extra.css') }}>
+        <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='base.css') }}>
+        {% block css %} {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imgs/favicon.ico') }}">
 
         <title>{% block title %}Holidays Helper - Personalized Travel Destination Suggestions | Discover your next destination! {% endblock %}</title>
@@ -37,41 +38,33 @@
     <body>
         <div id="main-page-container">
             <section>
-                <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3">
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse h5" id="navbar">
-                        <ul class="navbar-nav">
-                            <li>
-                                <a class="nav-link" id="home_nav_link" href="/">
-                                    <img id="home_logo" src="{{ url_for('static', filename='imgs/favicon.ico') }}" alt="">
-                                </a>
-                            </li>
-                            {% if user.is_authenticated and user.user_type != 0 %}
-                            <li class="nav-item">
-                                <a class="nav-link" id="prev-countries" href="/countries">Visited Countries</a>
-                            </li>
-                            {% elif not(user.is_authenticated) %}
-                            <li class="nav-item">
-                                <a class="nav-link" id="login" href="/login">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="signUp" href="/sign-up">Sign Up</a>
-                            </li>
-                            {% endif %}
-                        </ul>
-
-                        <ul class="navbar-nav ml-auto">
-                            {% if user.is_authenticated %}
-                            <li class="nav-item">
-                                <a class="nav-link" id="logout" href="/logout">Logout</a>
-                            </li>
-                            {% endif %}
-                        </ul>
-
-                    </div>
+                <nav class="navbar {% if request.path == '/' %}navbar-hidden{% endif %}" id="navbar">
+                    <ul class="navbar-nav">
+                        <li>
+                            <a class="nav-link" href="/">
+                                <img class="home_logo" src="{{ url_for('static', filename='imgs/favicon.ico') }}" alt="">
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav navbar-right">
+                        {% if user.is_authenticated and user.user_type != 0 %}
+                        <li class="nav-item">
+                            <a class="nav-link" id="prev-countries" href="/countries">Visited Countries</a>
+                        </li>
+                        {% elif not(user.is_authenticated) %}
+                        <li class="nav-item">
+                            <a class="nav-link" id="signUp" href="/sign-up">Sign Up</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link cta-login" id="login" href="/">Login</a>
+                        </li>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link cta-logout" id="logout" href="/">Login</a>
+                        </li>
+                        {% endif %}
+                    </ul>
                 </nav>
             </section>
 
@@ -97,7 +90,7 @@
             {% endif %}
             {% endwith %}
 
-            {% if request.path == "/" or request.path == "/landing" %}
+            {% if request.path == "/" %}
                 {% block homepage %}
                 {% endblock %}
             {% elif request.path == "/about" %}
@@ -122,17 +115,35 @@
                 </div>
             {% endif %}
 
-
-
-
-            <footer id="footer">
-                <div class="copyright-text">
-                    <h6>© 2024 Holidays Helper. All rights reserved</h6>
+            <section class="footer">
+                <div class="site-container">
+                    <div class="footer-info">
+                        <div class="footer-desc">
+                            <div class="footer-desc-header">
+                                <a class="nav-link" href="/">
+                                    <img class="home_logo" src="{{ url_for('static', filename='imgs/favicon.ico') }}" alt="">
+                                </a>
+                                <h3>Holidays Helper!</h3>
+                            </div>
+                            <p>
+                                Holiday Helper makes planning your dream vacation easy and personalized.
+                                Discover destinations tailored to your preferences and start your journey today!
+                            </p>
+                        </div>
+                        <div class="footer-links">
+                            <h3>Quick Links</h3>
+                            <ul>
+                                <li>About us</li>
+                                <li>Start New Journey</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="about-container">
-                    <a href="/about" id="about">About</a>
+                <div class="footer-cr">
+                    <p>@ 2024 Holidays Helper. All rights reserved</p>
                 </div>
-            </footer>
+                <!-- <div class="footer-social"></div> -->
+            </section>
         </div>
 
         <script
