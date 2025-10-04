@@ -4,7 +4,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from flask_login import LoginManager
-from dotenv import load_dotenv
 from flask_wtf.csrf import CSRFProtect
 import os
 
@@ -53,6 +52,6 @@ def create_app():
 
 def create_database():
     if not os.path.exists(os.path.join(os.getcwd(), 'website', DB_NAME)):
-        print("\nHERE, NO DATABASE DETECTED SO CREATING ONE! \n")
+        print("\nError: No database detected - creating a new one \n")
         Base.metadata.create_all(bind=engine)
         print("Database Created")
