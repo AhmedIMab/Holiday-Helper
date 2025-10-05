@@ -68,6 +68,11 @@
   opacity: 0;
 }
 
+.start-button a {
+  text-decoration: none;
+  color: inherit;
+}
+
 .start-button:hover {
   background-color: #3a93bb;
   color: #fefefe;
@@ -236,77 +241,6 @@ margin-bottom: 0.5em;
   color: var(--text-ternary-2);
 }
 
-/* FOOTER */
-.footer {
-  background-color: #1B1A1A;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-
-}
-
-.footer h3 {
-  color: #fefefe;
-}
-
-.footer p {
-  line-height: 1.5em;
-}
-
-.footer p, .footer li {
-  color: #DDDDDD;
-  font-size: 1em;
-}
-
-.footer-info {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 5em;
-  padding: 1em;
-}
-
-.footer-desc {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  flex: 1;
-  padding: 1em 0 0.5em 2em;
-}
-
-.footer-desc-header {
-  display: flex;
-  flex-direction: row;
-  gap: 1em;
-  align-items: center;
-}
-
-.footer-desc p {
-  max-width: 80%;
-}
-
-.footer-links {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  flex: 1;
-  padding: 1em;
-}
-
-.footer-links ul {
-  list-style-type: none;
-  padding: 0;
-  margin-top: 1em;
-}
-
-.footer-links li:not(:first-child) {
-  margin-top: 1em;
-}
-
-.footer-cr {
-  border-top: solid rgb(91, 91, 91) 1px;
-}
-
 .account-button-container {
   display: flex;
   flex-direction: row;
@@ -317,11 +251,13 @@ margin-bottom: 0.5em;
   border: solid 1.5px #3A93BB;
   border-radius: 16px;
   padding: 0.5em 1.3em;
+  color: #000000;
+  text-decoration: none;
 }
 
 
 /*                */
-/* HOLIDAY BANNER */
+/* HOLIDAY BANNERS */
 /*                */
 
 .holiday-types {

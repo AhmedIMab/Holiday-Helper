@@ -33,97 +33,113 @@
         {% block css %} {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='imgs/favicon.ico') }}">
 
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+
+
         <title>{% block title %}Holidays Helper - Personalized Travel Destination Suggestions | Discover your next destination! {% endblock %}</title>
     </head>
     <body>
+        {# To avoid overlapping bootstrap classes, custom css has been prepended with cus #}
         <div id="main-page-container">
             <section>
-                <nav class="navbar {% if request.path == '/' %}navbar-hidden{% endif %}" id="navbar">
-                    <ul class="navbar-nav">
+                <nav class="cus-navbar {% if request.path == '/' %}navbar-hidden{% endif %}" id="navbar">
+                    <ul class="cus-navbar-nav">
                         <li>
-                            <a class="nav-link" href="/">
+                            <a class="cus-nav-link" href="/">
                                 <img class="home_logo" src="{{ url_for('static', filename='imgs/favicon.ico') }}" alt="">
                             </a>
                         </li>
                     </ul>
-                    <ul class="navbar-nav navbar-right">
+                    <ul class="cus-navbar-nav navbar-right">
+                        {% if user.user_type == 0 %}
+                            <a style="color:red">Logged in as Guest</a>
+                        {% elif user.user_type == 1 %}
+                            <a style="color:blue">Logged in as User</a>
+                        {% elif user.user_type == 2 %}
+                            <a style="color:red">Admin</a>
+                        {% endif %}
                         {% if user.is_authenticated and user.user_type != 0 %}
-                        <li class="nav-item">
-                            <a class="nav-link" id="prev-countries" href="/countries">Visited Countries</a>
+                        <li>
+                            <a class="cus-nav-link" id="prev-countries" href="/countries">Visited Countries</a>
                         </li>
                         {% elif not(user.is_authenticated) %}
-                        <li class="nav-item">
-                            <a class="nav-link" id="signUp" href="/sign-up">Sign Up</a>
+                        <li>
+                            <a class="cus-nav-link" id="signUp" href="/sign-up">Sign Up</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link cta-login" id="login" href="/">Login</a>
+                        <li>
+                            <a class="nav-link cta-login" id="login" href="/login">Login</a>
                         </li>
                         {% endif %}
                         {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link cta-logout" id="logout" href="/">Login</a>
+                        <li>
+                            <a class="cus-nav-link cta-logout" id="logout" href="/logout">Logout</a>
                         </li>
                         {% endif %}
                     </ul>
                 </nav>
             </section>
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                {% if category == 'error' %}
-                <div class="alert alert-danger alter-dismissable fade show alert-message" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                {% else %}
-                <div class="alert alert-success alter-dismissable fade show alert-message" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                {% endif %}
-                {% endfor %}
-            {% endif %}
-            {% endwith %}
+            <div class="content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        {% if category == 'error' %}
+                        <div class="alert alert-danger alter-dismissable fade show alert-message" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-success alter-dismissable fade show alert-message" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
 
-            {% if request.path == "/" %}
-                {% block homepage %}
-                {% endblock %}
-            {% elif request.path == "/about" %}
-                {% block aboutcontent %}
-                {% endblock %}
-            {% elif request.path == "/countries" %}
-                {% block countriespage %}
-                {% endblock %}
-            {% elif request.path == "/login" %}
-                {% block logincontent %}
-                {% endblock %}
-            {% elif request.path == "/sign-up" %}
-                {% block signupcontent %}
-                {% endblock %}
-            {% elif request.path == "/guest-login" %}
-                {% block guestcontent %}
-                {% endblock %}
-            {% else %}
-                <div class="container" id="main">
-                {% block content %}
-                {% endblock %}
-                </div>
-            {% endif %}
+                {% if request.path == "/" %}
+                    {% block homepage %}
+                    {% endblock %}
+                {% elif request.path == "/about" %}
+                    {% block aboutcontent %}
+                    {% endblock %}
+                {% elif request.path == "/countries" %}
+                    {% block countriespage %}
+                    {% endblock %}
+                {% elif request.path == "/login" %}
+                    {% block logincontent %}
+                    {% endblock %}
+                {% elif request.path == "/sign-up" %}
+                    {% block signupcontent %}
+                    {% endblock %}
+                {% elif request.path == "/guest-login" %}
+                    {% block guestcontent %}
+                    {% endblock %}
+                {% else %}
+                    <div class="container" id="main">
+                    {% block content %}
+                    {% endblock %}
+                    </div>
+                {% endif %}
+            </div>
+
 
             <section class="footer">
                 <div class="site-container">
                     <div class="footer-info">
                         <div class="footer-desc">
                             <div class="footer-desc-header">
-                                <a class="nav-link" href="/">
+                                <a class="cus-nav-link" href="/">
                                     <img class="home_logo" src="{{ url_for('static', filename='imgs/favicon.ico') }}" alt="">
                                 </a>
-                                <h3>Holidays Helper!</h3>
+                                <h3>Holiday Helper!</h3>
                             </div>
                             <p>
                                 Holiday Helper makes planning your dream vacation easy and personalized.
@@ -140,7 +156,7 @@
                     </div>
                 </div>
                 <div class="footer-cr">
-                    <p>@ 2024 Holidays Helper. All rights reserved</p>
+                    <p>@ 2025 Holidays Helper. All rights reserved</p>
                 </div>
                 <!-- <div class="footer-social"></div> -->
             </section>
@@ -169,6 +185,7 @@
         <script
             type="text/javascript"
             src="{{ url_for('static', filename='index.js') }}"
-        ></script>
+        >
+        </script>
     </body>
 </html>

@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     entry.target.classList.add('animate-in-view')
                 }, index * 600)
-                return;
             }
             // If you want the animation to retrigger:
             // entry.target.classList.remove('animate-in-view')
@@ -23,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Create temp image to measure aspect ratio
     const tempImg = new Image();
-    tempImg.src = 'imgs/Window.png';
+    tempImg.src = '/static/imgs/Window.png';
     const navbar = document.getElementById('navbar')
 
     // Calculates the aspect ratio, so that it can be dynamic depending on the screen size
@@ -72,10 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const idToBannerMap = {
-        water_sports_banner: 'water_sports_banner.png',
-        winter_sports_banner: 'winter_sports_banner.png',
-        nature_hiking_banner: 'nature_hiking_banner.png',
-        historical_places_banner: 'historical_places_banner.png',
+        water_sports_banner: '/static/imgs/water_sports_banner.png',
+        winter_sports_banner: '/static/imgs/winter_sports_banner.png',
+        nature_hiking_banner: '/static/imgs/nature_hiking_banner.png',
+        historical_places_banner: '/static/imgs/historical_places_banner.png',
     };
 
     const holidayBanner = document.querySelector('.holiday-banner')
