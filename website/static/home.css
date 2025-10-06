@@ -217,6 +217,13 @@ margin-bottom: 0.5em;
   padding-bottom: 2.5em;
 }
 
+@media (max-width: 576px) {
+  .features-container {
+    flex-direction: column;
+  }
+}
+
+
 .account-features {
   background-color: #EDF8FD;
 }
