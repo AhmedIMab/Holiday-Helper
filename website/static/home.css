@@ -6,6 +6,7 @@
 }
 
 .scenic-view, .window-frame {
+  /* Places both the window and background in the same position so they overlap correctly */
   position: absolute;
   top: 0;
   left: 0;
@@ -28,7 +29,6 @@
   max-width: 90%;
   padding: 5rem 2.5rem 2.5rem 2.5rem;
   z-index: 3;
-  box-sizing: content-box; /* Explicitly set to default */
 }
 
 
@@ -48,7 +48,7 @@
 
 .banner-desc {
   font-weight: 500;
-  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+  font-size: clamp(0.9rem, 1.6vw, 1.4rem);
   color: var(--text-secondary);
   margin-top: 1rem;
 }
@@ -345,3 +345,5 @@ margin-bottom: 0.5em;
   opacity: 1;
   visibility: visible;
 }
+
+
