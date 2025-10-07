@@ -130,12 +130,6 @@ body {
   font-family: 'Montserrat', sans-serif;
 }
 
-@media (max-width: 576px) {
-  .window-banner {
-    padding-top: 60px; /* Based on actual navbar height */
-  }
-}
-
 .cus-navbar {
   display: flex;
   width: 100%;

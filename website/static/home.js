@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const banner = document.querySelector('.window-banner');
     const frame = document.querySelector('.window-frame');
 
+    // This is for the 'how it works' divs
     const observer = new IntersectionObserver(entries => {
         entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
@@ -30,16 +31,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const aspectRatio = (tempImg.height / tempImg.width) * 100;
         banner.style.paddingBottom = `${aspectRatio}%`;
 
-        // Add hover effect
-        banner.addEventListener('mouseenter', () => {
-            if (!banner.classList.contains('animated')) {
-                banner.classList.add('animated');
-                setTimeout(() => {
-                    frame.setAttribute('hidden', true)
-                    navbar.style.display = 'flex';
-                }, 1100);
-            }
-        });
+        if (window.innerWidth >= 715) {
+            // Add hover effect
+            banner.addEventListener('mouseenter', () => {
+                if (!banner.classList.contains('animated')) {
+                    banner.classList.add('animated');
+                    setTimeout(() => {
+                        frame.setAttribute('hidden', true)
+                        navbar.style.display = 'flex';
+                    }, 1100);
+                }
+            });
+        } else {
+            banner.classList.add('animated');
+            frame.setAttribute('hidden', true);
+            // Need to explicitly display navbar, as it is hidden on the homepage
+            navbar.style.display = 'flex';
+        }
     };
 
     // HOLIDAY TYPES BANNER IMAGE

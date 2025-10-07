@@ -84,6 +84,11 @@
   transition: transform 1s ease-in-out, opacity 0.6s ease-in-out 0.3s;
 }
 
+@media (max-width: 576px) {
+  .window-banner {
+    padding-top: 60px; /* Based on actual navbar height */
+  }
+}
 
 /* animated state */
 .window-banner.animated .scenic-view {
@@ -111,6 +116,22 @@
     background-color 0.3s ease,
     color 0.3s ease;
 }
+
+/* To remove animations on smaller screens*/
+@media (max-width: 715px) {
+  .window-frame {
+    display: none
+  }
+
+  .banner-heading,
+  .banner-desc,
+  .start-button {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 
 /* HOW CARDS */
 
