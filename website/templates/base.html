@@ -53,13 +53,13 @@
                         </li>
                     </ul>
                     <ul class="cus-navbar-nav navbar-right">
-                        {% if user.user_type == 0 %}
-                            <a style="color:red">Logged in as Guest</a>
-                        {% elif user.user_type == 1 %}
-                            <a style="color:blue">Logged in as User</a>
-                        {% elif user.user_type == 2 %}
-                            <a style="color:red">Admin</a>
-                        {% endif %}
+{#                        {% if user.user_type == 0 %}#}
+{#                            <a style="color:red">Logged in as Guest</a>#}
+{#                        {% elif user.user_type == 1 %}#}
+{#                            <a style="color:blue">Logged in as User</a>#}
+{#                        {% elif user.user_type == 2 %}#}
+{#                            <a style="color:red">Admin</a>#}
+{#                        {% endif %}#}
                         {% if user.is_authenticated and user.user_type != 0 %}
                         <li>
                             <a class="cus-nav-link" id="prev-countries" href="/countries">Visited Countries</a>
