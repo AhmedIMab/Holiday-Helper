@@ -119,7 +119,6 @@ def haveRequirementsBeenMet(travelID, questionID):
             currentValue = getattr(current_travel, requiredModifier)
             if isinstance(requiredValue, int):
                 if currentValue >= requiredValue:
-                    # print("requirement met")
                     pass
                 else:
                     # If the user does not have a greater than or equal score for the required factor
@@ -127,7 +126,6 @@ def haveRequirementsBeenMet(travelID, questionID):
                     break
             elif isinstance(requiredValue, str):
                 if currentValue == requiredValue:
-                    # print("requirements met")
                     pass
                 else:
                     requirementsMet = False
@@ -621,7 +619,6 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                 # Gets the attribute name in the database of the modifier
                 x = getattr(current_travel, toModify)
                 if type(x) == int:
-                    # print("This is an integer answer")
                     # Changes the fields value by the modification
                     setattr(current_travel, toModify, x + modificationBy)
                 else:
