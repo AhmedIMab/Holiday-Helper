@@ -44,8 +44,6 @@ def sitemap():
 @views.route('/', methods=['GET', 'POST'])
 def home():
     print("Welcome! Entered site on:", datetime.now())
-    print("current user:", current_user)
-    print("current user authenticated?:", current_user.is_authenticated)
     if current_user.is_authenticated:
         return render_template("home.html", user=current_user)
     else:
@@ -185,7 +183,6 @@ def suggestions(travelID):
 
     user_travel_details = []
     try:
-        print("\nIn the suggestions and just about to call userCountryScore function\n")
         ranked_countries = userCountryScore(travelID, AllCountries)
         # map function is used to replace country codes with country names for user convenience
         # x[0] is the country code

@@ -48,7 +48,6 @@ def logout():
     db = db_session()
     # When the account is a guest account
     if current_user.user_type == 0:
-        print("HERE")
         statement = delete(UserCountryScore).where(UserCountryScore.user_id == current_user.id)
         db.execute(statement)
         statement = delete(UserTravelScore).where(UserTravelScore.user_id == current_user.id)

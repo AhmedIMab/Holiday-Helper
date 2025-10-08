@@ -15,7 +15,7 @@
 }
 
 .scenic-view {
-  background: url('imgs/Hero image .png') center/cover no-repeat;
+  background: url('imgs/hero_image.png') center/cover no-repeat;
   filter: brightness(1);
   transition: all 0.8s ease-in-out;
   z-index: 1;
