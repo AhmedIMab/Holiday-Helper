@@ -363,6 +363,29 @@ def calculateCountryScores(travelID, countryCodes):
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         print("This is the error we have before:", e)
 
+    # Load the 3 consistently accessed tables
+    monthly_temps = {}
+    monthly_temps_data = MonthlyTemperatures.query.all()
+    for country in monthly_temps_data:
+        # If its one of the countries that should get their temps calculated (as per the function argument)
+        if country.country_code in countryCodes:
+            monthly_temps[country.country_code] = country
+
+    yearly_temps = {}
+    yearly_temps_data = YearlyTemperatures.query.all()
+    for country in yearly_temps_data:
+        # If its one of the countries that should get their temps calculated (as per the function argument)
+        if country.country_code in countryCodes:
+            yearly_temps[country.country_code] = country
+
+    daily_costs = {}
+    daily_costs_data = CountryDailyCost.query.all()
+    for country in daily_costs_data:
+        # If its one of the countries that should get their temps calculated (as per the function argument)
+        if country.country_code in countryCodes:
+            daily_costs[country.country_code] = country
+
+
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
         # Does the same for the current country
@@ -431,7 +454,7 @@ def calculateCountryScores(travelID, countryCodes):
             ##### For Temperature
             user_temp = getattr(current_travel, "pref_user_temp")
             journey_start = getattr(current_travel, "journey_start")
-            countryScore = MonthlyTemperatures.query.get(countryCode)
+            countryScore = monthly_temps.get(countryCode)
             # country_temp is referring to the temperature of the country for the given user month
             country_temp = None
 
@@ -445,7 +468,7 @@ def calculateCountryScores(travelID, countryCodes):
 
             # If it cant find it, will look at yearly temps
             if country_temp is None:
-                countryScore = YearlyTemperatures.query.get(countryCode)
+                countryScore = yearly_temps.get(countryCode)
                 country_temp = getattr(countryScore, "yearly_temp")
                 missing_monthly_temps += 1
 
