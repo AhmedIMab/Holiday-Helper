@@ -106,6 +106,8 @@ def guest_login():
             guest_user = User(email="default@XYZ.com", first_name=firstName, password=generate_password_hash(test_password), user_type=0)
             db = db_session()
             db.add(guest_user)
+            # Assigns the guest user an id
+            db.flush()
 
             # Here we update the email to include the ID
             guest_user.email = "default" + str(guest_user.id) + "@XYZ.com"
