@@ -59,7 +59,6 @@ def logout():
     finally:
         db.close()
 
-    # Always log out after cleaning up
     logout_user()
     return redirect(url_for('views.home'))
 
