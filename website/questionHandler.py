@@ -315,31 +315,46 @@ def sortCountries(travelID):
 @time_taken
 def calculateTempScores(travelID, countryCodes, temp_differences_squared):
     db = db_session()
-    valuesX = temp_differences_squared.values()
-    temps_d_squared_list = list(valuesX)
-    normalised_temps = {}
-    for country, temp in temp_differences_squared.items():
-        temp = float(temp)
-        # To normalise the value between 0 and 50
-        # Only normalised 0 to 50 as opposed to 0 to 100 as I would prefer to for the temperature to not have a large
-        # weighting on the score for the country
-        # Also did not normalise into negative values as I would like the temperature to refine to a more suited country
-        # as opposed to dispersing the countries which do not meet the temperature
-        temp_normalised = ((temp - min(temps_d_squared_list)) / (
-        (max(temps_d_squared_list) - min(temps_d_squared_list)))) * 100
-        # Inverse as it is currently a giving a larger number the further away it is from the users score...
-        temp_inverse = (-1 * temp_normalised) + 100
-        normalised_temps[country] = temp_inverse
-
-    for country_code in countryCodes:
-        # Here, it will find the country's temp
-        country_temp = normalised_temps[country_code]
-        current_country = UserCountryScore.query.get((current_user.id, travelID, country_code))
-        current_country_score = float(getattr(current_country, "temp_score"))
-        setattr(current_country, "temp_score", current_country_score + country_temp)
-
     try:
+        valuesX = temp_differences_squared.values()
+        temps_d_squared_list = list(valuesX)
+        normalised_temps = {}
+        min_temp = min(temps_d_squared_list)
+        max_temp = max(temps_d_squared_list)
+
+        for country, temp in temp_differences_squared.items():
+            temp = float(temp)
+            # To normalise the value between 0 and 50
+            # Only normalised 0 to 50 as opposed to 0 to 100 as I would prefer to for the temperature to not have a large
+            # weighting on the score for the country
+            # Also did not normalise into negative values as I would like the temperature to refine to a more suited country
+            # as opposed to dispersing the countries which do not meet the temperature
+            temp_normalised = ((temp - min_temp) / (max_temp - min_temp)) * 100
+            # Inverse as it is currently a giving a larger number the further away it is from the users score...
+            temp_inverse = (-1 * temp_normalised) + 100
+            normalised_temps[country] = temp_inverse
+
+        # Retrieve all the country scores with one query instead of querying per one
+        # the in_ will create an SQL list of all the values to check from
+        all_country_scores = {}
+        all_country_scores_data = UserCountryScore.query.filter(
+            UserCountryScore.user_id == current_user.id,
+            UserCountryScore.travel_id == travelID,
+            UserCountryScore.country_code.in_(countryCodes)
+        ).all()
+
+        for country_score in all_country_scores_data:
+            all_country_scores[country_score.country_code] = country_score
+
+        for country_code in countryCodes:
+            # Here, it will find the country's temp
+            country_temp = normalised_temps[country_code]
+            current_country = all_country_scores.get(country_code)
+            current_country_score = float(getattr(current_country, "temp_score"))
+            setattr(current_country, "temp_score", current_country_score + country_temp)
+
         db.commit()
+
     except Exception as e:
         print("Error committing temperature scores ", e)
         db.rollback()
@@ -363,28 +378,24 @@ def calculateCountryScores(travelID, countryCodes):
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         print("This is the error we have before:", e)
 
-    # Load the 3 consistently accessed tables
+    # Loads the 3 consistently accessed tables instead of querying everytime
+    # Reduces the number of requests from the DB and instead uses a dictionary local storage
     monthly_temps = {}
-    monthly_temps_data = MonthlyTemperatures.query.all()
+    monthly_temps_data = MonthlyTemperatures.query.filter(
+        MonthlyTemperatures.country_code.in_(countryCodes)).all()
     for country in monthly_temps_data:
-        # If its one of the countries that should get their temps calculated (as per the function argument)
-        if country.country_code in countryCodes:
-            monthly_temps[country.country_code] = country
+        monthly_temps[country.country_code] = country
 
     yearly_temps = {}
-    yearly_temps_data = YearlyTemperatures.query.all()
+    yearly_temps_data = YearlyTemperatures.query.filter(
+        YearlyTemperatures.country_code.in_(countryCodes)).all()
     for country in yearly_temps_data:
-        # If its one of the countries that should get their temps calculated (as per the function argument)
-        if country.country_code in countryCodes:
-            yearly_temps[country.country_code] = country
+        yearly_temps[country.country_code] = country
 
     daily_costs = {}
-    daily_costs_data = CountryDailyCost.query.all()
+    daily_costs_data = CountryDailyCost.query.filter(CountryDailyCost.country_code.in_(countryCodes)).all()
     for country in daily_costs_data:
-        # If its one of the countries that should get their temps calculated (as per the function argument)
-        if country.country_code in countryCodes:
-            daily_costs[country.country_code] = country
-
+        daily_costs[country.country_code] = country
 
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
@@ -479,7 +490,7 @@ def calculateCountryScores(travelID, countryCodes):
             temp_difference = temp_difference * temp_difference
             temp_differences_squared[countryCode] = temp_difference
 
-            country_daily_cost = CountryDailyCost.query.get(countryCode)
+            country_daily_cost = daily_costs.get(countryCode)
             if country_daily_cost.daily_cost is not None:
                 # To get the daily cost for the country, it will multiply the number of travellers by the
                 # travelling time and the daily cost of the country using the CountryDailyCost table
@@ -513,12 +524,11 @@ def calculateCountryScores(travelID, countryCodes):
     for countryCode in countryCodes:
         current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
         allScores = []
+        temp_score = getattr(current_country, "temp_score")
+        allScores.append(temp_score)
         for factor in UserCountryScoreEnum:
             x = getattr(current_country, factor.value)
             allScores.append(x)
-
-            temp_score = getattr(current_country, "temp_score")
-            allScores.append(temp_score)
 
             total_score_for_country = sum(allScores)
             setattr(current_country, "total_score", total_score_for_country)
