@@ -27,6 +27,11 @@ def create_app():
 
     csrf.init_app(app)
 
+    # So that every new request will clean up the session, avoiding rollback errors.
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        db_session.remove()
+
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
