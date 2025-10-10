@@ -107,6 +107,7 @@ def guest_login():
             db = db_session()
             db.add(guest_user)
             # Assigns the guest user an id
+            # Flushing here doesn't permanently make the changes to the db, so useful mid-transaction
             db.flush()
 
             # Here we update the email to include the ID
@@ -115,7 +116,6 @@ def guest_login():
 
             login_user(guest_user, force=True, remember=True)
             flash('Guest logged in successfully!', category='success')
-            print("Passed here!")
             db.close()
             return redirect(url_for('views.home'))
 
