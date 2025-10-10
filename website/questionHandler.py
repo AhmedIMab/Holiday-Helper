@@ -14,6 +14,39 @@ import functools
 import time
 
 
+# multiple enum's as inconsistent naming in databases
+# Every enum class has the have the same order for the names
+# e.g. WATER_SPORTS has to be first one defined in every class
+class UserCountryScoreEnum(Enum):
+    WATER_SPORTS = "water_sports_score"
+    WINTER_SPORTS = "winter_sports_score"
+    CULTURE_SCORE = "culture_score"
+    NATURE_SCORE = "nature_score"
+    SAFETY_SCORE = "safety_score"
+    BUDGET_SCORE = "budget_score"
+    DENSITY_SCORE = "pop_density_score"
+
+
+class CountryScoreEnum(Enum):
+    WATER_SPORTS = ("water_sports_score", Sport)
+    WINTER_SPORTS = ("winter_sports_score", Sport)
+    CULTURE_SCORE = ("heritage_score", CulturalValue)
+    NATURE_SCORE = ("nature_score", Nature)
+    SAFETY_SCORE = ("safety_score", Safety)
+    BUDGET_SCORE = ("cost_score", Cost)
+    DENSITY_SCORE = ("pop_density_score", PopulationDensity)
+
+
+class UserScoreEnum(Enum):
+    WATER_SPORTS = "water_sports_user_score"
+    WINTER_SPORTS = "winter_sports_user_score"
+    CULTURE_SCORE = "culture_user_score"
+    NATURE_SCORE = "nature_user_score"
+    SAFETY_SCORE = "safety_user_score"
+    BUDGET_SCORE = "budget_user_score"
+    DENSITY_SCORE = "pop_density_user_score"
+
+
 # A decorator to time how long it takes for a
 def time_taken(func):
     @functools.wraps(func)
@@ -24,6 +57,7 @@ def time_taken(func):
         end = time.time()
         print(f"Time taken for {func.__name__}: {end - start} secs")
         return value
+
     return wrapper_time_taken
 
 
@@ -168,29 +202,29 @@ def nextQuestionID(travelID):
     # so by applying a not, the value will be False
     # and the filter function extracts elements from a list which return True therefore ignoring answered questions
     # x is the current element the method is looking at (filter)
-    questionsStream = filter(lambda x:not(isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
+    questionsStream = filter(lambda x: not (isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
     # second filter will make sure only mandatory questions are asked
-    questionsStream = filter(lambda x:x.get("mandatory") == True, questionsStream)
+    questionsStream = filter(lambda x: x.get("mandatory") == True, questionsStream)
     # Third filter checks if the user has the access type for the question
-    questionsStream = filter(lambda x:shouldUserBeAskedQuestion(travelID, x.get("questionID")), questionsStream)
+    questionsStream = filter(lambda x: shouldUserBeAskedQuestion(travelID, x.get("questionID")), questionsStream)
     # Sort the questions by the smallest to biggest questionID (integer)
-    questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
+    questionsStream = sorted(questionsStream, key=lambda x: x.get("questionID"))
 
     if len(questionsStream) == 0:
         # this series of functions is for checking questions with requirements
         # As they are not in the initial set of questions
         questionsStream = questions
         # so only looks at questions which have requirements (non mandatory)
-        questionsStream = filter(lambda x:x.get("mandatory") == False, questionsStream)
+        questionsStream = filter(lambda x: x.get("mandatory") == False, questionsStream)
         # same as above filter
         # needed so that if a question with requirements is answered we need to make sure it's filtered out
         # and only ask non answered questions
-        questionsStream = filter(lambda x: not(isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
+        questionsStream = filter(lambda x: not (isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
         # same as above to ensure questions for the user are only asked if the user is of a certain account type
         questionsStream = filter(lambda x: shouldUserBeAskedQuestion(travelID, x.get("questionID")), questionsStream)
         # runs the function haveRequirementsBeenMet to get the questions which the user meets requirements for
-        questionsStream = filter(lambda x:haveRequirementsBeenMet(travelID, x.get("questionID")), questionsStream)
-        questionsStream = sorted(questionsStream, key=lambda x:x.get("questionID"))
+        questionsStream = filter(lambda x: haveRequirementsBeenMet(travelID, x.get("questionID")), questionsStream)
+        questionsStream = sorted(questionsStream, key=lambda x: x.get("questionID"))
 
         if len(questionsStream) == 0:
             # Will only run when there are no questions to ask/questions with requirements have been met as well
@@ -240,7 +274,7 @@ def filterPrevCountries(codes, travelID):
         # as it's a not, the value will become false
         # as a filter function which will extract elements from a list which return True
         # it means only the countries which return false in the doesUserWantThisCountry function will be extracted
-        suggestionsStream = filter(lambda x:not(doesUserWantThisCountry(x)), codes)
+        suggestionsStream = filter(lambda x: not (doesUserWantThisCountry(x)), codes)
         suggestionsStream = list(suggestionsStream)
         return suggestionsStream
 
@@ -250,9 +284,9 @@ def sortCountries(travelID):
     # Executes the command
     # Selects all the user country score records for the current user and current travel
     # Orders the countries by highest to lowest
-    result = UserCountryScore.query\
-        .filter_by(user_id=current_user.id, travel_id=travelID)\
-        .order_by(UserCountryScore.total_score.desc())\
+    result = UserCountryScore.query \
+        .filter_by(user_id=current_user.id, travel_id=travelID) \
+        .order_by(UserCountryScore.total_score.desc()) \
         .all()
 
     uCountryCodes = []
@@ -277,6 +311,7 @@ def sortCountries(travelID):
 
     return userSuggestions
 
+
 @time_taken
 def calculateTempScores(travelID, countryCodes, temp_differences_squared):
     db = db_session()
@@ -290,7 +325,8 @@ def calculateTempScores(travelID, countryCodes, temp_differences_squared):
         # weighting on the score for the country
         # Also did not normalise into negative values as I would like the temperature to refine to a more suited country
         # as opposed to dispersing the countries which do not meet the temperature
-        temp_normalised = ((temp-min(temps_d_squared_list))/((max(temps_d_squared_list)-min(temps_d_squared_list))))*100
+        temp_normalised = ((temp - min(temps_d_squared_list)) / (
+        (max(temps_d_squared_list) - min(temps_d_squared_list)))) * 100
         # Inverse as it is currently a giving a larger number the further away it is from the users score...
         temp_inverse = (-1 * temp_normalised) + 100
         normalised_temps[country] = temp_inverse
@@ -300,60 +336,32 @@ def calculateTempScores(travelID, countryCodes, temp_differences_squared):
         country_temp = normalised_temps[country_code]
         current_country = UserCountryScore.query.get((current_user.id, travelID, country_code))
         current_country_score = float(getattr(current_country, "temp_score"))
-        setattr(current_country, "temp_score", current_country_score+country_temp)
+        setattr(current_country, "temp_score", current_country_score + country_temp)
 
     try:
         db.commit()
     except Exception as e:
+        print("Error committing temperature scores ", e)
         db.rollback()
-        print("Traceback error:", traceback.format_exc())
+        # print("Traceback error:", traceback.format_exc())
+    finally:
+        db.close()
 
 
 @time_taken
 def calculateCountryScores(travelID, countryCodes):
-    # multiple enum's as inconsistent naming in databases
-    # Every enum class has the have the same order for the names
-    # e.g. WATER_SPORTS has to be first one defined in every class
-    class UserCountryScoreEnum(Enum):
-        WATER_SPORTS = "water_sports_score"
-        WINTER_SPORTS = "winter_sports_score"
-        CULTURE_SCORE = "culture_score"
-        NATURE_SCORE = "nature_score"
-        SAFETY_SCORE = "safety_score"
-        BUDGET_SCORE = "budget_score"
-        DENSITY_SCORE = "pop_density_score"
-
-    class CountryScoreEnum(Enum):
-        WATER_SPORTS = ("water_sports_score", Sport)
-        WINTER_SPORTS = ("winter_sports_score", Sport)
-        CULTURE_SCORE = ("heritage_score", CulturalValue)
-        NATURE_SCORE = ("nature_score", Nature)
-        SAFETY_SCORE = ("safety_score", Safety)
-        BUDGET_SCORE = ("cost_score", Cost)
-        DENSITY_SCORE = ("pop_density_score", PopulationDensity)
-
-    class UserScoreEnum(Enum):
-        WATER_SPORTS = "water_sports_user_score"
-        WINTER_SPORTS = "winter_sports_user_score"
-        CULTURE_SCORE = "culture_user_score"
-        NATURE_SCORE = "nature_user_score"
-        SAFETY_SCORE = "safety_user_score"
-        BUDGET_SCORE = "budget_user_score"
-        DENSITY_SCORE = "pop_density_user_score"
-
     db = db_session()
     current_travel = None
+    missing_monthly_temps = 0
+    temps = {}
+    temp_differences_squared = {}
 
     try:
         # Sets the current travel to the UserTravelScore of the user with primary key values
         # user_id as the current user id and travel id key as the travel id passed into the function
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print("This is the error we have before well well well:", e)
-
-    missing_monthly_temps = 0
-    temps = {}
-    temp_differences_squared = {}
+        print("This is the error we have before:", e)
 
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
@@ -376,9 +384,9 @@ def calculateCountryScores(travelID, countryCodes):
                                                 total_score=0,
                                                 final_travel_cost=1)
             db.add(new_user_country)
-            db.commit()
-            # sets the current_country to a query of country's newly created record
-            current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
+            db.flush()
+            # sets the current_country to the country's newly created record
+            current_country = new_user_country
             user_score = {}
             user_factor_values = [0] * len(UserScoreEnum)
 
@@ -393,6 +401,7 @@ def calculateCountryScores(travelID, countryCodes):
                 user_factor_values[count] = (factor_user_score)
                 count += 1
 
+            # gets the most important holiday factor for the user
             most_important_user_score = max(user_factor_values)
 
             all_country_scores = {}
@@ -419,29 +428,28 @@ def calculateCountryScores(travelID, countryCodes):
                 userCountryScores.append(userCountryScoreT)
                 userCountryScoresD[y.name] = userCountryScoreT
 
-            ## For Temperature
+            ##### For Temperature
             user_temp = getattr(current_travel, "pref_user_temp")
             journey_start = getattr(current_travel, "journey_start")
             countryScore = MonthlyTemperatures.query.get(countryCode)
-            # This is needed as the fields in the monthly temps has temperatures as: 'february_temp', 'december_temp'
-            # However in the User Country it is stored just as a month
-            journey_start_country = f"{journey_start}_temp"
-            try:
-                # country_temp is referring to the temperature of the country for the given user month
-                country_temp = getattr(countryScore, journey_start_country)
-            except AttributeError:
-                # If it cant find it, will look at yearly temps
-                countryScore = YearlyTemperatures.query.get(countryCode)
-                country_temp = getattr(countryScore, "yearly_temp")
+            # country_temp is referring to the temperature of the country for the given user month
+            country_temp = None
+
+            # If the country has a monthly temp record,
+            # and there's a journey start attribute for the user (should be true but just incase)
+            if countryScore and journey_start:
+                # This is needed as the fields in the monthly temps has temperatures as: 'february_temp', 'december_temp'
+                # However in the User Country it is stored just as a month
+                journey_start_country = f"{journey_start}_temp"
+                country_temp = getattr(countryScore, journey_start_country, None)
+
+            # If it cant find it, will look at yearly temps
             if country_temp is None:
-                # If there's no data for that month for the country
-                # Use the yearly temperature data
-                missing_monthly_temps += 1
                 countryScore = YearlyTemperatures.query.get(countryCode)
                 country_temp = getattr(countryScore, "yearly_temp")
-                temps[countryCode] = country_temp
-            else:
-                temps[countryCode] = country_temp
+                missing_monthly_temps += 1
+
+            temps[countryCode] = country_temp
 
             temp_difference = user_temp - country_temp
             # Squares the difference
@@ -466,8 +474,13 @@ def calculateCountryScores(travelID, countryCodes):
                 # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
                 setattr(current_country, t.value, userCountryScoresD[t.name])
 
-    db.commit()
-    db.close()
+    try:
+        db.commit()
+    except Exception as e:
+        print("Error calculating user scores:", e)
+        db.rollback()
+    finally:
+        db.close()
 
     calculateTempScores(travelID, countryCodes, temp_differences_squared)
 
@@ -489,7 +502,8 @@ def calculateCountryScores(travelID, countryCodes):
 
     try:
         db.commit()
-    except:
+    except Exception as e:
+        print("EXCEPTION committing final country scores:", e)
         db.rollback()
     finally:
         db.close()
@@ -548,56 +562,39 @@ def userQuestionAnswer(questionID, answerValue, travelID):
     if current_travel is None:
         # if the user has not travelled yet
         # Creates a new record for them
+        prev_countries_val = None
         if current_user.user_type == 0:
-            # Different travel record for a guest as the previous countries is set to 1 automatically (include prev countries)
             print("Making a guest user record")
-            new_user_travel = UserTravelScore(user_id=current_user.id,
-                                              travel_id=travelID,
-                                              date_added=datetime.date(now),
-                                              questions_answered="",
-                                              prev_countries=1,
-                                              travelling_time=0,
-                                              journey_start="",
-                                              pref_user_activity="",
-                                              pref_user_temp=0,
-                                              num_travellers=0,
-                                              water_sports_user_score=10,
-                                              winter_sports_user_score=10,
-                                              culture_user_score=10,
-                                              nature_user_score=10,
-                                              safety_user_score=0,
-                                              budget_user_score=0,
-                                              pop_density_user_score=0)
-        else:
-            new_user_travel = UserTravelScore(user_id=current_user.id,
-                                              travel_id=travelID,
-                                              date_added=datetime.date(now),
-                                              questions_answered="",
-                                              prev_countries=None,
-                                              travelling_time=0,
-                                              journey_start="",
-                                              pref_user_activity="",
-                                              pref_user_temp=0,
-                                              num_travellers=0,
-                                              water_sports_user_score=10,
-                                              winter_sports_user_score=10,
-                                              culture_user_score=10,
-                                              nature_user_score=10,
-                                              safety_user_score=0,
-                                              budget_user_score=0,
-                                              pop_density_user_score=0)
+            # Different travel record for a guest as the previous countries is set to 1 automatically (include prev countries)
+            prev_countries_val = 1
+        new_user_travel = UserTravelScore(user_id=current_user.id,
+                                          travel_id=travelID,
+                                          date_added=datetime.date(now),
+                                          questions_answered="",
+                                          prev_countries=prev_countries_val,
+                                          travelling_time=0,
+                                          journey_start="",
+                                          pref_user_activity="",
+                                          pref_user_temp=0,
+                                          num_travellers=0,
+                                          water_sports_user_score=10,
+                                          winter_sports_user_score=10,
+                                          culture_user_score=10,
+                                          nature_user_score=10,
+                                          safety_user_score=0,
+                                          budget_user_score=0,
+                                          pop_density_user_score=0)
 
         db.add(new_user_travel)
         db.commit()
 
         # sets the current_travel to a query of user's newly created record
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+        current_travel = new_user_travel
 
     y = getattr(current_travel, 'questions_answered')
     # splits the string at each comma to get a list containing the question ID of the questions answered
     questionsAnsweredArray = y.split(',')
     if str(questionID) in questionsAnsweredArray:
-        questionAnswered = True
         db.close()
         return
 
@@ -641,20 +638,21 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                 if factor == top_activity_score:
                     initialValue = getattr(current_travel, top_activity_score)
                     x = int(answerValue)
-                    value = x/10 * initialValue
-                    setattr(current_travel, top_activity_score, value+10)
+                    value = x / 10 * initialValue
+                    setattr(current_travel, top_activity_score, value + 10)
                 else:
                     # When it's not the highest factor...
                     x = int(answerValue)
-                    value = ((10-(x/10))/3) * 10
-                    setattr(current_travel, factor, value+10)
+                    value = ((10 - (x / 10)) / 3) * 10
+                    setattr(current_travel, factor, value + 10)
 
         # Adds the question to the user's questions answered
         current_travel.questions_answered += str(questionID) + ","
 
-        db.commit()
+        try:
+            db.commit()
+        except Exception as e:
+            print("Error adding question answer:", e)
+            db.rollback()
 
     db.close()
-
-
-
