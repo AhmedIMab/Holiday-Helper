@@ -27,7 +27,8 @@ def create_app():
 
     csrf.init_app(app)
 
-    # So that every new request will clean up the session, avoiding rollback errors.
+    # So that every new request will clean up the session, avoiding rollback errors
+    # It also avoids sessions overlapping and causing errors
     @app.teardown_appcontext
     def shutdown_session(exception=None):
         db_session.remove()
