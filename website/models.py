@@ -23,7 +23,7 @@ class Country(Base):
     country_name = Column(String(150), unique=True)
 
     # Relationships for SQLAlchemy
-    # Use list is needed so that the objects are not returned as a list but the actual related table object
+    # uselist is needed so that the objects are not returned as a list but the actual related table object
     sport = relationship('Sport', backref='Country', uselist=False)
     cost = relationship('Cost', backref='Country', uselist=False)
     cultural_value = relationship('CulturalValue', backref='Country', uselist=False)
