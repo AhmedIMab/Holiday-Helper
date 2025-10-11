@@ -15,7 +15,7 @@ import time
 
 
 # multiple enum's as inconsistent naming in databases
-# Every enum class has the have the same order for the names
+# Every enum class has to have the same order for the names
 # e.g. WATER_SPORTS has to be first one defined in every class
 class UserCountryScoreEnum(Enum):
     WATER_SPORTS = "water_sports_score"
@@ -366,7 +366,6 @@ def calculateTempScores(travelID, countryCodes, temp_differences_squared):
 @time_taken
 def calculateCountryScores(travelID, countryCodes):
     db = db_session()
-    current_travel = None
     missing_monthly_temps = 0
     temps = {}
     temp_differences_squared = {}
@@ -376,7 +375,9 @@ def calculateCountryScores(travelID, countryCodes):
         # user_id as the current user id and travel id key as the travel id passed into the function
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print("This is the error we have before:", e)
+        print("No such travel exists for the user - unable to calculate scores", e)
+        return
+
 
     # Loads the 3 consistently accessed tables instead of querying everytime
     # Reduces the number of requests from the DB and instead uses a dictionary local storage
@@ -397,11 +398,30 @@ def calculateCountryScores(travelID, countryCodes):
     for country in daily_costs_data:
         daily_costs[country.country_code] = country
 
+
+    ## For the user scores
+    user_score = {}
+    user_factor_values = [0] * len(UserScoreEnum)
+
+    count = 0
+    # For every factor
+    for n in UserScoreEnum:
+        # Gets the travel score
+        factor_user_score = getattr(current_travel, n.value)
+        # Adds it to the dictionary
+        user_score[n.name] = factor_user_score
+        # Adds the factor values to the list
+        user_factor_values[count] = (factor_user_score)
+        count += 1
+
+    # gets the most important holiday factor for the user
+    most_important_user_score = max(user_factor_values)
+
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
         # Does the same for the current country
         current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-        if current_travel is None or current_country is None:
+        if current_country is None:
             # When the country does not have a score
             # Adds a new default record
             new_user_country = UserCountryScore(user_id=current_user.id,
@@ -421,28 +441,14 @@ def calculateCountryScores(travelID, countryCodes):
             db.flush()
             # sets the current_country to the country's newly created record
             current_country = new_user_country
-            user_score = {}
-            user_factor_values = [0] * len(UserScoreEnum)
-
-            count = 0
-            # For every factor
-            for n in UserScoreEnum:
-                # Gets the travel score
-                factor_user_score = getattr(current_travel, n.value)
-                # Adds it to the dictionary
-                user_score[n.name] = factor_user_score
-                # Adds the factor values to the list
-                user_factor_values[count] = (factor_user_score)
-                count += 1
-
-            # gets the most important holiday factor for the user
-            most_important_user_score = max(user_factor_values)
 
             all_country_scores = {}
             for country_score in CountryScoreEnum:
                 table_value = country_score.value[1].query.get(countryCode)
                 # Will get the value of the field in the appropriate table
                 all_country_scores[country_score.name] = getattr(table_value, country_score.value[0])
+
+            print("all country scores:", all_country_scores)
 
             user_relative_scores = {}
             for x in UserScoreEnum:
