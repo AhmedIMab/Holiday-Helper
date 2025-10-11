@@ -282,9 +282,8 @@ def sortCountries(travelID):
         result = UserCountryScore.query.get((current_user.id, travelID, country))
         travelCost = result.final_travel_cost
         # Creates a dictionary to later be manipulated by the Jinja templating to display journey cost
-        valuesToDisplay = {}
+        valuesToDisplay = {"Your journey will cost approximately": f"{travelCost:0.2f}"}
         # Sets the key with text "your journey will cost approximately" to the travel cost in the table
-        valuesToDisplay["Your journey will cost approximately"] = f"{travelCost:0.2f}"
         # Adds country as a tuple to the list of userSuggestions
         userSuggestions.append((country, int(country_number), valuesToDisplay))
         country_number += 1
@@ -292,9 +291,10 @@ def sortCountries(travelID):
     return userSuggestions
 
 
+# Here we expect a session argument so that the data doesn't mismatch from the function call's db session
+# And we use the same one
 @time_taken
-def calculateTempScores(travelID, countryCodes, temp_differences_squared):
-    db = db_session()
+def calculateTempScores(db, countryCodes, all_user_country_scores, temp_differences_squared):
     try:
         valuesX = temp_differences_squared.values()
         temps_d_squared_list = list(valuesX)
@@ -314,22 +314,10 @@ def calculateTempScores(travelID, countryCodes, temp_differences_squared):
             temp_inverse = (-1 * temp_normalised) + 100
             normalised_temps[country] = temp_inverse
 
-        # Retrieve all the country scores with one query instead of querying per one
-        # the in_ will create an SQL list of all the values to check from
-        all_country_scores = {}
-        all_country_scores_data = UserCountryScore.query.filter(
-            UserCountryScore.user_id == current_user.id,
-            UserCountryScore.travel_id == travelID,
-            UserCountryScore.country_code.in_(countryCodes)
-        ).all()
-
-        for country_score in all_country_scores_data:
-            all_country_scores[country_score.country_code] = country_score
-
         for country_code in countryCodes:
             # Here, it will find the country's temp
             country_temp = normalised_temps[country_code]
-            current_country = all_country_scores.get(country_code)
+            current_country = all_user_country_scores.get(country_code)
             current_country_score = float(getattr(current_country, "temp_score"))
             setattr(current_country, "temp_score", current_country_score + country_temp)
 
@@ -339,8 +327,6 @@ def calculateTempScores(travelID, countryCodes, temp_differences_squared):
         print("Error committing temperature scores ", e)
         db.rollback()
         # print("Traceback error:", traceback.format_exc())
-    finally:
-        db.close()
 
 
 @time_taken
@@ -412,6 +398,8 @@ def calculateCountryScores(travelID, countryCodes):
 
     for country in all_country_scores_data:
         all_country_scores[country.country_code] = country
+
+    all_user_country_scores = {}
 
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
@@ -505,22 +493,15 @@ def calculateCountryScores(travelID, countryCodes):
                 # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
                 setattr(current_country, t.value[0], userCountryScoresD[t.name])
 
-    try:
-        db.commit()
-    except Exception as e:
-        print("Error calculating user scores:", e)
-        db.rollback()
-    finally:
-        db.close()
+        all_user_country_scores[countryCode] = current_country
 
-    calculateTempScores(travelID, countryCodes, temp_differences_squared)
+    db.flush()
 
-    db = db_session()
+    calculateTempScores(db, countryCodes, all_user_country_scores, temp_differences_squared)
 
     # sets the total score
     for countryCode in countryCodes:
-        current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-        # print("this is current_country:", current_country.__dict__)
+        current_country = all_user_country_scores.get(countryCode)
         allScores = []
         temp_score = getattr(current_country, "temp_score")
         allScores.append(temp_score)
