@@ -3,10 +3,11 @@ import os
 import sqlite3
 import traceback
 import sqlalchemy.exc
-from .models import UserCountry, UserTravelScore, Sport, Cost, CulturalValue, MonthlyTemperatures
+from .models import UserCountry, UserTravelScore, Sport, Cost, CulturalValue, MonthlyTemperatures, Country
 from .models import UserCountryScore, CountryDailyCost, Safety, Nature, PopulationDensity, YearlyTemperatures
 from flask_login import login_required, current_user
 from sqlalchemy.sql import *
+from sqlalchemy.orm import joinedload
 from . import db_session, NUM_COUNTRIES
 from enum import Enum
 from datetime import datetime
@@ -17,6 +18,16 @@ import time
 # multiple enum's as inconsistent naming in databases
 # Every enum class has to have the same order for the names
 # e.g. WATER_SPORTS has to be first one defined in every class
+class TableNamesEnum(Enum):
+    WATER_SPORTS = "sport"
+    WINTER_SPORTS = "sport"
+    CULTURE_SCORE = "cultural_value"
+    NATURE_SCORE = "nature"
+    SAFETY_SCORE = "safety"
+    BUDGET_SCORE = "cost"
+    DENSITY_SCORE = "population_density"
+
+
 class UserCountryScoreEnum(Enum):
     WATER_SPORTS = "water_sports_score"
     WINTER_SPORTS = "winter_sports_score"
@@ -378,7 +389,6 @@ def calculateCountryScores(travelID, countryCodes):
         print("No such travel exists for the user - unable to calculate scores", e)
         return
 
-
     # Loads the 3 consistently accessed tables instead of querying everytime
     # Reduces the number of requests from the DB and instead uses a dictionary local storage
     monthly_temps = {}
@@ -398,7 +408,6 @@ def calculateCountryScores(travelID, countryCodes):
     for country in daily_costs_data:
         daily_costs[country.country_code] = country
 
-
     ## For the user scores
     user_score = {}
     user_factor_values = [0] * len(UserScoreEnum)
@@ -416,6 +425,24 @@ def calculateCountryScores(travelID, countryCodes):
 
     # gets the most important holiday factor for the user
     most_important_user_score = max(user_factor_values)
+
+    # Locally
+    all_country_scores = {}
+    # joinedload uses the relationships defined in the models and loads the joined tables at the same time
+    # executes 1 query when accessing the different tables
+    all_country_scores_data = (
+        db.query(Country)
+        .options(
+            joinedload(Country.sport),
+            joinedload(Country.cost),
+            joinedload(Country.cultural_value),
+            joinedload(Country.nature),
+            joinedload(Country.safety),
+            joinedload(Country.population_density),
+        ).all())
+
+    for country in all_country_scores_data:
+        all_country_scores[country.country_code] = country
 
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
@@ -442,13 +469,11 @@ def calculateCountryScores(travelID, countryCodes):
             # sets the current_country to the country's newly created record
             current_country = new_user_country
 
-            all_country_scores = {}
-            for country_score in CountryScoreEnum:
-                table_value = country_score.value[1].query.get(countryCode)
-                # Will get the value of the field in the appropriate table
-                all_country_scores[country_score.name] = getattr(table_value, country_score.value[0])
-
-            print("all country scores:", all_country_scores)
+            # all_country_scores = {}
+            # for country_score in CountryScoreEnum:
+            #     table_value = country_score.value[1].query.get(countryCode)
+            #     # Will get the value of the field in the appropriate table
+            #     all_country_scores[country_score.name] = getattr(table_value, country_score.value[0])
 
             user_relative_scores = {}
             for x in UserScoreEnum:
@@ -458,9 +483,12 @@ def calculateCountryScores(travelID, countryCodes):
             userCountryScores = []
             userCountryScoresD = {}
             for y in UserScoreEnum:
+                country_scores_object = all_country_scores[countryCode]
+                country_factor_object = getattr(country_scores_object, TableNamesEnum[y.name].value)
+                country_value = getattr(country_factor_object, CountryScoreEnum[y.name].value[0])
                 # To deal with no data for that countries factor score
-                if all_country_scores[y.name] is not None:
-                    userCountryScoreT = user_relative_scores[y.name] * all_country_scores[y.name]
+                if country_value is not None:
+                    userCountryScoreT = user_relative_scores[y.name] * country_value
                 else:
                     # When the value is NULL, sets the value to 0
                     userCountryScoreT = 0
@@ -529,6 +557,7 @@ def calculateCountryScores(travelID, countryCodes):
     # sets the total score
     for countryCode in countryCodes:
         current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
+        # print("this is current_country:", current_country.__dict__)
         allScores = []
         temp_score = getattr(current_country, "temp_score")
         allScores.append(temp_score)

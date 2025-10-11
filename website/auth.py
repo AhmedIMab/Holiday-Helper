@@ -48,9 +48,9 @@ def logout():
     db = db_session()
     try:
         if current_user.user_type == 0:
-            db.query(UserCountryScore).filter_by(user_id=current_user.user_id).delete()
-            db.query(UserTravelScore).filter_by(user_id=current_user.user_id).delete()
-            user = db.query(User).get(current_user.user_id)
+            db.query(UserCountryScore).filter_by(user_id=current_user.id).delete()
+            db.query(UserTravelScore).filter_by(user_id=current_user.id).delete()
+            user = db.query(User).get(current_user.id)
             db.delete(user)
             db.commit()
     except Exception as e:

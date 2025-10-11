@@ -22,6 +22,15 @@ class Country(Base):
     country_code = Column(String(3), primary_key=True)
     country_name = Column(String(150), unique=True)
 
+    # Relationships for SQLAlchemy
+    # Use list is needed so that the objects are not returned as a list but the actual related table object
+    sport = relationship('Sport', backref='Country', uselist=False)
+    cost = relationship('Cost', backref='Country', uselist=False)
+    cultural_value = relationship('CulturalValue', backref='Country', uselist=False)
+    nature = relationship('Nature', backref='Country', uselist=False)
+    safety = relationship('Safety', backref='Country', uselist=False)
+    population_density = relationship('PopulationDensity', backref='Country', uselist=False)
+
 
 class UserCountry(Base):
     __tablename__ = 'user_country'
