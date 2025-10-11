@@ -469,12 +469,6 @@ def calculateCountryScores(travelID, countryCodes):
             # sets the current_country to the country's newly created record
             current_country = new_user_country
 
-            # all_country_scores = {}
-            # for country_score in CountryScoreEnum:
-            #     table_value = country_score.value[1].query.get(countryCode)
-            #     # Will get the value of the field in the appropriate table
-            #     all_country_scores[country_score.name] = getattr(table_value, country_score.value[0])
-
             user_relative_scores = {}
             for x in UserScoreEnum:
                 factor_relative_score = user_score[x.name] / most_important_user_score
