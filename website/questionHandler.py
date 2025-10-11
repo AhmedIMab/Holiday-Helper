@@ -24,38 +24,38 @@ class TableNamesEnum(Enum):
     CULTURE_SCORE = "cultural_value"
     NATURE_SCORE = "nature"
     SAFETY_SCORE = "safety"
-    BUDGET_SCORE = "cost"
+    COST_SCORE = "cost"
     DENSITY_SCORE = "population_density"
 
 
 class UserCountryScoreEnum(Enum):
     WATER_SPORTS = "water_sports_score"
     WINTER_SPORTS = "winter_sports_score"
-    CULTURE_SCORE = "culture_score"
+    CULTURE_SCORE = "cultural_score"
     NATURE_SCORE = "nature_score"
     SAFETY_SCORE = "safety_score"
-    BUDGET_SCORE = "budget_score"
+    COST_SCORE = "cost_score"
     DENSITY_SCORE = "pop_density_score"
 
 
 class CountryScoreEnum(Enum):
     WATER_SPORTS = ("water_sports_score", Sport)
     WINTER_SPORTS = ("winter_sports_score", Sport)
-    CULTURE_SCORE = ("heritage_score", CulturalValue)
+    CULTURE_SCORE = ("cultural_score", CulturalValue)
     NATURE_SCORE = ("nature_score", Nature)
     SAFETY_SCORE = ("safety_score", Safety)
-    BUDGET_SCORE = ("cost_score", Cost)
+    COST_SCORE = ("cost_score", Cost)
     DENSITY_SCORE = ("pop_density_score", PopulationDensity)
 
 
 class UserScoreEnum(Enum):
-    WATER_SPORTS = "water_sports_user_score"
-    WINTER_SPORTS = "winter_sports_user_score"
-    CULTURE_SCORE = "culture_user_score"
-    NATURE_SCORE = "nature_user_score"
-    SAFETY_SCORE = "safety_user_score"
-    BUDGET_SCORE = "budget_user_score"
-    DENSITY_SCORE = "pop_density_user_score"
+    WATER_SPORTS = "water_sports_score"
+    WINTER_SPORTS = "winter_sports_score"
+    CULTURE_SCORE = "cultural_score"
+    NATURE_SCORE = "nature_score"
+    SAFETY_SCORE = "safety_score"
+    COST_SCORE = "cost_score"
+    DENSITY_SCORE = "pop_density_score"
 
 
 # A decorator to time how long it takes for a
@@ -456,11 +456,11 @@ def calculateCountryScores(travelID, countryCodes):
                                                 country_code=countryCode,
                                                 water_sports_score=0,
                                                 winter_sports_score=0,
-                                                culture_score=0,
+                                                cultural_score=0,
                                                 nature_score=0,
                                                 temp_score=0,
                                                 safety_score=0,
-                                                budget_score=0,
+                                                cost_score=0,
                                                 pop_density_score=0,
                                                 total_score=0,
                                                 final_travel_cost=1)
@@ -639,13 +639,13 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                                           pref_user_activity="",
                                           pref_user_temp=0,
                                           num_travellers=0,
-                                          water_sports_user_score=10,
-                                          winter_sports_user_score=10,
-                                          culture_user_score=10,
-                                          nature_user_score=10,
-                                          safety_user_score=0,
-                                          budget_user_score=0,
-                                          pop_density_user_score=0)
+                                          water_sports_score=10,
+                                          winter_sports_score=10,
+                                          cultural_score=10,
+                                          nature_score=10,
+                                          safety_score=0,
+                                          cost_score=0,
+                                          pop_density_score=0)
 
         db.add(new_user_travel)
         db.commit()
@@ -690,11 +690,11 @@ def userQuestionAnswer(questionID, answerValue, travelID):
 
         elif answersType == "Integer+":
             pref_user_activity = getattr(current_travel, "pref_user_activity")
-            top_activity_score = pref_user_activity + "_user_score"
-            allFactorNames = ["water_sports_user_score",
-                              "winter_sports_user_score",
-                              "culture_user_score",
-                              "nature_user_score"]
+            top_activity_score = pref_user_activity + "_score"
+            allFactorNames = ["water_sports_score",
+                              "winter_sports_score",
+                              "cultural_score",
+                              "nature_score"]
 
             for factor in allFactorNames:
                 if factor == top_activity_score:
