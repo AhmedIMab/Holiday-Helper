@@ -3,9 +3,9 @@ import os
 import sqlite3
 import traceback
 import sqlalchemy.exc
-from .models import UserCountry, UserTravelScore, Sport, Cost, CulturalValue, MonthlyTemperatures, Country
-from .models import UserCountryScore, CountryDailyCost, Safety, Nature, PopulationDensity, YearlyTemperatures
-from flask_login import login_required, current_user
+from .models import UserCountry, UserTravelScore, MonthlyTemperatures, Country
+from .models import UserCountryScore, CountryDailyCost, YearlyTemperatures
+from flask_login import current_user
 from sqlalchemy.sql import *
 from sqlalchemy.orm import joinedload
 from . import db_session, NUM_COUNTRIES
@@ -15,47 +15,16 @@ import functools
 import time
 
 
-# multiple enum's as inconsistent naming in databases
-# Every enum class has to have the same order for the names
-# e.g. WATER_SPORTS has to be first one defined in every class
-class TableNamesEnum(Enum):
-    WATER_SPORTS = "sport"
-    WINTER_SPORTS = "sport"
-    CULTURE_SCORE = "cultural_value"
-    NATURE_SCORE = "nature"
-    SAFETY_SCORE = "safety"
-    COST_SCORE = "cost"
-    DENSITY_SCORE = "population_density"
-
-
-class UserCountryScoreEnum(Enum):
-    WATER_SPORTS = "water_sports_score"
-    WINTER_SPORTS = "winter_sports_score"
-    CULTURE_SCORE = "cultural_score"
-    NATURE_SCORE = "nature_score"
-    SAFETY_SCORE = "safety_score"
-    COST_SCORE = "cost_score"
-    DENSITY_SCORE = "pop_density_score"
-
-
-class CountryScoreEnum(Enum):
-    WATER_SPORTS = ("water_sports_score", Sport)
-    WINTER_SPORTS = ("winter_sports_score", Sport)
-    CULTURE_SCORE = ("cultural_score", CulturalValue)
-    NATURE_SCORE = ("nature_score", Nature)
-    SAFETY_SCORE = ("safety_score", Safety)
-    COST_SCORE = ("cost_score", Cost)
-    DENSITY_SCORE = ("pop_density_score", PopulationDensity)
-
-
-class UserScoreEnum(Enum):
-    WATER_SPORTS = "water_sports_score"
-    WINTER_SPORTS = "winter_sports_score"
-    CULTURE_SCORE = "cultural_score"
-    NATURE_SCORE = "nature_score"
-    SAFETY_SCORE = "safety_score"
-    COST_SCORE = "cost_score"
-    DENSITY_SCORE = "pop_density_score"
+# One ENUM that corresponds to a tuple for every factor
+# (field_name, table_name)
+class FactorsEnum(Enum):
+    WATER_SPORTS = ("water_sports_score", 'sport')
+    WINTER_SPORTS = ("winter_sports_score", 'sport')
+    CULTURE_SCORE = ("cultural_score", 'cultural_value')
+    NATURE_SCORE = ("nature_score", 'nature')
+    SAFETY_SCORE = ("safety_score", 'safety')
+    COST_SCORE = ("cost_score", 'cost')
+    DENSITY_SCORE = ("pop_density_score", 'population_density')
 
 
 # A decorator to time how long it takes for a
@@ -410,13 +379,13 @@ def calculateCountryScores(travelID, countryCodes):
 
     ## For the user scores
     user_score = {}
-    user_factor_values = [0] * len(UserScoreEnum)
+    user_factor_values = [0] * len(FactorsEnum)
 
     count = 0
     # For every factor
-    for n in UserScoreEnum:
+    for n in FactorsEnum:
         # Gets the travel score
-        factor_user_score = getattr(current_travel, n.value)
+        factor_user_score = getattr(current_travel, n.value[0])
         # Adds it to the dictionary
         user_score[n.name] = factor_user_score
         # Adds the factor values to the list
@@ -470,16 +439,16 @@ def calculateCountryScores(travelID, countryCodes):
             current_country = new_user_country
 
             user_relative_scores = {}
-            for x in UserScoreEnum:
+            for x in FactorsEnum:
                 factor_relative_score = user_score[x.name] / most_important_user_score
                 user_relative_scores[x.name] = factor_relative_score
 
             userCountryScores = []
             userCountryScoresD = {}
-            for y in UserScoreEnum:
+            for y in FactorsEnum:
                 country_scores_object = all_country_scores[countryCode]
-                country_factor_object = getattr(country_scores_object, TableNamesEnum[y.name].value)
-                country_value = getattr(country_factor_object, CountryScoreEnum[y.name].value[0])
+                country_factor_object = getattr(country_scores_object, FactorsEnum[y.name].value[1])
+                country_value = getattr(country_factor_object, FactorsEnum[y.name].value[0])
                 # To deal with no data for that countries factor score
                 if country_value is not None:
                     userCountryScoreT = user_relative_scores[y.name] * country_value
@@ -530,11 +499,11 @@ def calculateCountryScores(travelID, countryCodes):
                 total_cost_for_country = 0
                 setattr(current_country, "final_travel_cost", total_cost_for_country)
 
-            for t in UserCountryScoreEnum:
+            for t in FactorsEnum:
                 # adds the value for the factor score, using the value in the Enumerator of the UserCountryScore table
                 # e.g. the first run of the loop, t.value = water_sports_score
                 # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
-                setattr(current_country, t.value, userCountryScoresD[t.name])
+                setattr(current_country, t.value[0], userCountryScoresD[t.name])
 
     try:
         db.commit()
@@ -555,8 +524,8 @@ def calculateCountryScores(travelID, countryCodes):
         allScores = []
         temp_score = getattr(current_country, "temp_score")
         allScores.append(temp_score)
-        for factor in UserCountryScoreEnum:
-            x = getattr(current_country, factor.value)
+        for factor in FactorsEnum:
+            x = getattr(current_country, factor.value[0])
             allScores.append(x)
 
             total_score_for_country = sum(allScores)
