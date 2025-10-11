@@ -46,15 +46,19 @@ def login():
 @login_required
 def logout():
     db = db_session()
-    # When the account is a guest account
-    if current_user.user_type == 0:
-        statement = delete(UserCountryScore).where(UserCountryScore.user_id == current_user.id)
-        db.execute(statement)
-        statement = delete(UserTravelScore).where(UserTravelScore.user_id == current_user.id)
-        db.execute(statement)
-        db.delete(current_user)
-        db.commit()
+    try:
+        if current_user.user_type == 0:
+            db.query(UserCountryScore).filter_by(user_id=current_user.id).delete()
+            db.query(UserTravelScore).filter_by(user_id=current_user.id).delete()
+            user = db.query(User).get(current_user.id)
+            db.delete(user)
+            db.commit()
+    except Exception as e:
+        db.rollback()
+        print("Error deleting guest user:", e)
+    finally:
         db.close()
+
     logout_user()
     return redirect(url_for('views.home'))
 
@@ -102,7 +106,9 @@ def guest_login():
             guest_user = User(email="default@XYZ.com", first_name=firstName, password=generate_password_hash(test_password), user_type=0)
             db = db_session()
             db.add(guest_user)
-            db.commit()
+            # Assigns the guest user an id
+            # Flushing here doesn't permanently make the changes to the db, so useful mid-transaction
+            db.flush()
 
             # Here we update the email to include the ID
             guest_user.email = "default" + str(guest_user.id) + "@XYZ.com"
@@ -110,7 +116,6 @@ def guest_login():
 
             login_user(guest_user, force=True, remember=True)
             flash('Guest logged in successfully!', category='success')
-            print("Passed here!")
             db.close()
             return redirect(url_for('views.home'))
 

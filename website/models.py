@@ -7,10 +7,10 @@ from . import Base
 class User(Base, UserMixin):
     __tablename__ = 'user'
 
-    id = Column(Integer, primary_key=True)
-    email = Column(String(150), unique=True)
-    password = Column(String(150))
-    first_name = Column(String(150))
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(255), unique=True)
+    password = Column(String(255))
+    first_name = Column(String(255))
     user_type = Column(Integer)
     countries = relationship('UserCountry', backref='user')
     travel_score = relationship('UserTravelScore', backref='user')
@@ -21,6 +21,15 @@ class Country(Base):
 
     country_code = Column(String(3), primary_key=True)
     country_name = Column(String(150), unique=True)
+
+    # Relationships for SQLAlchemy
+    # uselist is needed so that the objects are not returned as a list but the actual related table object
+    sport = relationship('Sport', backref='Country', uselist=False)
+    cost = relationship('Cost', backref='Country', uselist=False)
+    cultural_value = relationship('CulturalValue', backref='Country', uselist=False)
+    nature = relationship('Nature', backref='Country', uselist=False)
+    safety = relationship('Safety', backref='Country', uselist=False)
+    population_density = relationship('PopulationDensity', backref='Country', uselist=False)
 
 
 class UserCountry(Base):
@@ -120,7 +129,7 @@ class UserTravelScore(Base):
     user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     travel_id = Column(Integer, primary_key=True)
     date_added = Column(Date)
-    questions_answered = Column(String)
+    questions_answered = Column(String(255))
     prev_countries = Column(Boolean)
     travelling_time = Column(Integer)
     journey_start = Column(String(15))
