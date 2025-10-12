@@ -27,12 +27,13 @@ class FactorsEnum(Enum):
     DENSITY_SCORE = ("pop_density_score", 'population_density')
 
 
-# A decorator to time how long it takes for a
+# A decorator to time how long it takes for a function to run
 def time_taken(func):
     @functools.wraps(func)
     def wrapper_time_taken(*args, **kwargs):
         print(f"Calling function: {func.__name__}")
         start = time.time()
+        # Passes down any arguments
         value = func(*args, **kwargs)
         end = time.time()
         print(f"Time taken for {func.__name__}: {end - start} secs")
@@ -397,11 +398,20 @@ def calculateCountryScores(travelID, countryCodes):
         all_country_scores[country.country_code] = country
 
     all_user_country_scores = {}
+    # Get any scores that have been potentially already added
+    # Usually will be 0, as this function calculates them, but incase of errors, this will help
+    # Previously, we were getting this for every country, now we bulk get all of them (None) instead
+    existing_user_country_scores = UserCountryScore.query.filter_by(user_id=current_user.id, travel_id=travelID).all()
+    user_country_scores_initial_data = {}
+    for country in existing_user_country_scores:
+        user_country_scores_initial_data[country.country_code] = country
+
 
     for countryCode in countryCodes:
+        start = time.time()
         # Loops through every country's code in the list of all countryCodes
         # Does the same for the current country
-        current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
+        current_country = user_country_scores_initial_data.get(countryCode)
         if current_country is None:
             # When the country does not have a score
             # Adds a new default record
@@ -454,7 +464,7 @@ def calculateCountryScores(travelID, countryCodes):
             # If the country has a monthly temp record,
             # and there's a journey start attribute for the user (should be true but just incase)
             if countryScore and journey_start:
-                # This is needed as the fields in the monthly temps has temperatures as: 'february_temp', 'december_temp'
+                # This is needed as the fields in the monthly temps has temperatures as: 'june_temp', 'december_temp'
                 # However in the User Country it is stored just as a month
                 journey_start_country = f"{journey_start}_temp"
                 country_temp = getattr(countryScore, journey_start_country, None)
@@ -491,6 +501,8 @@ def calculateCountryScores(travelID, countryCodes):
                 setattr(current_country, t.value[0], userCountryScoresD[t.name])
 
         all_user_country_scores[countryCode] = current_country
+        end = time.time()
+        print("To calculate one country time it took: ", end - start)
 
     db.flush()
 
