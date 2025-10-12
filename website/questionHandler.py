@@ -262,10 +262,12 @@ def filterPrevCountries(codes, travelID):
 
 @time_taken
 def sortCountries(travelID, country_scores):
-    # Turns the values of the dictionary (objects referencing a specific country score) into a list
-    country_scores_list = list(country_scores.values())
+    country_scores_dict = {}
+    for country in country_scores:
+        country_scores_dict[country.country_code] = country
+
     # Sorts the list by the total score of every object, descending
-    country_scores_descending = sorted(country_scores_list, key=lambda score: score.total_score, reverse=True)
+    country_scores_descending = sorted(country_scores, key=lambda score: score.total_score, reverse=True)
 
     uCountryCodes = []
     for country in country_scores_descending:
@@ -277,7 +279,7 @@ def sortCountries(travelID, country_scores):
 
     country_number = 1
     for country in filteredCountries:
-        result = country_scores.get(country.country_code)
+        result = country_scores_dict.get(country)
         travelCost = result.final_travel_cost
         # Creates a dictionary to later be manipulated by the Jinja templating to display journey cost
         valuesToDisplay = {"Your journey will cost approximately": f"{travelCost:0.2f}"}
@@ -541,8 +543,8 @@ def userCountryScore(travelID, countryCodes):
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         print("At this e, usercountryscore:", e)
 
-    country_scores = UserCountryScore.query.filter_by(user_id=current_user.id, travel_id=travelID)
-    num_country_scores = len(country_scores.all())
+    country_scores = UserCountryScore.query.filter_by(user_id=current_user.id, travel_id=travelID).all()
+    num_country_scores = len(country_scores)
 
     if num_country_scores != NUM_COUNTRIES:
         # Need to calculate them
