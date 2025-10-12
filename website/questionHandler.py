@@ -262,12 +262,9 @@ def filterPrevCountries(codes, travelID):
 
 @time_taken
 def sortCountries(travelID, country_scores):
-    country_scores_dict = {}
-    for country in country_scores:
-        country_scores_dict[country.country_code] = country
-
-    # Sorts the list by the total score of every object, descending
-    country_scores_descending = sorted(country_scores, key=lambda score: score.total_score, reverse=True)
+    # Gets the values of the dictionary (objects referencing a specific country score)
+    # Sorts the list of objects by the total score of every object, descending
+    country_scores_descending = sorted(country_scores.values(), key=lambda score: score.total_score, reverse=True)
 
     uCountryCodes = []
     for country in country_scores_descending:
@@ -279,7 +276,7 @@ def sortCountries(travelID, country_scores):
 
     country_number = 1
     for country in filteredCountries:
-        result = country_scores_dict.get(country)
+        result = country_scores.get(country)
         travelCost = result.final_travel_cost
         # Creates a dictionary to later be manipulated by the Jinja templating to display journey cost
         valuesToDisplay = {"Your journey will cost approximately": f"{travelCost:0.2f}"}
@@ -530,6 +527,7 @@ def calculateCountryScores(travelID, countryCodes):
         db.rollback()
     finally:
         db.close()
+        return all_user_country_scores
 
 
 @time_taken
@@ -543,14 +541,19 @@ def userCountryScore(travelID, countryCodes):
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         print("At this e, usercountryscore:", e)
 
-    country_scores = UserCountryScore.query.filter_by(user_id=current_user.id, travel_id=travelID).all()
-    num_country_scores = len(country_scores)
+    country_scores_data = UserCountryScore.query.filter_by(user_id=current_user.id, travel_id=travelID).all()
+    num_country_scores = len(country_scores_data)
+
+    # Convert to a dict as sortCountries expects that, and easier to work with
+    country_scores = {}
+    for country in country_scores_data:
+        country_scores[country.country_code] = country
 
     if num_country_scores != NUM_COUNTRIES:
         # Need to calculate them
         try:
             # Tries to calculate country scores
-            calculateCountryScores(travelID, countryCodes)
+            country_scores = calculateCountryScores(travelID, countryCodes)
         except ValueError as ve:
             print("\nWe've got a value error here:\n", ve)
             print("This is the traceback:\n", traceback.format_exc())
