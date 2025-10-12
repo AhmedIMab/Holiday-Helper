@@ -407,8 +407,8 @@ def calculateCountryScores(travelID, countryCodes):
         user_country_scores_initial_data[country.country_code] = country
 
 
+    start = time.time()
     for countryCode in countryCodes:
-        start = time.time()
         # Loops through every country's code in the list of all countryCodes
         # Does the same for the current country
         current_country = user_country_scores_initial_data.get(countryCode)
@@ -501,9 +501,9 @@ def calculateCountryScores(travelID, countryCodes):
                 setattr(current_country, t.value[0], userCountryScoresD[t.name])
 
         all_user_country_scores[countryCode] = current_country
-        end = time.time()
-        print("To calculate one country time it took: ", end - start)
 
+    end = time.time()
+    print("To calculate all 196 countries it took: ", end - start)
     db.flush()
 
     calculateTempScores(db, countryCodes, all_user_country_scores, temp_differences_squared)
