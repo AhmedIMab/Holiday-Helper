@@ -3,9 +3,9 @@ import os
 import sqlite3
 import traceback
 import sqlalchemy.exc
-from .models import UserCountry, UserTravelScore, Sport, Cost, CulturalValue, MonthlyTemperatures, Country
-from .models import UserCountryScore, CountryDailyCost, Safety, Nature, PopulationDensity, YearlyTemperatures
-from flask_login import login_required, current_user
+from .models import UserCountry, UserTravelScore, MonthlyTemperatures, Country
+from .models import UserCountryScore, CountryDailyCost, YearlyTemperatures
+from flask_login import current_user
 from sqlalchemy.sql import *
 from sqlalchemy.orm import joinedload
 from . import db_session, NUM_COUNTRIES
@@ -15,55 +15,25 @@ import functools
 import time
 
 
-# multiple enum's as inconsistent naming in databases
-# Every enum class has to have the same order for the names
-# e.g. WATER_SPORTS has to be first one defined in every class
-class TableNamesEnum(Enum):
-    WATER_SPORTS = "sport"
-    WINTER_SPORTS = "sport"
-    CULTURE_SCORE = "cultural_value"
-    NATURE_SCORE = "nature"
-    SAFETY_SCORE = "safety"
-    BUDGET_SCORE = "cost"
-    DENSITY_SCORE = "population_density"
+# One ENUM that corresponds to a tuple for every factor
+# (field_name, table_name)
+class FactorsEnum(Enum):
+    WATER_SPORTS = ("water_sports_score", 'sport')
+    WINTER_SPORTS = ("winter_sports_score", 'sport')
+    CULTURE_SCORE = ("cultural_score", 'cultural_value')
+    NATURE_SCORE = ("nature_score", 'nature')
+    SAFETY_SCORE = ("safety_score", 'safety')
+    COST_SCORE = ("cost_score", 'cost')
+    DENSITY_SCORE = ("pop_density_score", 'population_density')
 
 
-class UserCountryScoreEnum(Enum):
-    WATER_SPORTS = "water_sports_score"
-    WINTER_SPORTS = "winter_sports_score"
-    CULTURE_SCORE = "culture_score"
-    NATURE_SCORE = "nature_score"
-    SAFETY_SCORE = "safety_score"
-    BUDGET_SCORE = "budget_score"
-    DENSITY_SCORE = "pop_density_score"
-
-
-class CountryScoreEnum(Enum):
-    WATER_SPORTS = ("water_sports_score", Sport)
-    WINTER_SPORTS = ("winter_sports_score", Sport)
-    CULTURE_SCORE = ("heritage_score", CulturalValue)
-    NATURE_SCORE = ("nature_score", Nature)
-    SAFETY_SCORE = ("safety_score", Safety)
-    BUDGET_SCORE = ("cost_score", Cost)
-    DENSITY_SCORE = ("pop_density_score", PopulationDensity)
-
-
-class UserScoreEnum(Enum):
-    WATER_SPORTS = "water_sports_user_score"
-    WINTER_SPORTS = "winter_sports_user_score"
-    CULTURE_SCORE = "culture_user_score"
-    NATURE_SCORE = "nature_user_score"
-    SAFETY_SCORE = "safety_user_score"
-    BUDGET_SCORE = "budget_user_score"
-    DENSITY_SCORE = "pop_density_user_score"
-
-
-# A decorator to time how long it takes for a
+# A decorator to time how long it takes for a function to run
 def time_taken(func):
     @functools.wraps(func)
     def wrapper_time_taken(*args, **kwargs):
         print(f"Calling function: {func.__name__}")
         start = time.time()
+        # Passes down any arguments
         value = func(*args, **kwargs)
         end = time.time()
         print(f"Time taken for {func.__name__}: {end - start} secs")
@@ -291,17 +261,14 @@ def filterPrevCountries(codes, travelID):
 
 
 @time_taken
-def sortCountries(travelID):
-    # Executes the command
-    # Selects all the user country score records for the current user and current travel
-    # Orders the countries by highest to lowest
-    result = UserCountryScore.query \
-        .filter_by(user_id=current_user.id, travel_id=travelID) \
-        .order_by(UserCountryScore.total_score.desc()) \
-        .all()
+def sortCountries(travelID, country_scores):
+    # Turns the values of the dictionary (objects referencing a specific country score) into a list
+    country_scores_list = list(country_scores.values())
+    # Sorts the list by the total score of every object, descending
+    country_scores_descending = sorted(country_scores_list, key=lambda score: score.total_score, reverse=True)
 
     uCountryCodes = []
-    for country in result:
+    for country in country_scores_descending:
         countryCode = country.country_code
         uCountryCodes.append(countryCode)
 
@@ -310,12 +277,11 @@ def sortCountries(travelID):
 
     country_number = 1
     for country in filteredCountries:
-        result = UserCountryScore.query.get((current_user.id, travelID, country))
+        result = country_scores.get(country.country_code)
         travelCost = result.final_travel_cost
         # Creates a dictionary to later be manipulated by the Jinja templating to display journey cost
-        valuesToDisplay = {}
+        valuesToDisplay = {"Your journey will cost approximately": f"{travelCost:0.2f}"}
         # Sets the key with text "your journey will cost approximately" to the travel cost in the table
-        valuesToDisplay["Your journey will cost approximately"] = f"{travelCost:0.2f}"
         # Adds country as a tuple to the list of userSuggestions
         userSuggestions.append((country, int(country_number), valuesToDisplay))
         country_number += 1
@@ -323,9 +289,10 @@ def sortCountries(travelID):
     return userSuggestions
 
 
+# Here we expect a session argument so that the data doesn't mismatch from the function call's db session
+# And we use the same one
 @time_taken
-def calculateTempScores(travelID, countryCodes, temp_differences_squared):
-    db = db_session()
+def calculateTempScores(db, countryCodes, all_user_country_scores, temp_differences_squared):
     try:
         valuesX = temp_differences_squared.values()
         temps_d_squared_list = list(valuesX)
@@ -345,22 +312,10 @@ def calculateTempScores(travelID, countryCodes, temp_differences_squared):
             temp_inverse = (-1 * temp_normalised) + 100
             normalised_temps[country] = temp_inverse
 
-        # Retrieve all the country scores with one query instead of querying per one
-        # the in_ will create an SQL list of all the values to check from
-        all_country_scores = {}
-        all_country_scores_data = UserCountryScore.query.filter(
-            UserCountryScore.user_id == current_user.id,
-            UserCountryScore.travel_id == travelID,
-            UserCountryScore.country_code.in_(countryCodes)
-        ).all()
-
-        for country_score in all_country_scores_data:
-            all_country_scores[country_score.country_code] = country_score
-
         for country_code in countryCodes:
             # Here, it will find the country's temp
             country_temp = normalised_temps[country_code]
-            current_country = all_country_scores.get(country_code)
+            current_country = all_user_country_scores.get(country_code)
             current_country_score = float(getattr(current_country, "temp_score"))
             setattr(current_country, "temp_score", current_country_score + country_temp)
 
@@ -370,8 +325,6 @@ def calculateTempScores(travelID, countryCodes, temp_differences_squared):
         print("Error committing temperature scores ", e)
         db.rollback()
         # print("Traceback error:", traceback.format_exc())
-    finally:
-        db.close()
 
 
 @time_taken
@@ -410,13 +363,13 @@ def calculateCountryScores(travelID, countryCodes):
 
     ## For the user scores
     user_score = {}
-    user_factor_values = [0] * len(UserScoreEnum)
+    user_factor_values = [0] * len(FactorsEnum)
 
     count = 0
     # For every factor
-    for n in UserScoreEnum:
+    for n in FactorsEnum:
         # Gets the travel score
-        factor_user_score = getattr(current_travel, n.value)
+        factor_user_score = getattr(current_travel, n.value[0])
         # Adds it to the dictionary
         user_score[n.name] = factor_user_score
         # Adds the factor values to the list
@@ -444,10 +397,21 @@ def calculateCountryScores(travelID, countryCodes):
     for country in all_country_scores_data:
         all_country_scores[country.country_code] = country
 
+    all_user_country_scores = {}
+    # Get any scores that have been potentially already added
+    # Usually will be 0, as this function calculates them, but incase of errors, this will help
+    # Previously, we were getting this for every country, now we bulk get all of them (None) instead
+    existing_user_country_scores = UserCountryScore.query.filter_by(user_id=current_user.id, travel_id=travelID).all()
+    user_country_scores_initial_data = {}
+    for country in existing_user_country_scores:
+        user_country_scores_initial_data[country.country_code] = country
+
+
     for countryCode in countryCodes:
+        start = time.time()
         # Loops through every country's code in the list of all countryCodes
         # Does the same for the current country
-        current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
+        current_country = user_country_scores_initial_data.get(countryCode)
         if current_country is None:
             # When the country does not have a score
             # Adds a new default record
@@ -456,11 +420,11 @@ def calculateCountryScores(travelID, countryCodes):
                                                 country_code=countryCode,
                                                 water_sports_score=0,
                                                 winter_sports_score=0,
-                                                culture_score=0,
+                                                cultural_score=0,
                                                 nature_score=0,
                                                 temp_score=0,
                                                 safety_score=0,
-                                                budget_score=0,
+                                                cost_score=0,
                                                 pop_density_score=0,
                                                 total_score=0,
                                                 final_travel_cost=1)
@@ -470,16 +434,16 @@ def calculateCountryScores(travelID, countryCodes):
             current_country = new_user_country
 
             user_relative_scores = {}
-            for x in UserScoreEnum:
+            for x in FactorsEnum:
                 factor_relative_score = user_score[x.name] / most_important_user_score
                 user_relative_scores[x.name] = factor_relative_score
 
             userCountryScores = []
             userCountryScoresD = {}
-            for y in UserScoreEnum:
+            for y in FactorsEnum:
                 country_scores_object = all_country_scores[countryCode]
-                country_factor_object = getattr(country_scores_object, TableNamesEnum[y.name].value)
-                country_value = getattr(country_factor_object, CountryScoreEnum[y.name].value[0])
+                country_factor_object = getattr(country_scores_object, FactorsEnum[y.name].value[1])
+                country_value = getattr(country_factor_object, FactorsEnum[y.name].value[0])
                 # To deal with no data for that countries factor score
                 if country_value is not None:
                     userCountryScoreT = user_relative_scores[y.name] * country_value
@@ -500,7 +464,7 @@ def calculateCountryScores(travelID, countryCodes):
             # If the country has a monthly temp record,
             # and there's a journey start attribute for the user (should be true but just incase)
             if countryScore and journey_start:
-                # This is needed as the fields in the monthly temps has temperatures as: 'february_temp', 'december_temp'
+                # This is needed as the fields in the monthly temps has temperatures as: 'june_temp', 'december_temp'
                 # However in the User Country it is stored just as a month
                 journey_start_country = f"{journey_start}_temp"
                 country_temp = getattr(countryScore, journey_start_country, None)
@@ -530,33 +494,28 @@ def calculateCountryScores(travelID, countryCodes):
                 total_cost_for_country = 0
                 setattr(current_country, "final_travel_cost", total_cost_for_country)
 
-            for t in UserCountryScoreEnum:
+            for t in FactorsEnum:
                 # adds the value for the factor score, using the value in the Enumerator of the UserCountryScore table
                 # e.g. the first run of the loop, t.value = water_sports_score
                 # and userCountryScoresD[t.name] = value of the dictionary for water_sports score
-                setattr(current_country, t.value, userCountryScoresD[t.name])
+                setattr(current_country, t.value[0], userCountryScoresD[t.name])
 
-    try:
-        db.commit()
-    except Exception as e:
-        print("Error calculating user scores:", e)
-        db.rollback()
-    finally:
-        db.close()
+        all_user_country_scores[countryCode] = current_country
+        end = time.time()
+        print("To calculate one country time it took: ", end - start)
 
-    calculateTempScores(travelID, countryCodes, temp_differences_squared)
+    db.flush()
 
-    db = db_session()
+    calculateTempScores(db, countryCodes, all_user_country_scores, temp_differences_squared)
 
     # sets the total score
     for countryCode in countryCodes:
-        current_country = UserCountryScore.query.get((current_user.id, travelID, countryCode))
-        # print("this is current_country:", current_country.__dict__)
+        current_country = all_user_country_scores.get(countryCode)
         allScores = []
         temp_score = getattr(current_country, "temp_score")
         allScores.append(temp_score)
-        for factor in UserCountryScoreEnum:
-            x = getattr(current_country, factor.value)
+        for factor in FactorsEnum:
+            x = getattr(current_country, factor.value[0])
             allScores.append(x)
 
             total_score_for_country = sum(allScores)
@@ -597,7 +556,7 @@ def userCountryScore(travelID, countryCodes):
     # If the countries have already been added...
     # Just go straight to sorting the countries as they are already in the database
     # Runs the sortCountries function to get a list of the countries in an ordered format
-    sortedCountries = sortCountries(travelID)
+    sortedCountries = sortCountries(travelID, country_scores)
 
     return sortedCountries
 
@@ -639,13 +598,13 @@ def userQuestionAnswer(questionID, answerValue, travelID):
                                           pref_user_activity="",
                                           pref_user_temp=0,
                                           num_travellers=0,
-                                          water_sports_user_score=10,
-                                          winter_sports_user_score=10,
-                                          culture_user_score=10,
-                                          nature_user_score=10,
-                                          safety_user_score=0,
-                                          budget_user_score=0,
-                                          pop_density_user_score=0)
+                                          water_sports_score=10,
+                                          winter_sports_score=10,
+                                          cultural_score=10,
+                                          nature_score=10,
+                                          safety_score=0,
+                                          cost_score=0,
+                                          pop_density_score=0)
 
         db.add(new_user_travel)
         db.commit()
@@ -690,11 +649,11 @@ def userQuestionAnswer(questionID, answerValue, travelID):
 
         elif answersType == "Integer+":
             pref_user_activity = getattr(current_travel, "pref_user_activity")
-            top_activity_score = pref_user_activity + "_user_score"
-            allFactorNames = ["water_sports_user_score",
-                              "winter_sports_user_score",
-                              "culture_user_score",
-                              "nature_user_score"]
+            top_activity_score = pref_user_activity + "_score"
+            allFactorNames = ["water_sports_score",
+                              "winter_sports_score",
+                              "cultural_score",
+                              "nature_score"]
 
             for factor in allFactorNames:
                 if factor == top_activity_score:

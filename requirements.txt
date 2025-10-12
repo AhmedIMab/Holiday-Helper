@@ -8,4 +8,4 @@ python-dotenv==1.0.1
 flask-wtf==1.2.1
 pytest==8.4.1
 pymysql=1.1.2
-
+alembic=1.16.5

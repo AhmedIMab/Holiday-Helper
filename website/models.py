@@ -67,7 +67,7 @@ class CulturalValue(Base):
     __tablename__ = 'cultural_value'
 
     country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
-    heritage_score = Column(Float)
+    cultural_score = Column(Float)
 
 
 class CountryDailyCost(Base):
@@ -137,13 +137,13 @@ class UserTravelScore(Base):
     num_travellers = Column(Integer)
     pref_user_activity = Column(String(25))
     pref_user_temp = Column(Integer)
-    water_sports_user_score = Column(Integer)
-    winter_sports_user_score = Column(Integer)
-    culture_user_score = Column(Integer)
-    nature_user_score = Column(Integer)
-    safety_user_score = Column(Integer)
-    budget_user_score = Column(Integer)
-    pop_density_user_score = Column(Integer)
+    water_sports_score = Column(Integer)
+    winter_sports_score = Column(Integer)
+    cultural_score = Column(Integer)
+    nature_score = Column(Integer)
+    safety_score = Column(Integer)
+    cost_score = Column(Integer)
+    pop_density_score = Column(Integer)
 
 
 class UserCountryScore(Base):
@@ -154,11 +154,11 @@ class UserCountryScore(Base):
     country_code = Column(String(3), ForeignKey('country.country_code'), primary_key=True)
     water_sports_score = Column(Float)
     winter_sports_score = Column(Float)
-    culture_score = Column(Float)
+    cultural_score = Column(Float)
     nature_score = Column(Float)
     temp_score = Column(Float)
     safety_score = Column(Float)
-    budget_score = Column(Float)
+    cost_score = Column(Float)
     pop_density_score = Column(Float)
     total_score = Column(Float)
     final_travel_cost = Column(Float)
