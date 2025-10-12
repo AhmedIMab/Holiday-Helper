@@ -260,17 +260,14 @@ def filterPrevCountries(codes, travelID):
 
 
 @time_taken
-def sortCountries(travelID):
-    # Executes the command
-    # Selects all the user country score records for the current user and current travel
-    # Orders the countries by highest to lowest
-    result = UserCountryScore.query \
-        .filter_by(user_id=current_user.id, travel_id=travelID) \
-        .order_by(UserCountryScore.total_score.desc()) \
-        .all()
+def sortCountries(travelID, country_scores):
+    # Turns the values of the dictionary (objects referencing a specific country score) into a list
+    country_scores_list = list(country_scores.values())
+    # Sorts the list by the total score of every object, descending
+    country_scores_descending = sorted(country_scores_list, key=lambda score: score.total_score, reverse=True)
 
     uCountryCodes = []
-    for country in result:
+    for country in country_scores_descending:
         countryCode = country.country_code
         uCountryCodes.append(countryCode)
 
@@ -279,7 +276,7 @@ def sortCountries(travelID):
 
     country_number = 1
     for country in filteredCountries:
-        result = UserCountryScore.query.get((current_user.id, travelID, country))
+        result = country_scores.get(country.country_code)
         travelCost = result.final_travel_cost
         # Creates a dictionary to later be manipulated by the Jinja templating to display journey cost
         valuesToDisplay = {"Your journey will cost approximately": f"{travelCost:0.2f}"}
@@ -547,7 +544,7 @@ def userCountryScore(travelID, countryCodes):
     # If the countries have already been added...
     # Just go straight to sorting the countries as they are already in the database
     # Runs the sortCountries function to get a list of the countries in an ordered format
-    sortedCountries = sortCountries(travelID)
+    sortedCountries = sortCountries(travelID, country_scores)
 
     return sortedCountries
 
