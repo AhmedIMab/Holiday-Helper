@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title %}About{% endblock %}
 {% block aboutcontent %}
     <div class="about_main_container">
-        <section class="about_container">
+        <section class="about_privacy_container">
             <h1 class="pt-4 pb-2 about-header">About Holiday Helper!</h1>
             <p>Holiday helper started off as a personal project with the aim of helping people decide on the best
                 place to travel based on a vague idea of the holiday they are looking for!
@@ -21,51 +21,78 @@
                     providers mentioned below.
                 </li>
             </ul>
+            <div class="accred-title-header">
+                <h4>Holiday Helper uses data from the following sources: </h4>
+                <span class="mini-text lead">(external links provided, Holiday Helper does not guarantee the safety of the links)</span>
+            </div>
+            <ul>
+                <li class="accreditation">Holiday Helper uses data from <strong>UNESCO World Heritage Centre</strong> to inform its heritage-related rankings.
+                 Source:   "World Heritage List - UNESCO." UNESCO World Heritage Centre. Accessed in 2021. Available at: <a href="https://whc.unesco.org/">https://whc.unesco.org/</a> UNESCO is not affiliated with or endorsing Holiday Helper.
+                </li>
+
+                <li class="accreditation">Holiday Helper uses data from OpenTripMap, licensed under the Open Database License (ODbL)
+                    <a href="https://opendatacommons.org/licenses/odbl/">Open Database License (ODbL)</a>.
+                    OpenTripMap provides comprehensive information on travel destinations and attractions worldwide.
+                    Accessed in 2021 at <a href="https://opentripmap.com/en/">https://opentripmap.com/en/</a>.
+                    Data has been adapted for analytical use.
+                </li>
+
+                <li class="accreditation">
+                    Holiday Helper uses data from <strong>Wikipedia</strong> (Wikimedia Foundation),
+                    licensed under the
+                    <a href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike License (CC BY-SA 3.0)</a>.  Including the GPI (Global Peace Index). Available at: <a href="https://en.wikipedia.org/wiki/Global_Peace_Index">https://en.wikipedia.org/wiki/Global_Peace_Index</a> <br>
+                    Along with data from the "List of National Parks". Available at: <a href="https://en.wikipedia.org/wiki/List_of_national_parks">https://en.wikipedia.org/wiki/List_of_national_parks</a> <br>
+                    Data gathered in 2021.
+                </li>
+
+                <li class="accreditation">
+                    Cost data derived from <strong>TheGlobalEconomy.com</strong>, which compiles official macroeconomic indicators
+                    from reputable public sources including the World Bank and IMF.
+                    Source: "Cost of Living Index – World Bank ranking," TheGlobalEconomy.com.
+                    Accessed in 2021 at
+                    <a href="https://www.theglobaleconomy.com/rankings/cost_of_living_wb/">https://www.theglobaleconomy.com/rankings/cost_of_living_wb/</a>.
+                    TheGlobalEconomy.com is not affiliated with or endorsing Holiday Helper.
+                </li>
+            </ul>
+            <div class="privacy-container">
+                <h4>Privacy Policy</h4>
+                <p>
+                    Quick note, this is still a small project in very early stages, and our
+                    main goal is to build an app that actually helps users.
+                    We only ask for your name, email, and password so that you can create and use your account.
+                    Your password is always stored securely and never in plain text.
+                    We don’t track you or collect anything else. Your info is only used to make the app work.
+                    If you have any questions about your data,
+                    you can reach us via <a href="mailto:support@holidays-helper.com">support@holidays-helper.com</a>
+                </p>
+            </div>
         </section>
-        <div class="accred-title-header">
-        <h4>Holiday Helper uses data from the following sources: </h4>
-        <span class="mini-text lead">(external links provided, Holiday Helper does not guarantee the safety of the links)</span>
-        </div>
-        <ul>
-            <li class="accreditation">Holiday Helper uses data from <strong>UNESCO World Heritage Centre</strong> to inform its heritage-related rankings.
-             Source:   "World Heritage List - UNESCO." UNESCO World Heritage Centre. Accessed in 2021. Available at: <a href="https://whc.unesco.org/">https://whc.unesco.org/</a> UNESCO is not affiliated with or endorsing Holiday Helper.
-            </li>
-
-            <li class="accreditation">Holiday Helper uses data from OpenTripMap, licensed under the Open Database License (ODbL)
-                <a href="https://opendatacommons.org/licenses/odbl/">Open Database License (ODbL)</a>.
-                OpenTripMap provides comprehensive information on travel destinations and attractions worldwide.
-                Accessed in 2021 at <a href="https://opentripmap.com/en/">https://opentripmap.com/en/</a>.
-                Data has been adapted for analytical use.
-            </li>
-
-            <li class="accreditation">
-                Holiday Helper uses data from <strong>Wikipedia</strong> (Wikimedia Foundation),
-                licensed under the
-                <a href="https://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike License (CC BY-SA 3.0)</a>.  Including the GPI (Global Peace Index). Available at: <a href="https://en.wikipedia.org/wiki/Global_Peace_Index">https://en.wikipedia.org/wiki/Global_Peace_Index</a> <br>
-                Along with data from the "List of National Parks". Available at: <a href="https://en.wikipedia.org/wiki/List_of_national_parks">https://en.wikipedia.org/wiki/List_of_national_parks</a> <br>
-                Data gathered in 2021.
-            </li>
-
-            <li class="accreditation">
-                Cost data derived from <strong>TheGlobalEconomy.com</strong>, which compiles official macroeconomic indicators
-                from reputable public sources including the World Bank and IMF.
-                Source: "Cost of Living Index – World Bank ranking," TheGlobalEconomy.com.
-                Accessed in 2021 at
-                <a href="https://www.theglobaleconomy.com/rankings/cost_of_living_wb/">https://www.theglobaleconomy.com/rankings/cost_of_living_wb/</a>.
-                TheGlobalEconomy.com is not affiliated with or endorsing Holiday Helper.
-            </li>
-        </ul>
-        <div class="privacy-container">
-            <h4>Privacy Policy</h4>
-            <p>
-                Quick note, this is still a small project in very early stages, and our
-                main goal is to build an app that actually helps users.
-                We only ask for your name, email, and password so you can create and use your account,
-                your password is always stored securely and never in plain text.
-                We don’t track you or collect anything else. Your info is only used to make the app work.
-                If you have any questions about your data,
-                you can reach us via <a href="mailto:support@holidays-helper.com">support@holidays-helper.com</a>
-            </p>
+        <div class="feedback_form_container">
+            <p>As we are slowly working on improving Holiday Helper, any feedback is much appreciated
+            Please feel free to mention anything you think might be useful!</p>
+            <form method="POST" class="feedback-form d-flex flex-column align-items-center">
+                <h3 align="center" class="feedback-h">Any Feedback?</h3>
+                {{ form.csrf_token }}
+                <div class="form-group feedback-form-field">
+                    {{ form.email.label }}
+                    {{ form.email(class="form-control", placeholder="Enter email address") }}
+                </div>
+                <div class="form-group feedback-form-field">
+                    {{ form.firstName.label }}
+                    {{ form.firstName(class="form-control", placeholder="Enter first name") }}
+                </div>
+                <div class="form-group feedback-form-field">
+                    {{ form.message.label }}
+                    {{ form.message(class="form-control", placeholder="Any points you want to mention?") }}
+                </div>
+                <div class="form-group feedback-form-field">
+                    {{ form.to_implement.label }}
+                    {{ form.to_implement(class="form-control", placeholder="What are we missing?") }}
+                </div>
+                <div class="feedback-form-button-container">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
         </div>
     </div>
 {% endblock %}

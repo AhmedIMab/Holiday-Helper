@@ -2,6 +2,8 @@ import sqlite3
 import sqlalchemy.exc
 from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect, send_from_directory
 from flask_login import login_required, current_user
+
+from .forms import FeedbackForm
 from .models import User, Country, UserCountry
 from . import db_session, NUM_COUNTRIES
 import json
@@ -60,9 +62,11 @@ def home():
         return redirect(url_for('views.landing'))
 
 
-@views.route('/about', methods=['GET'])
+@views.route('/about', methods=['GET', 'POST'])
 @csrf.exempt
 def about():
+    form = FeedbackForm()
+
     return render_template("about.html", user=current_user)
 
 

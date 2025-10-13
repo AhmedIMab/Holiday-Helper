@@ -379,6 +379,9 @@
 .about_main_container {
   width: 90%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+
 }
 
 .about_main_container p, .about_main_container li {

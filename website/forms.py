@@ -17,3 +17,12 @@ class SignupForm(FlaskForm):
 
 class GuestLoginForm(FlaskForm):
     firstName = StringField('First Name (Optional)')
+
+
+class FeedbackForm(FlaskForm):
+    email = EmailField('Email Address', validators=[InputRequired()])
+    firstName = StringField('First Name (Optional)')
+    message = StringField('How did you find our app?')
+    to_implement = StringField('What would you most like to implemented into the app next?')
+
+
