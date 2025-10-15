@@ -233,17 +233,17 @@
 }
 
 
-/* Login Form */
-.login-form-field {
+/* Website Forms */
+.custom-form-field {
   width: 80%;
 }
 
-.login-h {
+.custom-form h3 {
   margin-bottom: 0.8rem;
   margin-top: 2rem;
 }
 
-.login-form-container {
+.custom-form-container {
   background-color: #2f3640;
   color: #ffffff;
   border-radius: 10px;
@@ -252,136 +252,46 @@
   font-size: 1.05rem;
 }
 
-.login-button-container {
+.custom-form-button-container {
   padding: 1rem 0 2rem 0;
 }
 
-.login-button-container button {
+.custom-form-button-container button {
   font-size: 1.1rem;
 }
 
 
 @media screen and (min-width: 991px) {
-  .login-form-container {
+  .custom-form-container {
     width: 600px;
   }
 }
 
 @media screen and (min-width: 1501px) {
-  .login-form-container {
+  .custom-form-container {
     width: 800px;
   }
 }
 
 @media screen and (max-width: 600px) {
-  .login-form-container {
+  .custom-form-container {
     width: 80%;
     font-size: 1rem;
   }
 }
 
-/* Signup page */
-.signup-form-field {
-  width: 80%;
-}
-
-.signup-h {
-  margin-bottom: 0.8rem;
-  margin-top: 2rem;
-}
-
-.signup-form-container {
-  background-color: #2f3640;
-  color: #ffffff;
-  border-radius: 10px;
-  width: 500px;
-  margin: 4rem auto 0 auto;
-  font-size: 1.05rem;
-}
-
-.signup-form-button-container {
-  padding: 1rem 0 2rem 0;
-}
-
-.signup-form-button-container button {
-  font-size: 1.1rem;
-}
-
-
-@media screen and (min-width: 991px) {
-  .signup-form-container {
-    width: 600px;
-  }
-}
-
-@media screen and (min-width: 1201px) {
-  .signup-form-container {
-    width: 800px;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .signup-form-container {
-    width: 80%;
-    font-size: 1rem;
-  }
-}
-
-/* Guest Login page */
-.guest-form-field {
-  width: 80%;
-  margin-top: 0.4em;
-}
-
-.guest-h {
-  margin-bottom: 0.8rem;
-  margin-top: 2rem;
-}
-
-.guest-form-container {
-  background-color: #2f3640;
-  color: #ffffff;
-  border-radius: 10px;
-  width: 500px;
-  margin: 4rem auto 0 auto;
-  font-size: 1.05rem;
-}
-
-.guest-form-button-container {
-  padding: 1rem 0 2rem 0;
-}
-
-.guest-form-button-container button {
-  font-size: 1.1rem;
-}
-
-
-@media screen and (min-width: 991px) {
-  .guest-form-container {
-    width: 600px;
-  }
-}
-
-@media screen and (min-width: 1201px) {
-  .guest-form-container {
-    width: 800px;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .guest-form-container {
-    width: 80%;
-    font-size: 1rem;
-  }
-}
 
 /* About page */
+.about-container {
+
+}
+
 .about_main_container {
   width: 90%;
   margin: 0 auto;
   display: flex;
   flex-direction: row;
-
+  gap: 1em;
 }
 
 .about_main_container p, .about_main_container li {
@@ -402,7 +312,6 @@
 .accred-title-header h3 {
   margin-bottom: 0;
 }
-
 
 
 /*/ Range Slider Styling /*/
