@@ -2,6 +2,7 @@ import sqlite3
 import sqlalchemy.exc
 from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect, send_from_directory
 from flask_login import login_required, current_user
+from flask_mail import Message
 
 from .forms import FeedbackForm
 from .models import User, Country, UserCountry
@@ -17,6 +18,7 @@ import functools
 
 views = Blueprint('views', __name__)
 
+mail_username = os.getenv('MAIL_USERNAME')
 
 def requires_user_types(user_types):
     def decorator(func):
@@ -66,7 +68,19 @@ def home():
 @csrf.exempt
 def about():
     form = FeedbackForm()
-
+    if request.method == 'POST':
+        email = form.email.data
+        firstName = form.firstName.data
+        message = form.message.data
+        to_implement = form.to_implement.data
+        if form.validate_on_submit():
+            message = Message(
+                subject=f"Feedback Form - {firstName} | {email}",
+                sender=mail_username,
+                recipients=[mail_username]
+            )
+            flash('Thanks for your message! Feedback is the most important thing for us and'
+                  'we hope to make the app as close to what you\'re looking for as possible')
     return render_template("about.html", user=current_user)
 
 

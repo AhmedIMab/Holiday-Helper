@@ -1,6 +1,7 @@
 import os.path
 from flask import Flask
 from flask_login import LoginManager
+from flask_mail import Mail
 from flask_wtf.csrf import CSRFProtect
 from .database import engine, Base, db_session
 
@@ -12,6 +13,13 @@ NUM_COUNTRIES = 196
 def create_app():
     app = Flask(__name__, static_folder='static', template_folder='templates')
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+    app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+    app.config['MAIL_PORT'] = os.getenv('MAIL_PORT')
+    app.config['MAIL_USE_SSL'] = True
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+
+    mail = Mail(app)
 
     from .views import views
     from .auth import auth

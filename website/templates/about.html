@@ -1,5 +1,17 @@
 {% extends "base.html" %} {% block title %}About{% endblock %}
 {% block aboutcontent %}
+    {% if form.errors %}
+    {% for field, errors in form.errors.items() %}
+        {% for error in errors %}
+            <div class="alert alert-danger alter-dismissable fade show alert-message" role="alert">
+                {{ error }}
+                <button type="button" class="close" data-dismiss="alert">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% endif %}
     <div class="about_main_container">
         <section class="about_privacy_container">
             <h1 class="pt-4 pb-2 about-header">About Holiday Helper!</h1>
