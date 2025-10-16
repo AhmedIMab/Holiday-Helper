@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, BooleanField, PasswordField, EmailField
+from wtforms import StringField, IntegerField, BooleanField, PasswordField, EmailField, TextAreaField
 from wtforms.validators import InputRequired, Length, EqualTo
 
 
@@ -22,7 +22,8 @@ class GuestLoginForm(FlaskForm):
 class FeedbackForm(FlaskForm):
     email = EmailField('Email Address', validators=[InputRequired()])
     firstName = StringField('First Name (Optional)')
-    message = StringField('How did you find our app?')
-    to_implement = StringField('What would you most like to implemented into the app next?')
+    message = TextAreaField('How did you find using our app?', render_kw={"rows": 5})
+    to_implement = TextAreaField('What would you like to see implemented into the app next?',
+                                 render_kw={"rows": 5})
 
 
