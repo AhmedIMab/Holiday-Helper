@@ -282,8 +282,21 @@
 
 
 /* About page */
+.feedback-form-container {
+  width: auto;
+  margin: 0 auto auto auto;
+}
+
+.feedback-form-container form {
+  padding: 1em;
+}
+
 .about-container {
 
+}
+
+.about-header {
+  margin: 0 0 0 1em;
 }
 
 .about_main_container {
