@@ -10,7 +10,7 @@ import random
 from sqlalchemy import delete
 
 auth = Blueprint('auth', __name__)
-# Update this if werkzeug changes its hash
+
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():

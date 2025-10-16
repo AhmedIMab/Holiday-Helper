@@ -1,18 +1,18 @@
 {% extends "base.html" %} {% block title %}Login{% endblock %}
 {% block logincontent %}
-<div class="login-form-container">
-    <form method="POST" class="login-form d-flex flex-column align-items-center">
-        <h3 align="center" class="login-h">Login</h3>
+<div class="custom-form-container">
+    <form method="POST" class="custom-form d-flex flex-column align-items-center">
+        <h3 align="center">Login</h3>
         {{ form.csrf_token }}
-        <div class="form-group login-form-field">
+        <div class="form-group custom-form-field">
             {{ form.email.label }}
             {{ form.email(class="form-control", placeholder="Enter email address") }}
         </div>
-        <div class="form-group login-form-field">
+        <div class="form-group custom-form-field">
             {{ form.password.label }}
             {{ form.password(class="form-control", placeholder="Enter password") }}
         </div>
-        <div class="login-button-container">
+        <div class="custom-form-button-container">
             <button type="submit" class="btn btn-primary btn-block">Login</button>
         </div>
     </form>
