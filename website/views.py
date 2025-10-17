@@ -2,6 +2,9 @@ import sqlite3
 import sqlalchemy.exc
 from flask import Blueprint, render_template, request, flash, jsonify, url_for, redirect, send_from_directory
 from flask_login import login_required, current_user
+from flask_mail import Message
+
+from .forms import FeedbackForm
 from .models import User, Country, UserCountry
 from . import db_session, NUM_COUNTRIES
 import json
@@ -10,10 +13,12 @@ import os
 from website.questionHandler import *
 import traceback
 import time
-from . import csrf
+from . import csrf, mail, env
 import functools
 
 views = Blueprint('views', __name__)
+
+mail_username = os.getenv('MAIL_USERNAME')
 
 
 def requires_user_types(user_types):
@@ -27,7 +32,9 @@ def requires_user_types(user_types):
             else:
                 # This is to ensure that the functions return values are lost
                 return func(*args, **kwargs)
+
         return wrapper_requires_access_level
+
     return decorator
 
 
@@ -50,10 +57,35 @@ def home():
         return render_template("home.html", user=None)
 
 
-@views.route('/about', methods=['GET'])
-@csrf.exempt
+@views.route('/about', methods=['GET', 'POST'])
 def about():
-    return render_template("about.html", user=current_user)
+    form = FeedbackForm()
+    if request.method == 'POST':
+        email = form.email.data
+        firstName = form.firstName.data
+        to_implement = form.to_implement.data
+        message = form.message.data
+        if form.validate_on_submit():
+            message = Message(
+                subject=f"Feedback Form - {firstName}",
+                sender=mail_username,
+                recipients=[mail_username],
+                body=f"WEBSITE FEEDBACK FROM \n"
+                     f"From Email: {email} | First Name: {firstName} \n"
+                     f"To Implement: {to_implement} \n"
+                     f"Extra Points: {message}"
+            )
+            try:
+                if env == 'PROD':
+                    mail.send(message)
+                flash('Thanks for your message! Feedback is the most important thing to us and '
+                      'we hope to make the app as close to what you\'re looking for as possible',
+                      category='success')
+            except Exception as e:
+                flash("Error sending message", category='error')
+                print("Exception when sending feedback email:", e)
+            return redirect(url_for('views.about'))
+    return render_template("about.html", user=current_user, form=form)
 
 
 @views.route("/travelID", methods=["GET"])
@@ -81,7 +113,8 @@ def newTravel():
 def journey():
     def find_journeys():
         prev_countries = UserCountry.query.filter_by(user_id=current_user.id).all()
-        prev_countries_country_codes = [Country.query.filter_by(country_code=cc.country_code).first().country_code for cc in prev_countries]
+        prev_countries_country_codes = [Country.query.filter_by(country_code=cc.country_code).first().country_code for
+                                        cc in prev_countries]
         all_travel_sessions = UserTravelScore.query.filter_by(user_id=current_user.id).all()
 
         travel_sessions = []
@@ -96,7 +129,7 @@ def journey():
                                                                        travel_id=travelID).all()
             if len(result_travel_countries) == 0:
                 # This will run when the user has not completed the questionnaire
-                travel_sessions.append((travelID, dateString, travel.prev_countries,  {'Status': 'Incomplete'}))
+                travel_sessions.append((travelID, dateString, travel.prev_countries, {'Status': 'Incomplete'}))
             else:
                 if len(result_travel_countries) == NUM_COUNTRIES:
                     # 0 means does not want to include previous countries
@@ -114,7 +147,6 @@ def journey():
                             .limit(len(prev_countries) + 1) \
                             .all()
 
-
                         # As a default option
                         top_country = result_all_countries[0]
 
@@ -129,9 +161,11 @@ def journey():
                             .order_by(UserCountryScore.total_score.desc()) \
                             .first()
 
-                    top_country_name = Country.query.filter_by(country_code=top_country.country_code).first().country_name
+                    top_country_name = Country.query.filter_by(
+                        country_code=top_country.country_code).first().country_name
 
-                    travel_sessions.append((travelID, dateString, travel.prev_countries, {'Top Country': top_country_name}))
+                    travel_sessions.append(
+                        (travelID, dateString, travel.prev_countries, {'Top Country': top_country_name}))
                 else:
                     # This else will only run if there is at least one country score, otherwise the first if will catch it
                     # As the code that adds countries only ever adds all countries, there has likely been a database error
@@ -183,6 +217,7 @@ def suggestions(travelID):
 
     user_travel_details = []
     try:
+        print("\nIn the suggestions and just about to call userCountryScore function\n")
         ranked_countries = userCountryScore(travelID, AllCountries)
         # map function is used to replace country codes with country names for user convenience
         # x[0] is the country code
@@ -257,7 +292,7 @@ def questions(questionID):
 @views.route('/countries', methods=['GET', 'POST'])
 @csrf.exempt
 @login_required
-@requires_user_types([1,2])
+@requires_user_types([1, 2])
 def countries():
     countries = Country.query.all()
     countries_list = []
@@ -308,6 +343,3 @@ def delete_country():
             db.commit()
 
     return jsonify({})
-
-
-
