@@ -13,6 +13,7 @@ from enum import Enum
 from datetime import datetime
 import functools
 import time
+from flask import current_app, redirect, url_for
 
 
 # One ENUM that corresponds to a tuple for every factor
@@ -46,8 +47,7 @@ def time_taken(func):
 def getQuestions():
     # Access's the questions in the json file
     base_directory = os.path.dirname(os.path.abspath(__file__))
-    filename = os.path.join(base_directory, "static", "questions.json")
-    # filename = os.path.join(os.getcwd(), 'website', 'static', 'questions.json')
+    filename = os.path.join(current_app.static_folder, "questions.json")
 
     f = open(filename, 'r')
     # uses the json module to load it as a JSON object in python
@@ -89,28 +89,25 @@ def getAnswer(questionID, answerID):
     return None
 
 
+@time_taken
 def isQuestionAnswered(travelID, questionID):
     questionAnswered = False
     try:
         # tries to get the user's current travel
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print(f"This is the error in {func.__name__}: {e}")
+        print("No travel session found")
+        return redirect(url_for('views.noTravel'))
 
-    try:
-        y = getattr(current_travel, 'questions_answered')
-        questionsAnsweredArray = y.split(',')
-        for questionA in questionsAnsweredArray:
-            if questionA == "":
-                pass
-            else:
-                if int(questionID) == int(questionA):
-                    questionAnswered = True
-                    break
+    # print("current travel questions_answered:", getattr(current_travel, 'questions_answered'))
+    if current_travel is None:
+        return False
 
-    except (UnboundLocalError, AttributeError) as e:
-        # Runs when no questions have been answered
-        pass
+    y = getattr(current_travel, 'questions_answered')
+    # Removes all elements that evaluate to false, aka empty strings
+    questionsAnsweredArray = filter(None, y.split(','))
+    if questionID in list(map(int, questionsAnsweredArray)):
+        questionAnswered = True
 
     # Returns a boolean value of whether the question has or has not been answered
     return questionAnswered
