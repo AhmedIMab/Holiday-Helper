@@ -221,23 +221,24 @@ def filterPrevCountries(codes, travelID):
         # Sets the current travel to the UserTravelScore of the user with primary key values
         # user_id as the current user id and travel id key as the travel id passed into the function
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
+        prev_countries = getattr(current_travel, "prev_countries")
+        if prev_countries:
+            return codes
+        else:
+            # For every country code
+            # it will check if the country code is one of the users visited countries
+            # by applying a not, if the country is one of the users countries
+            # the doesUserWantThisCountry will return True
+            # as it's a not, the value will become false
+            # as a filter function which will extract elements from a list which return True
+            # it means only the countries which return false in the doesUserWantThisCountry function will be extracted
+            suggestionsStream = filter(lambda x: not (doesUserWantThisCountry(x)), codes)
+            suggestionsStream = list(suggestionsStream)
+            return suggestionsStream
+
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         print(e)
 
-    prev_countries = getattr(current_travel, "prev_countries")
-    if prev_countries:
-        return codes
-    else:
-        # For every country code
-        # it will check if the country code is one of the users visited countries
-        # by applying a not, if the country is one of the users countries
-        # the doesUserWantThisCountry will return True
-        # as it's a not, the value will become false
-        # as a filter function which will extract elements from a list which return True
-        # it means only the countries which return false in the doesUserWantThisCountry function will be extracted
-        suggestionsStream = filter(lambda x: not (doesUserWantThisCountry(x)), codes)
-        suggestionsStream = list(suggestionsStream)
-        return suggestionsStream
 
 
 @time_taken
