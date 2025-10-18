@@ -359,6 +359,11 @@ def calculateCountryScores(travelID, countryCodes):
     # gets the most important holiday factor for the user
     most_important_user_score = max(user_factor_values)
 
+    user_relative_scores = {}
+    for x in FactorsEnum:
+        factor_relative_score = user_score[x.name] / most_important_user_score
+        user_relative_scores[x.name] = factor_relative_score
+
     # Locally
     all_country_scores = {}
     # joinedload uses the relationships defined in the models and loads the joined tables at the same time
@@ -412,14 +417,10 @@ def calculateCountryScores(travelID, countryCodes):
             # sets the current_country to the country's newly created record
             current_country = new_user_country
 
-            user_relative_scores = {}
-            for x in FactorsEnum:
-                factor_relative_score = user_score[x.name] / most_important_user_score
-                user_relative_scores[x.name] = factor_relative_score
-
             userCountryScores = []
             userCountryScoresD = {}
             for y in FactorsEnum:
+                # Gets the countrys scores
                 country_scores_object = all_country_scores[countryCode]
                 country_factor_object = getattr(country_scores_object, FactorsEnum[y.name].value[1])
                 country_value = getattr(country_factor_object, FactorsEnum[y.name].value[0])
