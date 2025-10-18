@@ -46,7 +46,6 @@ def time_taken(func):
 @time_taken
 def getQuestions():
     # Access's the questions in the json file
-    base_directory = os.path.dirname(os.path.abspath(__file__))
     filename = os.path.join(current_app.static_folder, "questions.json")
 
     f = open(filename, 'r')
@@ -93,7 +92,6 @@ def getAnswer(questionID, answerID):
 def isQuestionAnswered(current_travel, questionID):
     questionAnswered = False
 
-    # print("current travel questions_answered:", getattr(current_travel, 'questions_answered'))
     if current_travel is None:
         return False
 
@@ -227,7 +225,7 @@ def filterPrevCountries(codes, travelID):
         print(e)
 
     prev_countries = getattr(current_travel, "prev_countries")
-    if prev_countries == True:
+    if prev_countries:
         return codes
     else:
         # For every country code
