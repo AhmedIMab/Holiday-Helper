@@ -90,14 +90,8 @@ def getAnswer(questionID, answerID):
 
 
 @time_taken
-def isQuestionAnswered(travelID, questionID):
+def isQuestionAnswered(current_travel, questionID):
     questionAnswered = False
-    try:
-        # tries to get the user's current travel
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print("No travel session found")
-        return redirect(url_for('views.noTravel'))
 
     # print("current travel questions_answered:", getattr(current_travel, 'questions_answered'))
     if current_travel is None:
@@ -114,14 +108,9 @@ def isQuestionAnswered(travelID, questionID):
 
 
 @time_taken
-def haveRequirementsBeenMet(travelID, questionID):
+def haveRequirementsBeenMet(current_travel, questionID):
     question = getQuestion(questionID)
     requirementsMet = True
-    try:
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-
-    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print(f"This is the error in {func.__name__}: {e}")
 
     try:
         questionRequirements = question.get("questionRequirements")
@@ -138,30 +127,21 @@ def haveRequirementsBeenMet(travelID, questionID):
                     requirementsMet = False
                     break
             elif isinstance(requiredValue, str):
-                if currentValue == requiredValue:
-                    # print("requirements met")
-                    pass
-                else:
+                if currentValue != requiredValue:
                     requirementsMet = False
                     break
-    except:
+    except Exception as e:
         # This will run when the question does not have any question requirements
         return False
 
     return requirementsMet
 
 
-def shouldUserBeAskedQuestion(travelID, questionID):
+def doesUserMeetQuestionAccountType(questionID):
     question = getQuestion(questionID)
-    current_travel = None
     ask_question = False
-    try:
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print(f"This is the error in {func.__name__}: {e}")
 
     question_allowed_user_types = question.get("user_type")
-    # print(f"\nThese are the user types allowed to access question {questionID}: {question_allowed_user_types}")
     if current_user.user_type in question_allowed_user_types:
         ask_question = True
 
@@ -170,9 +150,14 @@ def shouldUserBeAskedQuestion(travelID, questionID):
 
 @time_taken
 def nextQuestionID(travelID):
-    print("In next questionID function, questionID:")
     questions = getQuestions()
     questionsStream = questions
+    try:
+        # tries to get the user's current travel
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+        print("No travel session found")
+        return redirect(url_for('views.noTravel'))
 
     # filter will ask the questions which have not been answered
     # by applying a not to the return of isQuestionAnswered so isQuestionAnswered will take the questionID and travelID
@@ -180,11 +165,11 @@ def nextQuestionID(travelID):
     # so by applying a not, the value will be False
     # and the filter function extracts elements from a list which return True therefore ignoring answered questions
     # x is the current element the method is looking at (filter)
-    questionsStream = filter(lambda x: not (isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
+    questionsStream = filter(lambda x: not (isQuestionAnswered(current_travel, x.get("questionID"))), questionsStream)
     # second filter will make sure only mandatory questions are asked
     questionsStream = filter(lambda x: x.get("mandatory") == True, questionsStream)
     # Third filter checks if the user has the access type for the question
-    questionsStream = filter(lambda x: shouldUserBeAskedQuestion(travelID, x.get("questionID")), questionsStream)
+    questionsStream = filter(lambda x: doesUserMeetQuestionAccountType(x.get("questionID")), questionsStream)
     # Sort the questions by the smallest to biggest questionID (integer)
     questionsStream = sorted(questionsStream, key=lambda x: x.get("questionID"))
 
@@ -197,11 +182,11 @@ def nextQuestionID(travelID):
         # same as above filter
         # needed so that if a question with requirements is answered we need to make sure it's filtered out
         # and only ask non answered questions
-        questionsStream = filter(lambda x: not (isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
+        questionsStream = filter(lambda x: not (isQuestionAnswered(current_travel, x.get("questionID"))), questionsStream)
         # same as above to ensure questions for the user are only asked if the user is of a certain account type
-        questionsStream = filter(lambda x: shouldUserBeAskedQuestion(travelID, x.get("questionID")), questionsStream)
+        questionsStream = filter(lambda x: doesUserMeetQuestionAccountType(x.get("questionID")), questionsStream)
         # runs the function haveRequirementsBeenMet to get the questions which the user meets requirements for
-        questionsStream = filter(lambda x: haveRequirementsBeenMet(travelID, x.get("questionID")), questionsStream)
+        questionsStream = filter(lambda x: haveRequirementsBeenMet(current_travel, x.get("questionID")), questionsStream)
         questionsStream = sorted(questionsStream, key=lambda x: x.get("questionID"))
 
         if len(questionsStream) == 0:
@@ -401,7 +386,6 @@ def calculateCountryScores(travelID, countryCodes):
     user_country_scores_initial_data = {}
     for country in existing_user_country_scores:
         user_country_scores_initial_data[country.country_code] = country
-
 
     start = time.time()
     for countryCode in countryCodes:
