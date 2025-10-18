@@ -513,13 +513,6 @@ def calculateCountryScores(travelID, countryCodes):
 # This function is used to calculate the country scores for a specific travel session
 # Runs after the user has answered all the questions
 def userCountryScore(travelID, countryCodes):
-    try:
-        # Sets the current travel to the UserTravelScore of the user with primary key values
-        # user_id as the current user id and travel id key as the travel id passed into the function
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print("At this e, usercountryscore:", e)
-
     country_scores_data = UserCountryScore.query.filter_by(user_id=current_user.id, travel_id=travelID).all()
     num_country_scores = len(country_scores_data)
 
@@ -572,6 +565,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
             print("Making a guest user record")
             # Different travel record for a guest as the previous countries is set to 1 automatically (include prev countries)
             prev_countries_val = 1
+
         new_user_travel = UserTravelScore(user_id=current_user.id,
                                           travel_id=travelID,
                                           date_added=datetime.date(now),

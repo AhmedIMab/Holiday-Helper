@@ -221,21 +221,21 @@ def validateTravelID(travelID):
 @csrf.exempt
 @login_required
 def suggestions(travelID):
-    countries = Country.query.all()
-    AllCountries = {}
-    for country in countries:
-        AllCountries[country.country_code] = country.country_name
+    all_countries = Country.query.all()
+    all_countries_dict = {}
+    for country in all_countries:
+        all_countries_dict[country.country_code] = country.country_name
 
     user_travel_details = []
     try:
         print("\nIn the suggestions and just about to call userCountryScore function\n")
-        ranked_countries = userCountryScore(travelID, AllCountries)
+        ranked_countries = userCountryScore(travelID, all_countries_dict)
         # map function is used to replace country codes with country names for user convenience
         # x[0] is the country code
         # the first part of the tuple (x[0]) will be replaced with the country name
         # By the country with country code index of x[0]
         # x[1] is the original second part of the tuple and x[2] is the 3rd part
-        ranked_countries_UF = list(map(lambda x: (AllCountries[x[0]], x[1], x[2]), ranked_countries))
+        ranked_countries_UF = list(map(lambda x: (all_countries_dict[x[0]], x[1], x[2]), ranked_countries))
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
         num_travellers = current_travel.num_travellers
         travelling_time = current_travel.travelling_time
