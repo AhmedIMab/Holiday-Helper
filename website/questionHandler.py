@@ -43,16 +43,19 @@ def time_taken(func):
     return wrapper_time_taken
 
 
-@time_taken
 def getQuestions():
     # Access's the questions in the json file
     filename = os.path.join(current_app.static_folder, "questions.json")
 
-    f = open(filename, 'r')
-    # uses the json module to load it as a JSON object in python
-    data = json.load(f)
-    allQuestions = data.get("questions")
-    return allQuestions
+    try:
+        f = open(filename, 'r')
+        # uses the json module to load it as a JSON object in python
+        data = json.load(f)
+        allQuestions = data.get("questions")
+        return allQuestions
+    except FileNotFoundError as e:
+        print("Could not find file questions.json")
+        return {}
 
 
 def getQuestion(questionID):
@@ -88,7 +91,6 @@ def getAnswer(questionID, answerID):
     return None
 
 
-@time_taken
 def isQuestionAnswered(current_travel, questionID):
     questionAnswered = False
 
@@ -105,7 +107,6 @@ def isQuestionAnswered(current_travel, questionID):
     return questionAnswered
 
 
-@time_taken
 def haveRequirementsBeenMet(current_travel, questionID):
     question = getQuestion(questionID)
     requirementsMet = True
