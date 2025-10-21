@@ -1,0 +1,89 @@
+#answer-buttons {
+  text-align: center;
+}
+
+.answer-button {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+/*/ Range Slider Styling /*/
+.rangeContainer {
+  margin-top: 75px;
+  display: grid;
+  height: 100%;
+  text-align: center;
+  place-items: center;
+}
+
+.range {
+  height: 80px;
+  width: 380px;
+}
+
+.range .sliderValue {
+  position: relative;
+  width: 100%;
+}
+
+.range .sliderValue span {
+  position: absolute;
+  height: 45px;
+  width: 45px;
+  color: #ffffff;
+  font-weight: 500;
+  top: -40px;
+  transform: translateX(-50%);
+  line-height: 55px;
+  z-index: 2;
+}
+
+.range .sliderValue span:after {
+  position: absolute;
+  content: "";
+  height: 45px;
+  width: 45px;
+  background: #005cc8;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  bottom: -8%;
+  box-shadow: 0px 0px 8px rgba(0,0,0,0.1);
+  z-index: -1;
+  border-top-left-radius: 50%;
+  border-top-right-radius: 50%;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.range .field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.range .field .value {
+  position: absolute;
+  font-size: 18px;
+  font-weight: 600;
+  color: #005cc8;
+}
+
+.range .field .value.left {
+  left: -38px;
+}
+
+.range .field .value.right {
+  right: -35px;
+}
+
+.range .field input {
+  -webkit-appearance: none;
+  height: 3px;
+  width: 100%;
+  background: #dddddd;
+  border-radius: 5px;
+  outline: none;
+  border: none
+}

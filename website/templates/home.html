@@ -11,7 +11,12 @@
           <div class="banner-content">
                 <h1 class="banner-heading">HOLIDAY HELPER!</h1>
                 <p class="banner-desc">Discover amazing destinations tailored to you - Start planning your dream holiday today!</p>
-              <button class="start-button"><a href="#accountFeatures">Start Your Journey!</a></button>
+              <button class="start-button"><a {% if user.is_authenticated %}
+                                                    href="/journeys"
+                                              {% else %}
+                                                    href="#accountFeatures"
+                                              {% endif %}>
+                  Start Your Journey!</a></button>
           </div>
         </div>
     <div class="window-frame"></div>

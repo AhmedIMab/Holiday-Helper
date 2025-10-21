@@ -59,8 +59,6 @@ const nextQuestion = function (travelID) {
             removeAllChildNodes(document.getElementsByClassName("helper-text"))
             // document.getElementsByClassName("question-text").style.display = "none" does not work as...
             // document.getElementsByClassName delivers a nodeList
-            // Could use jquery: $(".question-text").css("display", "none")
-            // document.getElementsByClassName("question-text")[0].style.display = "none"
             // Changes the questionTextP element's text to the current questions text
             questionTextP.text(question.questionText)
             const questionType = question.questionType
@@ -90,12 +88,10 @@ const nextQuestion = function (travelID) {
                         return _res.json(); // Returns the response further
                     })
                     .then((response_data) => {
-                        // console.log("RESPONSE DATA: " + JSON.stringify(response_data));
                         if (response_data.valid === true) {
                             // When it's found a valid travel ID, redirects to the suggestions page
                             window.location.href = "/suggestions/" + travelID
                         } else {
-                            console.log("Being thrown here!");
                             throw Error(response_data.message);
                         }
                     }).catch((error) => {
@@ -222,7 +218,6 @@ const rangeQuestion = function (question, answers, travelID) {
 
 
     submitButtonX.click(function (event) {
-        console.log("submit button clicked!")
         const answerValue = inputSlider.value;
         console.log(answerValue)
         const questionID = question.questionID
@@ -281,11 +276,9 @@ const integerQuestion = function (question, answers, travelID) {
         const questionID = question.questionID
         const invalidInteger = $("#invalidInteger")
         if (answerValue < minimumValue) {
-            console.log("This is min", minimumValue)
             $(invalidInteger).show();
             let str_minimum_value = toString(minimumValue)
             invalidInteger.text("Please input an integer greater than or equal to " + minimumValue);
-            console.log("dfgsefs")
         } else {
             $(invalidInteger).hide();
             Api.sendUserResponse(questionID, answerValue, travelID).then(() => {
@@ -308,8 +301,8 @@ const multipleChoiceQuestion = function (question, answers, travelID) {
                 createElementX(
                     "div",
                     {
-                        "id":"buttonsss",
-                        "class": "col centerAButtons"
+                        "id":"answer-buttons",
+                        "class": "col"
                     }
                 )
             ])
@@ -341,13 +334,13 @@ const multipleChoiceQuestion = function (question, answers, travelID) {
         const answer = answers[i]
         // retrieves the answer text of the answer
         const answerText = answer.answerText
-        const centerAButtons = document.getElementById("buttonsss");
+        const centerAButtons = document.getElementById("answer-buttons");
 
         // creates a new button element
         const answer_button = createElementX(
                 "button",
                 {
-                    "class":"btn btn-outline-primary mt-3 answerButtons",
+                    "class":"btn btn-outline-primary mt-3 answer-button",
                     "questionID": question.questionID,
                     "answerID": answer.answerID
                 },
@@ -359,7 +352,7 @@ const multipleChoiceQuestion = function (question, answers, travelID) {
         centerAButtons.appendChild(answer_button)
     }
 
-    const answerButton = $(".answerButtons");
+    const answerButton = $(".answer-button");
 
     answerButton.click(function (event) {
         const questionID = event.currentTarget.attributes["questionID"].value;
