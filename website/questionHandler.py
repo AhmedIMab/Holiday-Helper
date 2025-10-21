@@ -13,6 +13,7 @@ from enum import Enum
 from datetime import datetime
 import functools
 import time
+from flask import current_app, redirect, url_for
 
 
 # One ENUM that corresponds to a tuple for every factor
@@ -42,18 +43,19 @@ def time_taken(func):
     return wrapper_time_taken
 
 
-@time_taken
 def getQuestions():
     # Access's the questions in the json file
-    base_directory = os.path.dirname(os.path.abspath(__file__))
-    filename = os.path.join(base_directory, "static", "questions.json")
-    # filename = os.path.join(os.getcwd(), 'website', 'static', 'questions.json')
+    filename = os.path.join(current_app.static_folder, "questions.json")
 
-    f = open(filename, 'r')
-    # uses the json module to load it as a JSON object in python
-    data = json.load(f)
-    allQuestions = data.get("questions")
-    return allQuestions
+    try:
+        f = open(filename, 'r')
+        # uses the json module to load it as a JSON object in python
+        data = json.load(f)
+        allQuestions = data.get("questions")
+        return allQuestions
+    except FileNotFoundError as e:
+        print("Could not find file questions.json")
+        return {}
 
 
 def getQuestion(questionID):
@@ -89,42 +91,25 @@ def getAnswer(questionID, answerID):
     return None
 
 
-def isQuestionAnswered(travelID, questionID):
+def isQuestionAnswered(current_travel, questionID):
     questionAnswered = False
-    try:
-        # tries to get the user's current travel
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print(f"This is the error in {func.__name__}: {e}")
 
-    try:
-        y = getattr(current_travel, 'questions_answered')
-        questionsAnsweredArray = y.split(',')
-        for questionA in questionsAnsweredArray:
-            if questionA == "":
-                pass
-            else:
-                if int(questionID) == int(questionA):
-                    questionAnswered = True
-                    break
+    if current_travel is None:
+        return False
 
-    except (UnboundLocalError, AttributeError) as e:
-        # Runs when no questions have been answered
-        pass
+    y = getattr(current_travel, 'questions_answered')
+    # Removes all elements that evaluate to false, aka empty strings
+    questionsAnsweredArray = filter(None, y.split(','))
+    if questionID in list(map(int, questionsAnsweredArray)):
+        questionAnswered = True
 
     # Returns a boolean value of whether the question has or has not been answered
     return questionAnswered
 
 
-@time_taken
-def haveRequirementsBeenMet(travelID, questionID):
+def haveRequirementsBeenMet(current_travel, questionID):
     question = getQuestion(questionID)
     requirementsMet = True
-    try:
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-
-    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print(f"This is the error in {func.__name__}: {e}")
 
     try:
         questionRequirements = question.get("questionRequirements")
@@ -140,29 +125,21 @@ def haveRequirementsBeenMet(travelID, questionID):
                     requirementsMet = False
                     break
             elif isinstance(requiredValue, str):
-                if currentValue == requiredValue:
-                    pass
-                else:
+                if currentValue != requiredValue:
                     requirementsMet = False
                     break
-    except:
+    except Exception as e:
         # This will run when the question does not have any question requirements
         return False
 
     return requirementsMet
 
 
-def shouldUserBeAskedQuestion(travelID, questionID):
+def doesUserMeetQuestionAccountType(questionID):
     question = getQuestion(questionID)
-    current_travel = None
     ask_question = False
-    try:
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print(f"This is the error in {func.__name__}: {e}")
 
     question_allowed_user_types = question.get("user_type")
-    # print(f"\nThese are the user types allowed to access question {questionID}: {question_allowed_user_types}")
     if current_user.user_type in question_allowed_user_types:
         ask_question = True
 
@@ -171,9 +148,14 @@ def shouldUserBeAskedQuestion(travelID, questionID):
 
 @time_taken
 def nextQuestionID(travelID):
-    print("In next questionID function, questionID:")
     questions = getQuestions()
     questionsStream = questions
+    try:
+        # tries to get the user's current travel
+        current_travel = UserTravelScore.query.get((current_user.id, travelID))
+    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+        print("No travel session found")
+        return redirect(url_for('views.noTravel'))
 
     # filter will ask the questions which have not been answered
     # by applying a not to the return of isQuestionAnswered so isQuestionAnswered will take the questionID and travelID
@@ -181,11 +163,11 @@ def nextQuestionID(travelID):
     # so by applying a not, the value will be False
     # and the filter function extracts elements from a list which return True therefore ignoring answered questions
     # x is the current element the method is looking at (filter)
-    questionsStream = filter(lambda x: not (isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
+    questionsStream = filter(lambda x: not (isQuestionAnswered(current_travel, x.get("questionID"))), questionsStream)
     # second filter will make sure only mandatory questions are asked
     questionsStream = filter(lambda x: x.get("mandatory") == True, questionsStream)
     # Third filter checks if the user has the access type for the question
-    questionsStream = filter(lambda x: shouldUserBeAskedQuestion(travelID, x.get("questionID")), questionsStream)
+    questionsStream = filter(lambda x: doesUserMeetQuestionAccountType(x.get("questionID")), questionsStream)
     # Sort the questions by the smallest to biggest questionID (integer)
     questionsStream = sorted(questionsStream, key=lambda x: x.get("questionID"))
 
@@ -198,11 +180,11 @@ def nextQuestionID(travelID):
         # same as above filter
         # needed so that if a question with requirements is answered we need to make sure it's filtered out
         # and only ask non answered questions
-        questionsStream = filter(lambda x: not (isQuestionAnswered(travelID, x.get("questionID"))), questionsStream)
+        questionsStream = filter(lambda x: not (isQuestionAnswered(current_travel, x.get("questionID"))), questionsStream)
         # same as above to ensure questions for the user are only asked if the user is of a certain account type
-        questionsStream = filter(lambda x: shouldUserBeAskedQuestion(travelID, x.get("questionID")), questionsStream)
+        questionsStream = filter(lambda x: doesUserMeetQuestionAccountType(x.get("questionID")), questionsStream)
         # runs the function haveRequirementsBeenMet to get the questions which the user meets requirements for
-        questionsStream = filter(lambda x: haveRequirementsBeenMet(travelID, x.get("questionID")), questionsStream)
+        questionsStream = filter(lambda x: haveRequirementsBeenMet(current_travel, x.get("questionID")), questionsStream)
         questionsStream = sorted(questionsStream, key=lambda x: x.get("questionID"))
 
         if len(questionsStream) == 0:
@@ -239,23 +221,24 @@ def filterPrevCountries(codes, travelID):
         # Sets the current travel to the UserTravelScore of the user with primary key values
         # user_id as the current user id and travel id key as the travel id passed into the function
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
+        prev_countries = getattr(current_travel, "prev_countries")
+        if prev_countries:
+            return codes
+        else:
+            # For every country code
+            # it will check if the country code is one of the users visited countries
+            # by applying a not, if the country is one of the users countries
+            # the doesUserWantThisCountry will return True
+            # as it's a not, the value will become false
+            # as a filter function which will extract elements from a list which return True
+            # it means only the countries which return false in the doesUserWantThisCountry function will be extracted
+            suggestionsStream = filter(lambda x: not (doesUserWantThisCountry(x)), codes)
+            suggestionsStream = list(suggestionsStream)
+            return suggestionsStream
+
     except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
         print(e)
 
-    prev_countries = getattr(current_travel, "prev_countries")
-    if prev_countries == True:
-        return codes
-    else:
-        # For every country code
-        # it will check if the country code is one of the users visited countries
-        # by applying a not, if the country is one of the users countries
-        # the doesUserWantThisCountry will return True
-        # as it's a not, the value will become false
-        # as a filter function which will extract elements from a list which return True
-        # it means only the countries which return false in the doesUserWantThisCountry function will be extracted
-        suggestionsStream = filter(lambda x: not (doesUserWantThisCountry(x)), codes)
-        suggestionsStream = list(suggestionsStream)
-        return suggestionsStream
 
 
 @time_taken
@@ -376,6 +359,11 @@ def calculateCountryScores(travelID, countryCodes):
     # gets the most important holiday factor for the user
     most_important_user_score = max(user_factor_values)
 
+    user_relative_scores = {}
+    for x in FactorsEnum:
+        factor_relative_score = user_score[x.name] / most_important_user_score
+        user_relative_scores[x.name] = factor_relative_score
+
     # Locally
     all_country_scores = {}
     # joinedload uses the relationships defined in the models and loads the joined tables at the same time
@@ -403,7 +391,6 @@ def calculateCountryScores(travelID, countryCodes):
     for country in existing_user_country_scores:
         user_country_scores_initial_data[country.country_code] = country
 
-
     start = time.time()
     for countryCode in countryCodes:
         # Loops through every country's code in the list of all countryCodes
@@ -430,14 +417,10 @@ def calculateCountryScores(travelID, countryCodes):
             # sets the current_country to the country's newly created record
             current_country = new_user_country
 
-            user_relative_scores = {}
-            for x in FactorsEnum:
-                factor_relative_score = user_score[x.name] / most_important_user_score
-                user_relative_scores[x.name] = factor_relative_score
-
             userCountryScores = []
             userCountryScoresD = {}
             for y in FactorsEnum:
+                # Gets the countrys scores
                 country_scores_object = all_country_scores[countryCode]
                 country_factor_object = getattr(country_scores_object, FactorsEnum[y.name].value[1])
                 country_value = getattr(country_factor_object, FactorsEnum[y.name].value[0])
@@ -532,13 +515,6 @@ def calculateCountryScores(travelID, countryCodes):
 # This function is used to calculate the country scores for a specific travel session
 # Runs after the user has answered all the questions
 def userCountryScore(travelID, countryCodes):
-    try:
-        # Sets the current travel to the UserTravelScore of the user with primary key values
-        # user_id as the current user id and travel id key as the travel id passed into the function
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-    except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-        print("At this e, usercountryscore:", e)
-
     country_scores_data = UserCountryScore.query.filter_by(user_id=current_user.id, travel_id=travelID).all()
     num_country_scores = len(country_scores_data)
 
@@ -591,6 +567,7 @@ def userQuestionAnswer(questionID, answerValue, travelID):
             print("Making a guest user record")
             # Different travel record for a guest as the previous countries is set to 1 automatically (include prev countries)
             prev_countries_val = 1
+
         new_user_travel = UserTravelScore(user_id=current_user.id,
                                           travel_id=travelID,
                                           date_added=datetime.date(now),

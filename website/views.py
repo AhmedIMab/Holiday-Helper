@@ -113,8 +113,7 @@ def newTravel():
 def journey():
     def find_journeys():
         prev_countries = UserCountry.query.filter_by(user_id=current_user.id).all()
-        prev_countries_country_codes = [Country.query.filter_by(country_code=cc.country_code).first().country_code for
-                                        cc in prev_countries]
+        prev_countries_codes = [country.country_code for country in prev_countries]
         all_travel_sessions = UserTravelScore.query.filter_by(user_id=current_user.id).all()
 
         travel_sessions = []
@@ -151,7 +150,7 @@ def journey():
                         top_country = result_all_countries[0]
 
                         for country_y in result_all_countries:
-                            if country_y.country_code not in prev_countries_country_codes:
+                            if country_y.country_code not in prev_countries_codes:
                                 top_country = country_y
                                 break
 
@@ -210,21 +209,21 @@ def validateTravelID(travelID):
 @csrf.exempt
 @login_required
 def suggestions(travelID):
-    countries = Country.query.all()
-    AllCountries = {}
-    for country in countries:
-        AllCountries[country.country_code] = country.country_name
+    all_countries = Country.query.all()
+    all_countries_dict = {}
+    for country in all_countries:
+        all_countries_dict[country.country_code] = country.country_name
 
     user_travel_details = []
     try:
         print("\nIn the suggestions and just about to call userCountryScore function\n")
-        ranked_countries = userCountryScore(travelID, AllCountries)
+        ranked_countries = userCountryScore(travelID, all_countries_dict)
         # map function is used to replace country codes with country names for user convenience
         # x[0] is the country code
         # the first part of the tuple (x[0]) will be replaced with the country name
         # By the country with country code index of x[0]
         # x[1] is the original second part of the tuple and x[2] is the 3rd part
-        ranked_countries_UF = list(map(lambda x: (AllCountries[x[0]], x[1], x[2]), ranked_countries))
+        ranked_countries_UF = list(map(lambda x: (all_countries_dict[x[0]], x[1], x[2]), ranked_countries))
         current_travel = UserTravelScore.query.get((current_user.id, travelID))
         num_travellers = current_travel.num_travellers
         travelling_time = current_travel.travelling_time
@@ -294,9 +293,9 @@ def questions(questionID):
 @login_required
 @requires_user_types([1, 2])
 def countries():
-    countries = Country.query.all()
+    all_countries = Country.query.all()
     countries_list = []
-    for country in countries:
+    for country in all_countries:
         countries_list.append({country.country_code: country.country_name})
 
     return render_template("countries.html", user=current_user, countries=countries_list)
@@ -305,33 +304,34 @@ def countries():
 @views.route('/usercountries', methods=['GET', 'POST'])
 @csrf.exempt
 @login_required
+@requires_user_types([1, 2])
 def addCountry():
     if request.method == "POST":
-        db = db_session()
-        try:
-            now = datetime.now()
-            country = json.loads(request.data)
-            country_code = country.get("countryCode")
-            new_user_country = UserCountry(user_id=current_user.id,
-                                           country_code=country_code,
-                                           date_added=datetime.date(now),
-                                           rating=0)
-            db.add(new_user_country)
-            # the commit will confirm that the changes are added together
-            # ensuring consistency
-            db.commit()
-        except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
-            # print("This is the exception when adding a country that was already there:", e)
-            db.rollback()
-            # return f"This user has already added this country {country_code}", 500
+        country_code = json.loads(request.data).get("countryCode")
+        allUserAddedCountries = UserCountry.query.filter_by(user_id=current_user.id).all()
+        allCountryCodes = [x.country_code for x in allUserAddedCountries]
+        if country_code in allCountryCodes:
             return jsonify({"error": "Country already added"}), 400
+        else:
+            db = db_session()
+            now = datetime.now()
+            try:
+                new_user_country = UserCountry(user_id=current_user.id,
+                                               country_code=country_code,
+                                               date_added=datetime.date(now),
+                                               rating=0)
+                db.add(new_user_country)
+                db.commit()
+            except (sqlite3.IntegrityError, sqlalchemy.exc.IntegrityError) as e:
+                db.rollback()
 
     return render_template("countries.html", user=current_user)
 
 
 @views.route("/usercountries", methods=["DELETE"])
-@login_required
 @csrf.exempt
+@login_required
+@requires_user_types([1, 2])
 def delete_country():
     country = json.loads(request.data)
     countryCode = country.get('countryCode')
