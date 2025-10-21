@@ -211,15 +211,15 @@ body {
 
 .footer p, .footer li {
   color: #DDDDDD;
-  font-size: 0.9em;
+  font-size: 0.85em;
 }
 
 .footer-info {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 5em;
-  padding: 1em;
+  gap: 3em;
+  padding: 0.5em;
 }
 
 .footer-desc {
@@ -238,20 +238,20 @@ body {
 }
 
 .footer-desc p {
-  margin: 0;
+  margin-top: 0;
 }
 
 .footer-links {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
   flex: 1;
 }
 
 .footer-links ul {
   list-style-type: none;
   padding: 0;
-  margin-top: 1em;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .footer-links li:not(:first-child) {
