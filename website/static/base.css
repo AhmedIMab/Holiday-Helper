@@ -203,6 +203,7 @@ body {
 
 .footer h3 {
   color: #fefefe;
+  font-size: 0.8rem;
 }
 
 .footer p {
@@ -211,7 +212,7 @@ body {
 
 .footer p, .footer li {
   color: #DDDDDD;
-  font-size: 0.85em;
+  font-size: 0.7em;
 }
 
 .footer-info {
