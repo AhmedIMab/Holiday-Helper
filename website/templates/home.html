@@ -1,114 +1,141 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %}
+{% extends "base.html" %}
+{% block css %}
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='home.css') }}>
+{% endblock %}
+{% block title %}Home{% endblock %}
+
 {% block homepage %}
-{#<section class="bg-dark text-light p-5 pt-lg-0 text-center text-sm-start">
-    <div class="container">
-        <div class="d-sm-flex align-items-center justify-content-between">
+
+<div class="window-banner">
+    <div class="scenic-view">
+          <div class="banner-content">
+                <h1 class="banner-heading">HOLIDAY HELPER!</h1>
+                <p class="banner-desc">Discover amazing destinations tailored to you - Start planning your dream holiday today!</p>
+              <button class="start-button"><a {% if user.is_authenticated %}
+                                                    href="/journeys"
+                                              {% else %}
+                                                    href="#accountFeatures"
+                                              {% endif %}>
+                  Start Your Journey!</a></button>
+          </div>
+        </div>
+    <div class="window-frame"></div>
+</div>
+
+<section class="how-it-works">
+    <div class="site-container">
+        <h2>How does it work?</h2>
+        <div class="how-imgs">
+            <div class="how-img-wrapper animate">
+                <div class="number-header">
+                    01
+                </div>
+                <div class="content-card">
+                    <h3 class="card-title">Share Your Travel Preferences</h3>
+                    <p class="card-text">
+                        Start by answering a few questions about what you're looking for in your next holiday whether
+                        it's adventure, relaxation, culture, or something else. This helps us tailor your journey.
+                    </p>
+                </div>
+            </div>
+
+            <div class="how-img-wrapper animate">
+                <div class="number-header">
+                    02
+                </div>
+                <div class="content-card">
+                    <h3 class="card-title">Add Your Past Destinations</h3>
+                    <p class="card-text">
+                        If you've travelled before, add countries you've visited to create a personalised travel history.
+                        This allows us to recommend destinations that align with your past trips and preferences.
+                    </p>
+                </div>
+            </div>
+            <div class="how-img-wrapper animate">
+                <div class="number-header">
+                    03
+                </div>
+                <div class="content-card">
+                    <h3 class="card-title">Get Your Travel Recommendations</h3>
+                    <p class="card-text">
+                        Once you complete the questionnaire, our algorithm generate a personalised, ranked list of destinations
+                        based on your preferences.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="holiday-types">
+    <div class="site-container">
+        <h2>Types of destinations!</h2>
+        <div class="holiday-banner">
+            <img class="banner-image banner-image-a visible" src="{{ url_for('static', filename='imgs/water_sports_banner.png') }}">
+            <img class="banner-image banner-image-b" src="{{ url_for('static', filename='imgs/winter_sports_banner.png') }}">
+            <div class="holiday-banner-buttons">
+                <div class="holiday-banner-button-container">
+                    <img src="{{ url_for('static', filename='imgs/water_sports_logo.svg') }}" class="holiday-logo" id="logo-water"></img>
+                    <button class="holiday-type-button" id="water_sports_banner">Water Sports</button>
+                </div>
+                <div class="holiday-banner-button-container">
+                    <img src="{{ url_for('static', filename='imgs/winter_sports_logo.svg') }}" class="holiday-logo" id="logo-winter"></img>
+                    <button class="holiday-type-button" id="winter_sports_banner">Winter Sports</button>
+                </div>
+                <div class="holiday-banner-button-container">
+                    <img src="{{ url_for('static', filename='imgs/nature_hiking_logo.svg') }}" class="holiday-logo" id="logo-nature"></img>
+                    <button class="holiday-type-button" id="nature_hiking_banner">Nature & hiking</button>
+                </div>
+                <div class="holiday-banner-button-container">
+                    <img src="{{ url_for('static', filename='imgs/historical_places.svg') }}" class="holiday-logo" id="logo-historical"></img>
+                    <button class="holiday-type-button" id="historical_places_banner">Historical places</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="holiday-account-types">
+    <div class="account-features" id="accountFeatures">
+        <div class="site-container features-container">
+            <img class="account-types-img" src="{{ url_for('static', filename='imgs/suitcase_home_1.png') }}">
+            <div class="features-text-container">
+                <h2>Enjoy exclusive features with an account</h2>
+                <p>Unlock the full potential of Holiday Helper with an account! Save your travel plans, manage multiple journeys, and receive personalized destination recommendations tailored to your preferences. Take control of your holiday planning experience and enjoy exclusive features that make every trip unforgettable.</p>
+                <ul>
+                    <li class="features-listitem">Unlock full access to Holiday Helper's exclusive features.</li>
+                    <li class="features-listitem">Save travel sessions and manage multiple journeys effortlessly.</li>
+                    <li class="features-listitem">Add visited countries to refine and filter destination recommendations.</li>
+                    <li class="features-listitem">Personalize your holiday planning experience to match your preferences.</li>
+                    <li class="features-listitem">Coming Soon: Fine-tune the algorithm to prioritize your travel goals!</li>
+                </ul>
+                <div class="account-button-container">
+                    <button><a class="cus-nav-link cta-login" href="/login">Login</a></button>
+                    <button><a class="cta-signup" href="/sign-up">Sign up</a></button>
+                </div>
+        </div>
+    </div>
+</div>
+
+    <div class="features-container site-container">
+        <div class="features-text-container">
+            <h2>Just exploring? Try guest mode!</h2>
+            <p>Not ready to commit? Our Guest Mode lets you explore Holiday Helper without creating an account. Get a quick taste of our features, answer a few simple questions, and discover tailored travel suggestions. While guest access is limited, it’s the perfect way to see how we can help plan your next adventure!</p>
+            <ul>
+              <li>Test-drive the app without signing up.</li>
+              <li>Quickly explore travel suggestions and answer a few questions.</li>
+              <li>Limited number of questions.</li>
+              <li>Suggestions are less personalized than for account holders.</li>
+              <li>Guest data (including journeys) will be deleted upon logout.</li>
+            </ul>
             <div>
-                <h1><span class="text-warning">Holiday</span> Helper!</h1>
-                <!-- lead makes it a bit bigger -->
-                <p class="lead my-4 mr-5">
-                We focus on getting you the best possible destination for you to enjoy
-                and make the most out of your holiday
-                </p>
-                <a href="/journeys" class="btn btn-primary mb-2">Start Adventuring Now!</a>
-            </div>
-            <!-- d means display so d-sm-block will block on smaller screens -->
-            <img class="img-fluid w-50 d-none d-sm-block" src="{{ url_for('static', filename='imgs/semiglobe.png') }}" alt="this is the image" />
-        </div>
-    </div>
-</section>#}
-
-    <section class="hh-header-section bg-dark text-light pt-lg-0 text-sm-start">
-        <div class="hh-header-container container">
-            <div class="hh-main-text">
-                <h1><span class="text-warning">Holiday</span> Helper!</h1>
-                <!-- lead makes it a bit bigger -->
-                <p class="lead my-4">
-                We focus on getting you the best possible destination for you to enjoy
-                and make the most out of your holiday!
-                </p>
-                <a href="/journeys" class="btn btn-primary mb-2">Start Adventuring Now!</a>
-            </div>
-            <img class="hh-globe-image img-fluid w-50 mb-3" src="{{ url_for('static', filename='imgs/semiglobe.png') }}" alt="this is the image" />
-            <!-- d means display so d-sm-block will block on smaller screens -->
-        </div>
-    </section>
-
-
-<!-- Cards -->
-
-<section class="p-5">
-    <div class="container">
-        <div class="row text-center g-4">
-            <div class="col-md">
-                <div class="card card1 text-light">
-                    <div class="card-body text-center">
-                        <div class="h1 mb-3">
-                            <i class="bi bi-question"></i>
-                        </div>
-                        <h3 class="card-title mb-3">
-                            What do we do?
-                        </h3>
-                        <p class="card-text">
-                            Find out more about our main functions and ways in which we can assist you to
-                            find the correct travel spot
-                        </p>
-                        <a href="#helpsect" class="btn btn-info mb-2">Help Me</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md">
-                <div class="card card2 text-light">
-                    <div class="card-body text-center">
-                        <div class="h1 mb-3">
-                            <i class="bi bi-card-checklist"></i>
-                        </div>
-                        <h3 class="card-title mb-3">
-                            Your countries
-                        </h3>
-                        <p class="card-text">
-                            Pick the countries you have previously visited and choose whether these will
-                            affect the destinations our algorithm picks for you
-                        </p>
-                        <a href="/countries" class="btn btn-success mb-2">Get Adding!</a>
-                    </div>
-                </div>
+                <button><a class="cta-login cus-nav-link" href="/guest-login">Guest Login</a></button>
             </div>
         </div>
+        <img class="account-types-img" src="{{ url_for('static', filename='imgs/suitcase_home_2.png') }}">
     </div>
 </section>
 
-<!-- ########-->
-
-<section id="helpsect" class="p-5">
-    <div class="container">
-        <div class="row align-items-center justify-content-between">
-            <div class="col-md align-center">
-                <img src="{{ url_for('static', filename='imgs/world1.png') }}" class="img-fluid">
-            </div>
-            <div class="col-md p-5">
-                <h2>What we do!</h2>
-                <p class="lead">
-                    The primary objective of Holiday helper is to help those unsure of where they want to travel to, we do this by:
-                </p>
-                <p>
-                    &bull; Asking you various questions to better understand the type of holiday you are looking for
-                </p>
-                <p>
-                    &bull; Using your responses to create a personalised score system for the different factors we feature
-                </p>
-                <p>
-                    &bull; Using these 'factor scores' to then compare with all the countries in the world and see which one closely matches your preference
-                </p>
-                <p>
-                    For example, if you answer yes to a question about winter activities and give us a rough estimate of your budget, we will recommend countries which are
-                    good for winter activities like <span style="color: #36b2b2">skiing</span> which match your budget
-                </p>
-
-            </div>
-        </div>
-    </div>
-</section>
 
 <script
     type="text/javascript"

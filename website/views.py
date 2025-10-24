@@ -28,7 +28,7 @@ def requires_user_types(user_types):
         def wrapper_requires_access_level(*args, **kwargs):
             if current_user.user_type not in user_types:
                 flash("Guests cannot access this page", category='error')
-                return redirect(url_for('views.landing'))
+                return redirect(url_for('views.home'))
             else:
                 # This is to ensure that the functions return values are lost
                 return func(*args, **kwargs)
@@ -40,33 +40,21 @@ def requires_user_types(user_types):
 
 @views.route('/robots.txt', methods=['GET'])
 def robots():
-    print("Here we are!")
-    print(os.getcwd() + 'website/')
     return send_from_directory(os.getcwd() + '/website/', 'robots.txt')
 
 
 @views.route('/sitemap.xml', methods=['GET'])
 def sitemap():
-    print("Here we are!")
-    print(os.getcwd() + 'website/')
     return send_from_directory(os.getcwd() + '/website/', 'sitemap.xml')
-
-
-@views.route('/landing', methods=['GET'])
-def landing():
-    if current_user.is_authenticated:
-        return render_template("landing.html", user=current_user)
-    else:
-        return render_template("landing.html", user=None)
 
 
 @views.route('/', methods=['GET', 'POST'])
 def home():
     print("Welcome! Entered site on:", datetime.now())
-    if current_user.is_authenticated and (current_user.user_type == 1 or current_user.user_type == 2):
+    if current_user.is_authenticated:
         return render_template("home.html", user=current_user)
     else:
-        return redirect(url_for('views.landing'))
+        return render_template("home.html", user=None)
 
 
 @views.route('/about', methods=['GET', 'POST'])
