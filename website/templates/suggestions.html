@@ -2,20 +2,10 @@
 {% block content %}
 <div class="container pt-5">
     <div class="suggestions-main-header">
-        <h3 align="center"><span class="text-success" >Suggested Countries for Travel Session: {{ user_travel[0] }}</span></h3>
-        <h4 align="center" class="text-primary suggestions-custom-main-header">After your completion of the questionnaire, <span style="color: red">{{ user.first_name }}</span>, our trusty algorithm has provided a tailored list of destinations for you!</h4>
-        <ul>
-                <li class="suggestions-main-li text-primary">By also taking into account that <span style="color:red">{{ user_travel[1] }}</span> people are travelling for <span style="color:red">{{ user_travel[2] }}</span> days, we've
-            estimated the cost of travelling there!
-                </li>
-            <li class="suggestions-main-li text-primary">
-            {% if user_travel[3] == 0 %}
-                We've also removed the countries you previously visited just as you requested!
-            {% else %}
-                We've also included the countries you previously visited just as you requested!
-            {% endif %}
-            </li>
-        </ul>
+        <h3 align="center"><span class="text-success" >Travel Destinations!</span></h3>
+            <p class="suggestions-main-li text-primary">By also taking into account that <span style="color:red">{{ user_travel[1] }}</span> people are travelling for <span style="color:red">{{ user_travel[2] }}</span> days, we've
+        estimated the cost of travelling there!
+            </p>
     </div>
     <div class="mb-2">
         <span class="mini-text lead">(Please note that cost estimates are based on data available as of 2021 and may not be fully accurate. We apologize for any inconvenience and are working to update this information.)</span><br>

@@ -353,7 +353,7 @@ body {
 }
 
 .mini-text {
-  font-size: 1.1rem;
+  font-size: 0.8rem;
 }
 
 .accred-title-header {
@@ -490,7 +490,7 @@ body {
 }
 
 .suggestions-main-li {
-  font-size: 20px;
+  font-size: 15px;
 }
 
 .suggestions-main-header {
@@ -502,6 +502,7 @@ body {
   padding: 0.4em 0.8em 0.4em 0.8em;
   margin-bottom: 1.2rem;
   font-weight: 500;
+  text-align: center;
 }
 
 .suggestions-main-header ul {
