@@ -58,6 +58,12 @@ class Api {
         })
     }
 
+    displayCountries(travel_id, num_countries) {
+        return fetch("/suggestions/" + travel_id + num_countries, {
+            method: "GET"
+        })
+    }
+
 }
 
 export default new Api();

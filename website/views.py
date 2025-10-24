@@ -6,7 +6,7 @@ from flask_mail import Message
 
 from .forms import FeedbackForm
 from .models import User, Country, UserCountry
-from . import db_session, NUM_COUNTRIES
+from . import db_session, NUM_COUNTRIES, ALL_COUNTRIES_DICT
 import json
 from datetime import datetime
 import os
@@ -205,42 +205,83 @@ def validateTravelID(travelID):
         return jsonify({'valid': True}), 200
 
 
+@time_taken
+def getSuggestions(current_travel, prev_countries_included):
+    db = db_session()
+    travelID = current_travel.travel_id
+
+    if not current_travel:
+        return []
+
+    if not prev_countries_included:
+        calculated_countries = UserCountryScore.query\
+            .filter_by(user_id=current_user.id, travel_id=travelID)\
+            .order_by(UserCountryScore.total_score)\
+            .all()
+    else:
+        visited_countries = db.query(UserCountry.country_code).filter_by(user_id=current_user.id)
+        calculated_countries = UserCountryScore.query\
+            .filter_by(user_id=current_user.id, travel_id=travelID)\
+            .filter(UserCountryScore.country_code.notin_(visited_countries))\
+            .order_by(UserCountryScore.total_score)\
+            .all()
+    print("calculated Countries:", calculated_countries)
+    db.close()
+    return calculated_countries
+
+
 @views.route("/suggestions/<travelID>", methods=["GET"])
+@views.route("/suggestions/<travelID>/<num_countries>", methods=["GET"])
 @csrf.exempt
 @login_required
-def suggestions(travelID):
-    all_countries = Country.query.all()
-    all_countries_dict = {}
-    for country in all_countries:
-        all_countries_dict[country.country_code] = country.country_name
+def suggestions(travelID, num_countries=NUM_COUNTRIES):
+    print("this is num countries:", num_countries)
+    current_travel = UserTravelScore.query.get((current_user.id, travelID))
+    all_suggestions = getSuggestions(current_travel, current_travel.prev_countries)
+    user_travel_details = [travelID]
 
-    user_travel_details = []
-    try:
-        print("\nIn the suggestions and just about to call userCountryScore function\n")
-        ranked_countries = userCountryScore(travelID, all_countries_dict)
-        # map function is used to replace country codes with country names for user convenience
-        # x[0] is the country code
-        # the first part of the tuple (x[0]) will be replaced with the country name
-        # By the country with country code index of x[0]
-        # x[1] is the original second part of the tuple and x[2] is the 3rd part
-        ranked_countries_UF = list(map(lambda x: (all_countries_dict[x[0]], x[1], x[2]), ranked_countries))
-        current_travel = UserTravelScore.query.get((current_user.id, travelID))
-        num_travellers = current_travel.num_travellers
-        travelling_time = current_travel.travelling_time
-        user_travel_details.append(travelID)
-        user_travel_details.append(num_travellers)
-        user_travel_details.append(travelling_time)
-        user_travel_details.append(current_travel.prev_countries)
+    if len(all_suggestions) != num_countries:
+        try:
+            print("\nIn the suggestions and just about to call userCountryScore function\n")
+            ranked_countries = userCountryScore(travelID, ALL_COUNTRIES_DICT)
+            print("This is ranked countries:", ranked_countries)
+            # map function is used to replace country codes with country names for user convenience
+            # x[0] is the country code
+            # the first part of the tuple (x[0]) will be replaced with the country name
+            # By the country with country code index of x[0]
+            # x[1] is the original second part of the tuple and x[2] is the 3rd part
+            ranked_countries_UF = list(map(lambda x: ALL_COUNTRIES_DICT[x[0]], ranked_countries))
+            #num_travellers = current_travel.num_travellers
+            #travelling_time = current_travel.travelling_time
+            #user_travel_details.append(num_travellers)
+            #user_travel_details.append(travelling_time)
+            return render_template("suggestions.html",
+                                   user=current_user,
+                                   best_countries=ranked_countries_UF,
+                                   user_travel=user_travel_details)
+        except AttributeError:
+            print("ERROR", traceback.format_exc())
+            return redirect(url_for('views.noTravel'))
+    else:
+        print("IN HERE")
+        print("all country names:", ALL_COUNTRIES_DICT)
+
+        ranked_countries_UF = list(map(lambda x: ALL_COUNTRIES_DICT[x.country_code], all_suggestions))
+        print("rankedCountries UF:", ranked_countries_UF)
         return render_template("suggestions.html",
                                user=current_user,
                                best_countries=ranked_countries_UF,
                                user_travel=user_travel_details)
 
-    except AttributeError:
-        print("ERROR", traceback.format_exc())
-        user_travel_details.append(0)
-        user_travel_details.append(1)
-        return redirect(url_for('views.noTravel'))
+
+# @views.route("/suggestions/<travelID>/<numCountries>")
+# @csrf.exempt
+# @login_required
+# def getSuggestions(travelID, numCountries):
+#     print("Here we are")
+#     print("travelID:", travelID)
+#     print("numCountries:", numCountries)
+#     return
 
 
 @views.route("/userQuestionAnswer", methods=["POST"])

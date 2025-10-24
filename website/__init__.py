@@ -11,6 +11,7 @@ mail = Mail()
 env = os.getenv('ENVIRONMENT')
 
 NUM_COUNTRIES = 196
+ALL_COUNTRIES_DICT = {}
 
 
 def create_app():
@@ -47,6 +48,10 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
+
+    all_countries = Country.query.all()
+    for country in all_countries:
+        ALL_COUNTRIES_DICT[country.country_code] = country.country_name
 
     return app
 
