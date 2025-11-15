@@ -72,6 +72,11 @@ a:hover {
   --bg-dark: #1D1D1D;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 /* RESET */
 
 button {
